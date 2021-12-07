@@ -1,6 +1,4 @@
-# 2021_assignment3_insert_name
-
-[Name_Placeholder] - 3rd Assignment
+GreenBook - 3rd Assignment
 ====================================
 Third Assignment developed for the Software Development Process course delivered at the University of Milano - Bicocca.
 
