@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Assignment3}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{center}
+        \textbf{TODO}
+\end{center}
+
+
+\begin{itemize}
+    \item Definire enum type per ruolo in Staff e turno in Prenotazione.
+    \item Controllo sui parametri dei costruttori di Persona: codice fiscale, numero di telefono. Per Staff: ruolo $\in$ {cameriere, cuoco,pulizie}. Per Prenotazione: turno $\in$ {pranzo, cena}.
+
+    \item Capire come mostrare vincoli di relazione nei diagrammi ER.
+          Ricordarsi dei vincoli della relazione 'riservato' tra Prenotazione e Tavolo, ovvero Occupato = False AND numCommensali <= postiTavolo.
+
+    \item Al momento, il tavolo viene settato a false quando viene         riservato, ma non viene mai più risettato a true                 (bisognerebbe simulare la fine del turno, ovvero lo              scorrere del tempo). Forse bisognerebbe dare un clock 
+          globale al sito/applicazione in modo tale che dopo che, ad esempio, sono passate le ore 15 del pomeriggio, i tavoli occupati ritornino liberi.
+ 
+    \item Valutare la creazione di una ulteriore entità, ad esempio Registro, che faccia da oggetto contenitore di prenotazioni (per esempio una arraylist<Prenotazione>) per permettere la gestione/cancellazione di prenotazioni.
+
+    \item Possibile funzione per la ricerca di un tavolo libero nel ristorante. Magari da dare all'entità registro o facente funzione.
+    
+    \item Valutare riorganizzazione dei file su gitlab. Mettere tutti i file del progetto java in una loro cartella ed i restanti tipo, schema ER, README, questo file nella directory appena sopra (la root del progetto su gitlab).
+\end{itemize}
+
+
+\end{document}
