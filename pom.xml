@@ -9,26 +9,21 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>it.unimib.bdf</groupId>
-	<artifactId>assignment3</artifactId>
+	<artifactId>greenbook</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>assignment3</name>
-	<description>PSS Assignment3</description>
+	<name>GreenBook</name>
+	<description>PSS Assignment no. 3</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
- 	<dependencies>
-	    <dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-starter-web</artifactId>
-	    </dependency>
-	
-	    <dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-starter-tomcat</artifactId>
-	        <scope>provided</scope>
-	    </dependency>
-	    
-	    <dependency>
+
+	<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <dependency>
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-test</artifactId>
 	        <scope>test</scope>
@@ -38,26 +33,44 @@
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-security</artifactId>
 	    </dependency>
-	
-	    <dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-starter-data-jpa</artifactId>
-	    </dependency>
-	
-	    <dependency>
-	        <groupId>org.apache.tomcat.embed</groupId>
-	        <artifactId>tomcat-embed-jasper</artifactId>
-	    </dependency>
-	
-	    <dependency>
-	        <groupId>javax.servlet</groupId>
-	        <artifactId>jstl</artifactId>
-	    </dependency>
-	
-	    <dependency>
-	        <groupId>com.h2database</groupId>
-	        <artifactId>h2</artifactId>
-	    </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        
+        <dependency>
+		    <groupId>org.hibernate.validator</groupId>
+		    <artifactId>hibernate-validator</artifactId>
+		    <version>6.0.16.Final</version>
+		</dependency>
+        
     </dependencies>
 
 	<build>

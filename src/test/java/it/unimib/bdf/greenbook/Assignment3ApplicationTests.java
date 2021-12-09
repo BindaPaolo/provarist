@@ -1,4 +1,4 @@
-package it.unimib.bdf.assignment3;
+package it.unimib.bdf.greenbook;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

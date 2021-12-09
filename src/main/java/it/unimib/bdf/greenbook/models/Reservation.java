@@ -1,41 +1,36 @@
-package it.unimib.bdf.assignment3.models;
+package it.unimib.bdf.greenbook.models;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-public class Prenotazione {
+public class Reservation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-	@Column(nullable = false)
-	private int numCommensali;
-
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dataTimeStamp;
+	private Date dateTimeStamp;
 	/*
 	 * TO SET: temporalValues.setUtilTimestamp( new
 	 * SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
 	 * .parse("2017-11-15 15:30:14.332"));
 	 */
 
-	private ArrayList<Tavolo> tavoliRiservati;
+	@OneToMany
+	private List<RestaurantTable> reservedTables;
 
-	public Prenotazione(int numCommensali, Date data, String turno) {
-		this.numCommensali = numCommensali;
-		this.dataTimeStamp = data;
-		this.tavoliRiservati = new ArrayList<Tavolo>();
-	}
+	@OneToMany
+	private List<Customer> tableCompanions;
 
 }
