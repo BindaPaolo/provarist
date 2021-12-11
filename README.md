@@ -11,12 +11,3 @@ The application must implement CRUD (create, read, update, delete) and at least 
 * Binda Paolo - [p.binda@campus.unimib.it](mailto:p.binda@campus.unimib.it)<br/>
 * D'Apa Massimo - [m.dapa@campus.unimib.it](mailto:m.dapa@campus.unimib.it)<br/>
 * Fornaro Alessandro - [a.fornaro1@campus.unimib.it](mailto:a.fornaro1@campus.unimib.it)
-
-### Goals checklist
-- [ ] CRUD operations implementation
-- [ ] Search operation implementation
-- [ ] Check presence of at least 4 entities and 3 relationships
-- [ ] Front-end implementation (volatile objects)
-- [ ] Back-end implementation (Java interface)
-- [ ] Check production-quality of code
-- [ ] Make PDF w/ ER/class diagram and assigned responsibilities
