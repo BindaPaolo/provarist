@@ -19,9 +19,6 @@ public class Customer extends Person {
 	@NotEmpty(message = "Il numero di telefono non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
-	@Email(message = "Inserire un indirizzo email valido")
-	private String email;
-
 	@OneToOne
 	private Customer recommendedBy;
 
@@ -32,4 +29,12 @@ public class Customer extends Person {
 	@Column
 	@OneToMany
 	private List<Reservation> reservations;
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
 }

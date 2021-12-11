@@ -6,15 +6,15 @@
 <head>
 <%@ page isELIgnored="false"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Lista Dipendenti</title>
+<title>Lista Clienti</title>
 </head>
 <body>
 	<div>
 		<div>
-			<h2>Dipendenti</h2>
+			<h2>Clienti</h2>
 			<hr />
-			<a href="/new-employee">
-				<button type="submit">Aggiungi nuovo dipendente</button>
+			<a href="/new-customer">
+				<button type="submit">Aggiungi nuovo cliente</button>
 			</a> <br />
 			<br />
             <div>
@@ -23,18 +23,16 @@
                         <th>Id</th>
                         <th>Nome</th>
                         <th>Cognome</th>
-                        <th>Ruolo</th>
-                        <th>C.F.</th>
+                        <th>Numero di cellulare</th>
                     </tr>
-                    <c:forEach var="employee" items="${employees}">
+                    <c:forEach var="customer" items="${customers}">
                         <tr>
-                            <td>${employee.id}</td>
-                            <td>${employee.firstName}</td>
-                            <td>${employee.lastName}</td>
-                            <td>${employee.role}</td>
-                            <td>${employee.cf}</td>
-                            <td><a href="/showEmployee/${employee.id}">Modifica</a>
-                                <form action="/deleteEmployee/${employee.id}" method="post">
+                            <td>${customer.id}</td>
+                            <td>${customer.firstName}</td>
+                            <td>${customer.lastName}</td>
+                            <td>${customer.mobileNumber}</td>
+                            <td><a href="/showCustomer/${customer.id}">Modifica</a>
+                                <form action="/deleteCustomer/${customer.id}" method="post">
                                     <input type="submit" value="Elimina" />
                                 </form></td>
                         </tr>
