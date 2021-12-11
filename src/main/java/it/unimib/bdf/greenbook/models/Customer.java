@@ -13,7 +13,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@DiscriminatorValue("C")
 public class Customer extends Person {
 
 	@Basic(optional = false)

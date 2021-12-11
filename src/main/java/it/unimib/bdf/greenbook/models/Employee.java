@@ -7,7 +7,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@DiscriminatorValue("E")
 public class Employee extends Person {
 
 	@Basic(optional = false)
