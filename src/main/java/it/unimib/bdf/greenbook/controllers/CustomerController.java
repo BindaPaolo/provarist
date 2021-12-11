@@ -23,23 +23,23 @@ public class CustomerController {
     @GetMapping("/customers")
     public String showAllCustomers(Model model) {
         model.addAttribute("customers", service.findAll());
-        return "customers";
+        return "customer/customers";
     }
 
     @GetMapping("/new-customer")
     public String showNewCustomerForm(Model model) {
         model.addAttribute("customer", new Customer());
-        return "new-customer";
+        return "customer/new-customer";
     }
 
     @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String addNewCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "new-customer";
+            return "customer/new-customer";
         }
         service.save(customer);
         model.addAttribute("customers", service.findAll());
-        return "customers";
+        return "customer/customers";
     }
 
     @GetMapping("/showCustomer/{id}")
@@ -47,19 +47,19 @@ public class CustomerController {
         Customer customer = service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
         model.addAttribute("customer", customer);
-        return "edit-customer";
+        return "customer/edit-customer";
     }
 
     @PostMapping("/updateCustomer/{id}")
     public String updateCustomer(@PathVariable Long id, @Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "edit-customer";
+            return "customer/edit-customer";
         }
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
         service.save(customer);
         model.addAttribute("customers", service.findAll());
-        return "customers";
+        return "customer/customers";
     }
 
     @PostMapping("/deleteCustomer/{id}")
@@ -68,7 +68,7 @@ public class CustomerController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
         service.deleteById(id);
         model.addAttribute("customers", service.findAll());
-        return "customers";
+        return "customer/customers";
     }
 
 }

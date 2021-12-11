@@ -6,15 +6,16 @@
 <head>
 <%@ page isELIgnored="false"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Lista Clienti</title>
+<title>Lista Dipendenti</title>
 </head>
 <body>
 	<div>
 		<div>
-			<h2>Clienti</h2>
+			<h2>Dipendenti</h2>
+			<a href="/">Torna alla homepage</a>
 			<hr />
-			<a href="/new-customer">
-				<button type="submit">Aggiungi nuovo cliente</button>
+			<a href="/new-employee">
+				<button type="submit">Aggiungi nuovo dipendente</button>
 			</a> <br />
 			<br />
             <div>
@@ -23,16 +24,18 @@
                         <th>Id</th>
                         <th>Nome</th>
                         <th>Cognome</th>
-                        <th>Numero di cellulare</th>
+                        <th>Ruolo</th>
+                        <th>C.F.</th>
                     </tr>
-                    <c:forEach var="customer" items="${customers}">
+                    <c:forEach var="employee" items="${employees}">
                         <tr>
-                            <td>${customer.id}</td>
-                            <td>${customer.firstName}</td>
-                            <td>${customer.lastName}</td>
-                            <td>${customer.mobileNumber}</td>
-                            <td><a href="/showCustomer/${customer.id}">Modifica</a>
-                                <form action="/deleteCustomer/${customer.id}" method="post">
+                            <td>${employee.id}</td>
+                            <td>${employee.firstName}</td>
+                            <td>${employee.lastName}</td>
+                            <td>${employee.role}</td>
+                            <td>${employee.cf}</td>
+                            <td><a href="/showEmployee/${employee.id}">Modifica</a>
+                                <form action="/deleteEmployee/${employee.id}" method="post">
                                     <input type="submit" value="Elimina" />
                                 </form></td>
                         </tr>
