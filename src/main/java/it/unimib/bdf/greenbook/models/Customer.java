@@ -1,16 +1,8 @@
 package it.unimib.bdf.greenbook.models;
 
-import java.util.List;
-
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.validation.constraints.Email;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 public class Customer extends Person {
@@ -19,15 +11,13 @@ public class Customer extends Person {
 	@NotEmpty(message = "Il numero di telefono non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
-	@OneToOne
+	@ManyToOne
 	private Customer recommendedBy;
 
-	@Column
 	@OneToMany
 	private List<Allergen> allergies;
 
-	@Column
-	@OneToMany
+	@ManyToMany
 	private List<Reservation> reservations;
 
 	public String getMobileNumber() {
