@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class RestaurantTable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Min(value = 2, message = "La capacità del singolo tavolo deve essere >=2")

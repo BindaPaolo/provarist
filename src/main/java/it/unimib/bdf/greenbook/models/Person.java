@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 @MappedSuperclass
 public class Person {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Basic(optional = false)
