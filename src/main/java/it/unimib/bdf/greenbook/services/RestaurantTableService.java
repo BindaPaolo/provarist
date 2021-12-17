@@ -1,7 +1,7 @@
 package it.unimib.bdf.greenbook.services;
 
-import it.unimib.bdf.greenbook.models.Employee;
-import it.unimib.bdf.greenbook.repositories.EmployeeRepository;
+import it.unimib.bdf.greenbook.models.RestaurantTable;
+import it.unimib.bdf.greenbook.repositories.RestaurantTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,30 +11,30 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class EmployeeService {
-	
-	private EmployeeRepository repository;
+public class RestaurantTableService {
+
+    private RestaurantTableRepository repository;
 
     @Autowired
-    public EmployeeService(EmployeeRepository repository) {
+    public RestaurantTableService(RestaurantTableRepository repository) {
         this.repository = repository;
     }
 
-    public List<Employee> findAll() {
+    public List<RestaurantTable> findAll() {
         return StreamSupport.stream(repository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
 
-    public Optional<Employee> findById(Long id) {
+    public Optional<RestaurantTable> findById(Long id) {
         return repository.findById(id);
     }
 
-    public Employee save(Employee employee) {
-        return repository.save(employee);
+    public RestaurantTable save(RestaurantTable table) {
+        return repository.save(table);
     }
 
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
-    
+
 }

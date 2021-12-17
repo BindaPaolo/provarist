@@ -6,7 +6,7 @@
 <head>
     <%@ page isELIgnored="false"%>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Lista Dipendenti</title>
+    <title>Lista Tavoli</title>
     <style type="text/css">
       td {
         padding: 0 15px;
@@ -16,31 +16,25 @@
 <body>
 	<div>
 		<div>
-			<h2>Dipendenti</h2>
+			<h2>Tavoli</h2>
 			<a href="/">Torna alla homepage</a>
 			<hr />
-			<a href="/new-employee">
-				<button type="submit">Aggiungi nuovo dipendente</button>
+			<a href="/new-table">
+				<button type="submit">Aggiungi nuovo tavolo</button>
 			</a> <br />
 			<br />
             <div>
                 <table>
                     <tr>
                         <th>Id</th>
-                        <th>Nome</th>
-                        <th>Cognome</th>
-                        <th>Ruolo</th>
-                        <th>C.F.</th>
+                        <th>Capacita</th>
                     </tr>
-                    <c:forEach var="employee" items="${employees}">
+                    <c:forEach var="table" items="${tables}">
                         <tr>
-                            <td>${employee.id}</td>
-                            <td>${employee.firstName}</td>
-                            <td>${employee.lastName}</td>
-                            <td>${employee.role}</td>
-                            <td>${employee.cf}</td>
-                            <td><a href="/showEmployee/${employee.id}">Modifica</a>
-                                <form action="/deleteEmployee/${employee.id}" method="post">
+                            <td>${table.id}</td>
+                            <td>${table.capacity}</td>
+                            <td><a href="/showTable/${table.id}">Modifica</a>
+                                <form action="/deleteTable/${table.id}" method="post">
                                     <input type="submit" value="Elimina" />
                                 </form></td>
                         </tr>

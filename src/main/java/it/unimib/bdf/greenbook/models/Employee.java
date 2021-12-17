@@ -1,10 +1,8 @@
 package it.unimib.bdf.greenbook.models;
 
 import javax.persistence.Basic;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Employee extends Person {

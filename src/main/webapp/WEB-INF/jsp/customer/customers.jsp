@@ -7,6 +7,11 @@
 <%@ page isELIgnored="false"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Lista Clienti</title>
+<style type="text/css">
+  td {
+    padding: 0 15px;
+  }
+</style>
 </head>
 <body>
 	<div>

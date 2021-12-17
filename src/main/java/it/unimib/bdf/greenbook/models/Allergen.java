@@ -1,12 +1,7 @@
 package it.unimib.bdf.greenbook.models;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Allergen {
@@ -17,4 +12,20 @@ public class Allergen {
 	@Basic(optional = false)
 	@NotEmpty(message = "Il nome dell'allergene non puo' essere lasciato vuoto")
 	private String name;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

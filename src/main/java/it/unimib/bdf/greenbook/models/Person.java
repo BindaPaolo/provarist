@@ -2,7 +2,6 @@ package it.unimib.bdf.greenbook.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @MappedSuperclass
 public class Person {
