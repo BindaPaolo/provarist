@@ -3,11 +3,13 @@ package it.unimib.bdf.greenbook.models;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import lombok.Data;
 
+@Data
 @Entity
 public class Reservation {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Enumerated(EnumType.STRING)
@@ -19,28 +21,8 @@ public class Reservation {
 	@Basic
 	@Temporal(TemporalType.DATE)
 	private Date date;
-	/*
-	 * TO SET: temporalValues.setUtilDate(
-  	 *           new SimpleDateFormat("yyyy-MM-dd").parse("2017-11-15"));
-	 */
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private List<RestaurantTable> reservedTables;
-
-	public shiftEnumType getShiftEnum() {
-		return shiftEnum;
-	}
-
-	public void setShiftEnum(shiftEnumType shiftEnum) {
-		this.shiftEnum = shiftEnum;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
 
 }
