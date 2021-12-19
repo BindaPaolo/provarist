@@ -1,6 +1,7 @@
 package it.unimib.bdf.greenbook.controllers;
 
 
+import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.models.Reservation.shiftEnumType;
 import it.unimib.bdf.greenbook.services.ReservationService;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import lombok.extern.slf4j.Slf4j;
+
 
 @Controller
 public class ReservationController {
@@ -34,6 +38,13 @@ public class ReservationController {
     	model.addAttribute("shiftEnumValues", shiftEnumType.values());
         model.addAttribute("reservation", new Reservation());
         return "reservation/new-reservation";
+    }
+    
+    
+    @GetMapping("/add-customer-reservation")
+    public String addCustomerToReservation(Model model) {
+    	model.addAttribute("customer", new Customer());
+    	return "customer/new-customer";
     }
 
     @PostMapping(value = "/addReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -54,6 +65,7 @@ public class ReservationController {
         return "reservation/edit-reservation";
     }
 
+   
     @PostMapping("/updateReservation/{id}")
     public String updateReservation(@PathVariable Long id, @Valid @ModelAttribute Reservation reservation, BindingResult result, Model model) {
         if (result.hasErrors()) {
