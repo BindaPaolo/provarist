@@ -1,7 +1,8 @@
 package it.unimib.bdf.greenbook.controllers;
 
-import it.unimib.bdf.greenbook.models.Customer;
+
 import it.unimib.bdf.greenbook.models.Reservation;
+import it.unimib.bdf.greenbook.models.Reservation.shiftEnumType;
 import it.unimib.bdf.greenbook.services.ReservationService;
 
 import javax.validation.Valid;
@@ -30,6 +31,7 @@ public class ReservationController {
 
     @GetMapping("/new-reservation")
     public String showNewReservationForm(Model model) {
+    	model.addAttribute("shiftEnumValues", shiftEnumType.values());
         model.addAttribute("reservation", new Reservation());
         return "reservation/new-reservation";
     }
@@ -45,7 +47,7 @@ public class ReservationController {
     }
 
     @GetMapping("/showReservation/{id}")
-    public String showCustomerById(@PathVariable Long id, Model model) {
+    public String showReservationById(@PathVariable Long id, Model model) {
         Reservation reservation = service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
         model.addAttribute("reservation", reservation);
@@ -65,7 +67,7 @@ public class ReservationController {
     }
 
     @PostMapping("/deleteReservation/{id}")
-    public String deleteCustomer(@PathVariable Long id, Model model) {
+    public String deleteReservation(@PathVariable Long id, Model model) {
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
         service.deleteById(id);
