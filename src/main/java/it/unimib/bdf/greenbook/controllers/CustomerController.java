@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class CustomerController {
 
@@ -30,6 +33,13 @@ public class CustomerController {
     public String showNewCustomerForm(Model model) {
         model.addAttribute("customer", new Customer());
         return "customer/new-customer";
+    }
+    
+    @GetMapping("/customer/reservation-customers/{reservation_id}")
+    public String showReservationCustomers(@PathVariable Long reservation_id, Model model) {
+    	log.info("\n\n\n\n ENTRO CUSTOMER CONTROLLER \n\n\n\n");
+    	model.addAttribute("customers", service.findAllCustomersByReservationId(reservation_id));
+    	return "customer/customers";
     }
 
     @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

@@ -4,13 +4,20 @@ import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Transactional
+@Slf4j
 public class CustomerService {
 
     private CustomerRepository repository;
@@ -18,6 +25,18 @@ public class CustomerService {
     @Autowired
     public CustomerService(CustomerRepository repository) {
         this.repository = repository;
+    }
+    
+    public List<Customer> findAllCustomersByReservationId(Long reservation_id){
+    	log.info("\n\n\n\n ENTRO SERVICE \n\n\n\n");
+    	List<Long> customer_id_list = this.repository.findAllCustomersByReservationId(reservation_id); 
+    	List<Customer> customer_obj_list = new ArrayList<Customer>();
+    	
+    	for (Long customer_id : customer_id_list) {
+    		customer_obj_list.add(this.findById(customer_id).get());
+    	}
+    	
+    	return customer_obj_list;
     }
 
     public List<Customer> findAll() {

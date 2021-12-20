@@ -3,6 +3,7 @@
 ------------------------------------------------------
 
 INSERT INTO RESERVATION (SHIFT_ENUM, DATE) VALUES ('LUNCH', '2022-01-01');
+INSERT INTO RESERVATION (SHIFT_ENUM, DATE) VALUES ('DINNER', '2022-04-17');
 
 ------------------------------------------------------
 -- Customer:
@@ -28,6 +29,15 @@ INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Germanico','Casc
 INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Ameglia','Labieni','C2911332E22LADX3', 'Aiuto chef');
 INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Florianna','Trefoloni','CXC1142EE233DXX3', 'Cameriere');
 INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Dorinda','Clementino','C3411112E22LKDD3', 'Cameriere');
+
+------------------------------------------------------
+-- Reservation_Customers:
+------------------------------------------------------
+
+INSERT INTO RESERVATION_CUSTOMERS (RESERVATION_ID, CUSTOMER_ID) VALUES (1, 2);
+INSERT INTO RESERVATION_CUSTOMERS (RESERVATION_ID, CUSTOMER_ID) VALUES (1, 5);
+INSERT INTO RESERVATION_CUSTOMERS (RESERVATION_ID, CUSTOMER_ID) VALUES (2, 6);
+
 
 ------------------------------------------------------
 -- Allergen:

@@ -35,12 +35,12 @@
                     </tr>
                     <c:forEach var="reservation" items="${reservations}">
                         <tr>
-                            <td>${reservation.id}</td>
+                            <td>${reservation.reservation_id}</td>
                             <td>${reservation.shiftEnum}</td>
                             <td>${reservation.date}</td>
-                            <td><a href="/manageReservationClients/${reservation.id}">Gestisci</a></td>
+                            <td><a href="/customer/reservation-customers/${reservation.reservation_id}">Gestisci</a></td>
 							<td>${reservation.reservedTables}</td>
-                            <td><form action="/deleteReservation/${reservation.id}" method="post">
+                            <td><form action="/deleteReservation/${reservation.reservation_id}" method="post">
                                     <input type="submit" value="Elimina" />
                                 </form></td>
                         </tr>

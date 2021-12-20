@@ -6,6 +6,9 @@ import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.models.Reservation.shiftEnumType;
 import it.unimib.bdf.greenbook.services.ReservationService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
