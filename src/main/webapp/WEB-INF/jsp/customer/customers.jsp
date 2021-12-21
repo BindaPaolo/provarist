@@ -33,12 +33,12 @@
                     </tr>
                     <c:forEach var="customer" items="${customers}">
                         <tr>
-                            <td>${customer.id}</td>
+                            <td>${customer.person_id}</td>
                             <td>${customer.firstName}</td>
                             <td>${customer.lastName}</td>
                             <td>${customer.mobileNumber}</td>
-                            <td><a href="/showCustomer/${customer.id}">Modifica</a>
-                                <form action="/deleteCustomer/${customer.id}" method="post">
+                            <td><a href="/showCustomer/${customer.person_id}">Modifica</a>
+                                <form action="/deleteCustomer/${customer.person_id}" method="post">
                                     <input type="submit" value="Elimina" />
                                 </form></td>
                         </tr>

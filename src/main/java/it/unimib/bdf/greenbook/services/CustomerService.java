@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +31,10 @@ public class CustomerService {
     public List<Customer> findAllCustomersByReservationId(Long reservation_id){
     	log.info("\n\n\n\n ENTRO SERVICE \n\n\n\n");
     	List<Long> customer_id_list = this.repository.findAllCustomersByReservationId(reservation_id); 
+    	
+    	log.info(Arrays.toString(customer_id_list.toArray()));
+    	log.info("\n\n\n\n ARRIVO QUIIIIII \n\n\n\n");
+
     	List<Customer> customer_obj_list = new ArrayList<Customer>();
     	
     	for (Long customer_id : customer_id_list) {
