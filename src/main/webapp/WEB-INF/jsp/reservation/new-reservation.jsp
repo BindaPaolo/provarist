@@ -13,7 +13,7 @@
 		<h2>Nuova Prenotazione</h2>
 	<div>
 		<div>
-			<a href="/add-customer-reservation">
+			<a href="/add-customer-to-reservation">
 				<button type="submit">Aggiungi cliente</button>
 			</a> <br/>
 			

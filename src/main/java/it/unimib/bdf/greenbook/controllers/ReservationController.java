@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import lombok.extern.slf4j.Slf4j;
 
 
 @Controller
@@ -44,7 +43,7 @@ public class ReservationController {
     }
     
     
-    @GetMapping("/add-customer-reservation")
+    @GetMapping("/add-customer-to-reservation")
     public String addCustomerToReservation(Model model) {
     	model.addAttribute("customer", new Customer());
     	return "customer/new-customer";

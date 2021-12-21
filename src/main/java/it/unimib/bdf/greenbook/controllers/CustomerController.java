@@ -37,19 +37,18 @@ public class CustomerController {
     
     @GetMapping("/customer/reservation-customers/{reservation_id}")
     public String showReservationCustomers(@PathVariable Long reservation_id, Model model) {
-    	log.info("\n\n\n\n ENTRO CUSTOMER CONTROLLER \n\n\n\n");
     	model.addAttribute("customers", service.findAllCustomersByReservationId(reservation_id));
     	return "customer/customers";
     }
 
     @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String addNewCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
+    public String addCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "customer/new-customer";
         }
         service.save(customer);
         model.addAttribute("customers", service.findAll());
-        return "customer/customers";
+        return "reservation/new-reservation";
     }
 
     @GetMapping("/showCustomer/{id}")
