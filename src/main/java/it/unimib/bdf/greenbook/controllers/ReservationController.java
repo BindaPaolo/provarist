@@ -34,6 +34,16 @@ public class ReservationController {
         model.addAttribute("reservations", service.findAll());
         return "reservation/reservations";
     }
+    
+    @GetMapping("/search-reservation-by-customer")
+    public String searchReservationByCustomer(Model model) {
+    	return "/reservation/search-reservation-by-customer";
+    }
+    
+    @GetMapping("/search-reservation-by-date")
+    public String serachReservationByDate(Model model) {
+    	return "/reservation/search-reservation-by-date";
+    }
 
     @GetMapping("/new-reservation")
     public String showNewReservationForm(Model model) {

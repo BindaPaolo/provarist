@@ -14,8 +14,8 @@
 </style>
 </head>
 <body>
-	<div> <a href="/search-reservation-by-date">Ricerca prenotazione per data</a></div>
 	<div> <a href="/search-reservation-by-customer">Ricerca prenotazione per cliente</a></div>
+	<div> <a href="/search-reservation-by-date">Ricerca prenotazione per data</a></div>
 	<div> <a href="/new-reservation">Nuova prenotazione</a></div>
 </body>
 </html>
