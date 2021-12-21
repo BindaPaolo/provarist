@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import lombok.extern.slf4j.Slf4j;
 
 
-
+@Slf4j
 @Controller
 public class ReservationController {
 	
@@ -59,6 +60,35 @@ public class ReservationController {
     	return "customer/new-customer";
     }
 
+    @PostMapping(value="/saveReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String saveReservation(@Valid @ModelAttribute Reservation reservation, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "reservation/reservations";
+        }
+        log.info("\n\n\n Entro in ReservationController.saveReservation\n\n\n\n");
+        /*
+        service.save(reservation);
+        model.addAttribute("reservations", service.findAll());
+        return "reservation/reservations";*/
+        
+        return "/reservations";
+    }
+    
+    @PostMapping(value="/cancelReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String cancelReservation(@Valid @ModelAttribute Reservation reservation, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "reservation/reservations";
+        }
+        log.info("\n\n\n Entro in ReservationController.cancelReservation\n\n\n\n");
+        /*
+        service.save(reservation);
+        model.addAttribute("reservations", service.findAll());
+        return "reservation/reservations";*/
+        
+        return "/reservations";
+    }    
+    
+    
     @PostMapping(value = "/addReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String addNewReservation(@Valid @ModelAttribute Reservation reservation, BindingResult result, Model model) {
         if (result.hasErrors()) {
