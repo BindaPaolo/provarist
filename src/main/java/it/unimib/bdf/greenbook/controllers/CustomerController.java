@@ -1,6 +1,7 @@
 package it.unimib.bdf.greenbook.controllers;
 
 import it.unimib.bdf.greenbook.models.Customer;
+import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -41,13 +45,18 @@ public class CustomerController {
     	return "customer/customers";
     }
 
-    @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String addCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
+    @PostMapping(value = "/addCustomerToReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String addCustomer(@Valid @ModelAttribute Customer addedCustomer, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "customer/new-customer";
         }
-        service.save(customer);
-        model.addAttribute("customers", service.findAll());
+        //service.save(customer); //lo voglio salvare quando salvo la prenotazione
+        //model.addAttribute("customers", service.findAll());
+        Reservation res = new Reservation();
+        List<Customer> c = new ArrayList<>();
+        c.add(addedCustomer);
+        res.setReservation_customers(c);
+        model.addAttribute("reservation", res);
         return "reservation/new-reservation";
     }
 

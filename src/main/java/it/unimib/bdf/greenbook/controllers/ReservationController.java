@@ -48,7 +48,6 @@ public class ReservationController {
 
     @GetMapping("/new-reservation")
     public String showNewReservationForm(Model model) {
-    	model.addAttribute("shiftEnumValues", shiftEnumType.values());
         model.addAttribute("reservation", new Reservation());
         return "reservation/new-reservation";
     }
