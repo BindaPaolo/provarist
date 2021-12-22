@@ -12,7 +12,7 @@
 		<h2>Nuovo cliente</h2>
 		<div>
 			<div>
-				<form:form action="/addCustomerToReservation" modelAttribute="customer" method="post">
+				<form:form action="/addCustomer" modelAttribute="customer" method="post">
 					<div>
 						<div>
 							<form:label path="firstName">Nome</form:label>

@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -53,10 +55,14 @@ public class ReservationController {
     }
     
     
-    @GetMapping("/add-customer-to-reservation")
-    public String addCustomerToReservation(Model model) {
-    	model.addAttribute("customer", new Customer());
-    	return "customer/new-customer";
+    @PostMapping("/addCustomerToReservation")
+    public String addCustomerToReservation(Model model,
+    		@ModelAttribute("reservation") Reservation reservation,
+    		RedirectAttributes redirectAttributes) {
+    	
+    	redirectAttributes.addFlashAttribute("reservation", reservation);
+    	
+    	return "redirect:/customer/new-customer";
     }
 
     @PostMapping(value="/saveReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

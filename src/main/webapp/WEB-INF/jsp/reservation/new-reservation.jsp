@@ -6,6 +6,25 @@
 <head>
 <%@ page isELIgnored="false"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<style>
+.inline {
+  display: inline;}
+.link-button {
+  background: none;
+  border: none;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: serif;
+}
+.link-button:focus {
+  outline: none;
+}
+.link-button:active {
+  color:red;
+}
+ </style>
 <title>Nuova Prenotazione</title>
 </head>
 <body>
@@ -13,9 +32,15 @@
 		<h2>Nuova Prenotazione</h2>
 	</div>
 		<div>
-			<a href="/add-customer-to-reservation">
+			<form:form method="post" action="/addCustomerToReservation" class="inline">
+  				<!-- <input type="hidden" name="extra_submit_param" value="extra_submit_value">  -->
+  				<button type="submit" class="link-button">
+    				Aggiungi cliente
+  				</button>
+			</form:form>
+		<!-- <a href="/add-customer-to-reservation">
 				<button type="submit">Aggiungi cliente</button>
-			</a> <br/>
+			</a> <br/> -->	
 		</div>
 		<div>
 			<form:form modelAttribute="reservation" method="post">
@@ -32,8 +57,8 @@
 					</form:select> <br/> 
 				</div>
 				<div>
-				<button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</button>
-				<button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
+					<button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</button>
+					<button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
 				</div>
 			</form:form>
 		</div>

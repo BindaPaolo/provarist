@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,24 @@ public class CustomerController {
         return "customer/customers";
     }
 
-    @GetMapping("/new-customer")
-    public String showNewCustomerForm(Model model) {
+    /*
+    @GetMapping("/customer/new-customer")
+    public String showNewCustomerForm(
+    		@ModelAttribute("reservation") Reservation reservation,
+    		Model model) {
+    	Customer c = new Customer();
+    	reservation.add_reservation_customer(c);
+        model.addAttribute("customer", c);
+        return "customer/new-customer";
+    }*/
+    
+    @GetMapping("/customer/new-customer")
+    public String showNewCustomerForm(
+    		@ModelAttribute("reservation") Reservation reservation,
+    		Model model) {
+    	//Customer c = new Customer();
+    	//reservation.add_reservation_customer(c);
+        model.addAttribute("reservation", reservation);
         model.addAttribute("customer", new Customer());
         return "customer/new-customer";
     }
@@ -45,19 +62,23 @@ public class CustomerController {
     	return "customer/customers";
     }
 
-    @PostMapping(value = "/addCustomerToReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String addCustomer(@Valid @ModelAttribute Customer addedCustomer, BindingResult result, Model model) {
+    @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String addCustomer(@Valid @ModelAttribute Customer customer,
+    						@Valid @ModelAttribute("reservation") Reservation reservation,
+    						BindingResult result,
+    						RedirectAttributes redirectAttributes,
+    						Model model) {
         if (result.hasErrors()) {
             return "customer/new-customer";
         }
-        //service.save(customer); //lo voglio salvare quando salvo la prenotazione
-        //model.addAttribute("customers", service.findAll());
-        Reservation res = new Reservation();
+        reservation.add_reservation_customer(customer);
+        redirectAttributes.addFlashAttribute("reservation", reservation);
+        /*Reservation res = new Reservation();
         List<Customer> c = new ArrayList<>();
         c.add(addedCustomer);
         res.setReservation_customers(c);
-        model.addAttribute("reservation", res);
-        return "reservation/new-reservation";
+        model.addAttribute("reservation", res);*/
+        return "redirect:/reservation/new-reservation";
     }
 
     @GetMapping("/showCustomer/{id}")

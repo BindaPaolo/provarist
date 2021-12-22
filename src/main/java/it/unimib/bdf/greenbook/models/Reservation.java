@@ -5,6 +5,7 @@ import javax.persistence.*;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Fetch;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import lombok.Data;
@@ -36,8 +37,12 @@ public class Reservation {
 	@JoinTable(name = "reservation_customers",
 			   joinColumns = { @JoinColumn(name = "reservation_id")},
 			   inverseJoinColumns = {@JoinColumn(name = "customer_id")})
-	private List<Customer> reservation_customers;
+	private List<Customer> reservation_customers = new ArrayList<Customer>();
 	
+	
+	public void add_reservation_customer(Customer c) {
+		this.reservation_customers.add(c);
+	}
 }
 
 
