@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
+@RequestMapping("/reservation")
 public class ReservationController {
 	
 	@Autowired
@@ -49,9 +51,18 @@ public class ReservationController {
     }
 
     @GetMapping("/new-reservation")
-    public String showNewReservationForm(Model model) {
-        model.addAttribute("reservation", new Reservation());
-        return "reservation/new-reservation";
+    public String showNewReservationForm(
+    		@ModelAttribute("reservation") Reservation reservation,
+    		Model model) {
+    	
+    	log.info("\n\n Entro in new-reservation");
+    	/*
+    	log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
+    	for (Customer c : reservation.getReservation_customers()) {
+        	log.info("\n\n Customers.toString: " + c.toString() + "\n\n");
+    	}*/
+        model.addAttribute("reservation", reservation);
+        return "/reservation/new-reservation";
     }
     
     
@@ -60,6 +71,8 @@ public class ReservationController {
     		@ModelAttribute("reservation") Reservation reservation,
     		RedirectAttributes redirectAttributes) {
     	
+    	log.info("Entro in addCustomerToReservaation");
+
     	redirectAttributes.addFlashAttribute("reservation", reservation);
     	
     	return "redirect:/customer/new-customer";
@@ -85,10 +98,7 @@ public class ReservationController {
             return "reservation/reservations";
         }
         log.info("\n\n\n Entro in ReservationController.cancelReservation\n\n\n\n");
-        /*
-        service.save(reservation);
-        model.addAttribute("reservations", service.findAll());
-        return "reservation/reservations";*/
+
         
         return "/reservations";
     }    

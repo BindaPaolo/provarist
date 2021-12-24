@@ -10,8 +10,11 @@ import java.util.Set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 
 @Data
+@ToString
 @EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name="customer")

@@ -31,19 +31,12 @@
 	<div>
 		<h2>Nuova Prenotazione</h2>
 	</div>
-		<div>
-			<form:form method="post" action="/addCustomerToReservation" class="inline">
-  				<!-- <input type="hidden" name="extra_submit_param" value="extra_submit_value">  -->
-  				<button type="submit" class="link-button">
-    				Aggiungi cliente
-  				</button>
-			</form:form>
-		<!-- <a href="/add-customer-to-reservation">
-				<button type="submit">Aggiungi cliente</button>
-			</a> <br/> -->	
-		</div>
+
 		<div>
 			<form:form modelAttribute="reservation" method="post">
+				<div>
+					<button type="submit" class="link-button" formaction="/addCustomerToReservation">Aggiungi cliente</button>
+				</div>			
 				<div>
 					<form:label path="date">Data</form:label>
 					<form:input type="date" id="date" path="date"/>
@@ -70,7 +63,7 @@
                 <th>Cognome</th>
                 <th>Numero di cellulare</th>
              </tr>
-             <c:forEach var="customer" items="${reservation.reservation_customers}">
+             <c:forEach var="customer" items="${reservation.getReservation_customers()}">
                   <tr>
                       <td>${customer.person_id}</td>
                       <td>${customer.firstName}</td>

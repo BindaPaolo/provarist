@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
+@RequestMapping("/customer")
 public class CustomerController {
 
     @Autowired
@@ -45,23 +47,44 @@ public class CustomerController {
         return "customer/new-customer";
     }*/
     
-    @GetMapping("/customer/new-customer")
+    @GetMapping("/new-customer")
     public String showNewCustomerForm(
     		@ModelAttribute("reservation") Reservation reservation,
     		Model model) {
-    	//Customer c = new Customer();
-    	//reservation.add_reservation_customer(c);
-        model.addAttribute("reservation", reservation);
+    	log.info("\n\n Entro in showNewCustomerForm");
+    	log.info("Reservation.toString(): " + reservation.toString() +"\n\n");
+
         model.addAttribute("customer", new Customer());
+        model.addAttribute("customer", reservation.addReservationCustomer());
         return "customer/new-customer";
     }
     
-    @GetMapping("/customer/reservation-customers/{reservation_id}")
+    @GetMapping("/reservation-customers/{reservation_id}")
     public String showReservationCustomers(@PathVariable Long reservation_id, Model model) {
     	model.addAttribute("customers", service.findAllCustomersByReservationId(reservation_id));
     	return "customer/customers";
     }
 
+    @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String addCustomer(@Valid Customer customer,
+    								 Reservation reservation,
+    								 BindingResult result,
+    								 RedirectAttributes redirectAttributes,
+    								 Model model) {
+        if (result.hasErrors()) {
+            return "customer/new-customer";
+        }
+        log.info("\n\nENTRO IN addCustomer\n\n");
+    	log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
+
+
+        reservation.addReservationCustomer(customer);
+        redirectAttributes.addFlashAttribute("reservation", reservation);
+        return "redirect:/new-reservation";
+    } 
+    
+    
+    /*
     @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String addCustomer(@Valid @ModelAttribute Customer customer,
     						@Valid @ModelAttribute("reservation") Reservation reservation,
@@ -71,15 +94,17 @@ public class CustomerController {
         if (result.hasErrors()) {
             return "customer/new-customer";
         }
-        reservation.add_reservation_customer(customer);
+        log.info("\n\nENTRO IN addCustomer\n\n");
+    	log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
+
+
+        reservation.addReservationCustomer(customer);
         redirectAttributes.addFlashAttribute("reservation", reservation);
-        /*Reservation res = new Reservation();
-        List<Customer> c = new ArrayList<>();
-        c.add(addedCustomer);
-        res.setReservation_customers(c);
-        model.addAttribute("reservation", res);*/
-        return "redirect:/reservation/new-reservation";
+
+        model.addAttribute("reservation", res);
+        return "redirect:/new-reservation";
     }
+     */
 
     @GetMapping("/showCustomer/{id}")
     public String showCustomerById(@PathVariable Long id, Model model) {
