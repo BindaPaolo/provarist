@@ -23,6 +23,7 @@
 					<form:label path="date">Data</form:label>
 					<form:input type="date" name="date" id="date" path="date"/>
 					<form:errors path="date" class="validationError"/>
+
 					<br/>
 				</div>
 				<div>
@@ -30,8 +31,9 @@
 					<form:select name="shiftEnum" path = "shiftEnum">
    						<form:option value = "" label = "Select"/>
    						<form:options items = "${shiftEnum.values()}" />
-   						<form:errors path="shiftEnum" class="validationError"/>
-					</form:select> <br/> 
+					</form:select>  
+					<form:errors path="shiftEnum" class="validationError"/>
+					<br/>
 				</div>
 				<div>
 					<button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</button>

@@ -55,6 +55,7 @@ public class ReservationController {
         return "reservation/new-reservation";
     }
     
+    /*
     @PostMapping("/addCustomerToReservation")
     public String addCustomerToReservation(Model model,
     		@Valid @ModelAttribute("reservation") Reservation reservation,
@@ -68,7 +69,22 @@ public class ReservationController {
 
     	redirectAttributes.addFlashAttribute("reservation", reservation);
     	
-    	return "redirect:/customer/new-customer";
+    	return "redirect:/new-customer";
+    }*/
+    
+    @PostMapping("/addCustomerToReservation")
+    public String addCustomerToReservation(Model model,
+    		@Valid @ModelAttribute("reservation") Reservation reservation,
+    		BindingResult result) {
+    	
+    	if(result.hasErrors()) {
+    		return "reservation/new-reservation";
+    	}
+    	log.info("Entro in addCustomerToReservation");
+
+    	model.addAttribute("reservation", reservation);
+    	
+    	return "/new-customer";
     }
     
     

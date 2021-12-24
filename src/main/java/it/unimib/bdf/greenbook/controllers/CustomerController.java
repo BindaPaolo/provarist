@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequestMapping("/customer")
 public class CustomerController {
 
     @Autowired
@@ -47,6 +46,7 @@ public class CustomerController {
         return "customer/new-customer";
     }*/
     
+    /*
     @GetMapping("/new-customer")
     public String showNewCustomerForm(
     		@ModelAttribute("reservation") Reservation reservation,
@@ -56,7 +56,18 @@ public class CustomerController {
 
         model.addAttribute("customer", new Customer());
         model.addAttribute("customer", reservation.addReservationCustomer());
-        return "/new-customer";
+        return "/customer/new-customer";
+    }*/
+    
+    @GetMapping("/new-customer")
+    public String showNewCustomerForm(Model model) {
+    	log.info("\n\n Entro in showNewCustomerForm");
+    	Reservation reservation = (Reservation) model.getAttribute("reservation");
+    	log.info("Reservation.toString(): " + reservation.toString() +"\n\n");
+
+        model.addAttribute("customer", new Customer());
+        model.addAttribute("customer", reservation.addReservationCustomer());
+        return "/customer/new-customer";
     }
     
     @GetMapping("/reservation-customers/{reservation_id}")
@@ -66,20 +77,20 @@ public class CustomerController {
     }
 
     @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String addCustomer(@Valid Customer customer,
-    								 Reservation reservation,
-    								 BindingResult result,
-    								 RedirectAttributes redirectAttributes,
-    								 Model model) {
+    public String addCustomer(@Valid @ModelAttribute Customer customer,
+    						//@ModelAttribute Reservation reservation,
+    						BindingResult result,
+    						Model model) {
         if (result.hasErrors()) {
             return "customer/new-customer";
         }
         log.info("\n\nENTRO IN addCustomer\n\n");
-    	log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
+        model.addAttribute(customer);
+    	//log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
 
-
-        reservation.addReservationCustomer(customer);
-        redirectAttributes.addFlashAttribute("reservation", reservation);
+        //reservation.addReservationCustomer(customer);
+        //model.addAttribute(reservation);
+        
         return "redirect:/new-reservation";
     } 
     
@@ -123,7 +134,7 @@ public class CustomerController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
         service.save(customer);
         model.addAttribute("customers", service.findAll());
-        return "/customers";
+        return "customer/customers";
     }
 
     @PostMapping("/deleteCustomer/{id}")
@@ -132,7 +143,7 @@ public class CustomerController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
         service.deleteById(id);
         model.addAttribute("customers", service.findAll());
-        return "/customers";
+        return "customer/customers";
     }
 
 }

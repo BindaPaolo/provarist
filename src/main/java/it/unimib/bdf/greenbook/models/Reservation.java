@@ -31,11 +31,11 @@ public class Reservation {
 		LUNCH, DINNER
 	}
 	@Enumerated(EnumType.STRING)
-	@NotNull(message="")
+	@NotNull(message="Seleziona il turno!")
 	private shiftEnumType shiftEnum;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@NotNull(message="")
+	@NotNull(message="Seleziona la data!")
 	private LocalDate date;
 
 	@OneToMany(fetch = FetchType.EAGER)
