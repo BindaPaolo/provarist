@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequestMapping("/reservation")
 public class ReservationController {
 	
 	@Autowired
@@ -36,60 +35,52 @@ public class ReservationController {
 	
     @GetMapping("/reservations")
     public String showAllReservations(Model model) {
-        model.addAttribute("reservations", service.findAll());
         return "reservation/reservations";
     }
     
     @GetMapping("/search-reservation-by-customer")
     public String searchReservationByCustomer(Model model) {
-    	return "/reservation/search-reservation-by-customer";
+    	return "reservation/search-reservation-by-customer";
     }
     
     @GetMapping("/search-reservation-by-date")
     public String serachReservationByDate(Model model) {
-    	return "/reservation/search-reservation-by-date";
+    	return "reservation/search-reservation-by-date";
     }
 
     @GetMapping("/new-reservation")
-    public String showNewReservationForm(
-    		@ModelAttribute("reservation") Reservation reservation,
-    		Model model) {
-    	
-    	log.info("\n\n Entro in new-reservation");
-    	/*
-    	log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
-    	for (Customer c : reservation.getReservation_customers()) {
-        	log.info("\n\n Customers.toString: " + c.toString() + "\n\n");
-    	}*/
-        model.addAttribute("reservation", reservation);
-        return "/reservation/new-reservation";
+    public String showNewReservationForm(Model model) {
+    	log.info("\nEntro in new-reservation");
+        model.addAttribute("reservation", new Reservation());
+        return "reservation/new-reservation";
     }
-    
     
     @PostMapping("/addCustomerToReservation")
     public String addCustomerToReservation(Model model,
-    		@ModelAttribute("reservation") Reservation reservation,
+    		@Valid @ModelAttribute("reservation") Reservation reservation,
+    		BindingResult result,
     		RedirectAttributes redirectAttributes) {
     	
-    	log.info("Entro in addCustomerToReservaation");
+    	if(result.hasErrors()) {
+    		return "reservation/new-reservation";
+    	}
+    	log.info("Entro in addCustomerToReservation");
 
     	redirectAttributes.addFlashAttribute("reservation", reservation);
     	
     	return "redirect:/customer/new-customer";
     }
+    
+    
 
     @PostMapping(value="/saveReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String saveReservation(@Valid @ModelAttribute Reservation reservation, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "reservation/reservations";
+            return "/reservations";
         }
         log.info("\n\n\n Entro in ReservationController.saveReservation\n\n\n\n");
-        /*
-        service.save(reservation);
-        model.addAttribute("reservations", service.findAll());
-        return "reservation/reservations";*/
         
-        return "/reservations";
+        return "reservation/reservations";
     }
     
     @PostMapping(value="/cancelReservation", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -100,7 +91,7 @@ public class ReservationController {
         log.info("\n\n\n Entro in ReservationController.cancelReservation\n\n\n\n");
 
         
-        return "/reservations";
+        return "reservation/reservations";
     }    
     
     

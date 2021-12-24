@@ -56,13 +56,13 @@ public class CustomerController {
 
         model.addAttribute("customer", new Customer());
         model.addAttribute("customer", reservation.addReservationCustomer());
-        return "customer/new-customer";
+        return "/new-customer";
     }
     
     @GetMapping("/reservation-customers/{reservation_id}")
     public String showReservationCustomers(@PathVariable Long reservation_id, Model model) {
     	model.addAttribute("customers", service.findAllCustomersByReservationId(reservation_id));
-    	return "customer/customers";
+    	return "/customers";
     }
 
     @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -123,7 +123,7 @@ public class CustomerController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
         service.save(customer);
         model.addAttribute("customers", service.findAll());
-        return "customer/customers";
+        return "/customers";
     }
 
     @PostMapping("/deleteCustomer/{id}")
@@ -132,7 +132,7 @@ public class CustomerController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
         service.deleteById(id);
         model.addAttribute("customers", service.findAll());
-        return "customer/customers";
+        return "/customers";
     }
 
 }

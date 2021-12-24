@@ -1,8 +1,13 @@
 package it.unimib.bdf.greenbook.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.FetchMode;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.hibernate.annotations.Fetch;
 
@@ -22,13 +27,15 @@ public class Reservation {
 	@Column(name = "reservation_id")
 	private long reservation_id;
 
-	@Enumerated(EnumType.STRING)
-	private shiftEnumType shiftEnum;
 	public enum shiftEnumType {
 		LUNCH, DINNER
 	}
+	@Enumerated(EnumType.STRING)
+	@NotNull(message="")
+	private shiftEnumType shiftEnum;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@NotNull(message="")
 	private LocalDate date;
 
 	@OneToMany(fetch = FetchType.EAGER)

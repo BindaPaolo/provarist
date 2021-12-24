@@ -6,25 +6,7 @@
 <head>
 <%@ page isELIgnored="false"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<style>
-.inline {
-  display: inline;}
-.link-button {
-  background: none;
-  border: none;
-  color: blue;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 1em;
-  font-family: serif;
-}
-.link-button:focus {
-  outline: none;
-}
-.link-button:active {
-  color:red;
-}
- </style>
+<style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
 <title>Nuova Prenotazione</title>
 </head>
 <body>
@@ -39,14 +21,16 @@
 				</div>			
 				<div>
 					<form:label path="date">Data</form:label>
-					<form:input type="date" id="date" path="date"/>
+					<form:input type="date" name="date" id="date" path="date"/>
+					<form:errors path="date" class="validationError"/>
 					<br/>
 				</div>
 				<div>
 					<form:label path="shiftEnum">Turno</form:label>
-					<form:select path = "shiftEnum">
-   						<form:option value = "NONE" label = "Select"/>
+					<form:select name="shiftEnum" path = "shiftEnum">
+   						<form:option value = "" label = "Select"/>
    						<form:options items = "${shiftEnum.values()}" />
+   						<form:errors path="shiftEnum" class="validationError"/>
 					</form:select> <br/> 
 				</div>
 				<div>
