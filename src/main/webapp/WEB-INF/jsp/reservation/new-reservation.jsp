@@ -44,14 +44,12 @@
 	<div>
         <table>
             <tr>
-                <th>Id</th>
                 <th>Nome</th>
                 <th>Cognome</th>
                 <th>Numero di cellulare</th>
              </tr>
              <c:forEach var="customer" items="${reservation.getReservation_customers()}">
                   <tr>
-                      <td>${customer.person_id}</td>
                       <td>${customer.firstName}</td>
                       <td>${customer.lastName}</td>
                       <td>${customer.mobileNumber}</td>

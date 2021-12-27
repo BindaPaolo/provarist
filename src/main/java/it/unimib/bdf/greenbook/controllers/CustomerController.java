@@ -29,44 +29,19 @@ public class CustomerController {
     @Autowired
     private CustomerService service;
 
-    @GetMapping("/customers")
+    @GetMapping("/customer/customers")
     public String showAllCustomers(Model model) {
         model.addAttribute("customers", service.findAll());
         return "customer/customers";
     }
 
-    /*
+    
     @GetMapping("/customer/new-customer")
-    public String showNewCustomerForm(
-    		@ModelAttribute("reservation") Reservation reservation,
-    		Model model) {
-    	Customer c = new Customer();
-    	reservation.add_reservation_customer(c);
-        model.addAttribute("customer", c);
-        return "customer/new-customer";
-    }*/
-    
-    /*
-    @GetMapping("/new-customer")
-    public String showNewCustomerForm(
-    		@ModelAttribute("reservation") Reservation reservation,
-    		Model model) {
-    	log.info("\n\n Entro in showNewCustomerForm");
-    	log.info("Reservation.toString(): " + reservation.toString() +"\n\n");
-
-        model.addAttribute("customer", new Customer());
-        model.addAttribute("customer", reservation.addReservationCustomer());
-        return "/customer/new-customer";
-    }*/
-    
-    @GetMapping("/new-customer")
     public String showNewCustomerForm(Model model) {
     	log.info("\n\n Entro in showNewCustomerForm");
-    	Reservation reservation = (Reservation) model.getAttribute("reservation");
-    	log.info("Reservation.toString(): " + reservation.toString() +"\n\n");
-
+    	
         model.addAttribute("customer", new Customer());
-        model.addAttribute("customer", reservation.addReservationCustomer());
+
         return "/customer/new-customer";
     }
     
@@ -76,47 +51,30 @@ public class CustomerController {
     	return "/customers";
     }
 
-    @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping("/addCustomer")
     public String addCustomer(@Valid @ModelAttribute Customer customer,
-    						//@ModelAttribute Reservation reservation,
     						BindingResult result,
+    			    		RedirectAttributes redirectAttributes,
     						Model model) {
+    	
         if (result.hasErrors()) {
             return "customer/new-customer";
         }
-        log.info("\n\nENTRO IN addCustomer\n\n");
-        model.addAttribute(customer);
-    	//log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
-
-        //reservation.addReservationCustomer(customer);
-        //model.addAttribute(reservation);
         
+    	redirectAttributes.addFlashAttribute("customer", customer);
+    	log.info("About to redirect to new-reservation");
+    	
+    	
         return "redirect:/new-reservation";
     } 
-    
-    
-    /*
-    @PostMapping(value = "/addCustomer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String addCustomer(@Valid @ModelAttribute Customer customer,
-    						@Valid @ModelAttribute("reservation") Reservation reservation,
-    						BindingResult result,
-    						RedirectAttributes redirectAttributes,
-    						Model model) {
-        if (result.hasErrors()) {
-            return "customer/new-customer";
-        }
-        log.info("\n\nENTRO IN addCustomer\n\n");
-    	log.info("\n\n Reservation.toString(): " + reservation.toString() +"\n\n");
 
-
-        reservation.addReservationCustomer(customer);
-        redirectAttributes.addFlashAttribute("reservation", reservation);
-
-        model.addAttribute("reservation", res);
-        return "redirect:/new-reservation";
+    @PostMapping("/cancelCustomerInsertion")
+    public String cancelCustomerInsertion(Model model) {
+    	
+    	return "redirect:/new-reservation"; 
     }
-     */
-
+    
+    
     @GetMapping("/showCustomer/{id}")
     public String showCustomerById(@PathVariable Long id, Model model) {
         Customer customer = service.findById(id)

@@ -12,8 +12,7 @@
 		<h2>Nuovo cliente</h2>
 		<div>
 			<div>
-				<form:form action="/addCustomer" modelAttribute="customer" method="post">
-					<div>
+				<form:form modelAttribute="customer" method="post">					<div>
 						<div>
 							<form:label path="firstName">Nome</form:label>
 							<form:input type="text" id="firstName" path="firstName" />
@@ -32,7 +31,8 @@
 					</div>
 					<div>
 						<div>
-							<input type="submit" value="Aggiungi cliente">
+							<button type="submit" name="save" formaction="/addCustomer">Aggiungi cliente</button>
+							<button type="submit" name="cancel" formaction="/cancelCustomerInsertion">Annulla</button>
 						</div>
 					</div>
 				</form:form>
