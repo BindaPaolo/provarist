@@ -29,6 +29,7 @@
                         <th>Id</th>
                         <th>Nome</th>
                         <th>Cognome</th>
+                        <th>Allergie</th>
                         <th>Numero di cellulare</th>
                     </tr>
                     <c:forEach var="customer" items="${customers}">
@@ -36,11 +37,14 @@
                             <td>${customer.id}</td>
                             <td>${customer.firstName}</td>
                             <td>${customer.lastName}</td>
+                            <td>${customer.allergies}</td>
                             <td>${customer.mobileNumber}</td>
-                            <td><a href="/showCustomer/${customer.id}">Modifica</a>
+                            <td>
+                                <a href="/showCustomer/${customer.id}">Modifica</a>
                                 <form action="/deleteCustomer/${customer.id}" method="post">
                                     <input type="submit" value="Elimina" />
-                                </form></td>
+                                </form>
+                            </td>
                         </tr>
                     </c:forEach>
                 </table>

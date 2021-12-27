@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
 <head>
     <%@ page isELIgnored="false" %>
@@ -8,39 +9,63 @@
     <title>Lista Clienti</title>
 </head>
 <body>
-    <div>
-        <h2>Modifica Cliente</h2>
-        <div>
-            <div>
-                <form:form action="/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
-                    <div>
-                        <div>
-                            Id: ${customer.id}
-                        </div>
-                        <div>
-							<form:label path="firstName">Nome</form:label>
-							<form:input type="text" id="firstName" path="firstName" />
-							<form:errors path="firstName" />
-						</div>
-						<div>
-							<form:label path="lastName">Cognome</form:label>
-							<form:input type="text" id="lastName" path="lastName" />
-							<form:errors path="lastName" />
-						</div>
-						<div>
-							<form:label path="mobileNumber">Numero di cellulare</form:label>
-							<form:input type="text" id="mobileNumber" path="mobileNumber" />
-							<form:errors path="mobileNumber" />
-						</div>
-                    </div>
-                    <div>
-                        <div>
-                            <input type="submit" value="Aggiorna cliente">
-                        </div>
-                    </div>
-                </form:form>
-            </div>
-        </div>
-    </div>
-    </body>
+    <h2>Modifica Cliente</h2>
+    <a href="#" onclick="history.go(-1)">Torna indietro</a>
+    <hr /><br />
+
+    <form:form action="/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
+        <table>
+            <tr>
+                <td>
+                    <form:label path="firstName">Nome</form:label>
+                </td>
+                <td>
+                    <form:input type="text" id="firstName" path="firstName" />
+                    <form:errors path="firstName" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <form:label path="lastName">Cognome</form:label>
+                </td>
+                <td>
+                    <form:input type="text" id="lastName" path="lastName" />
+                    <form:errors path="lastName" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <form:label path="mobileNumber">Numero di cellulare</form:label>
+                </td>
+                <td>
+                    <form:input type="text" id="mobileNumber" path="mobileNumber" />
+                    <form:errors path="mobileNumber" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <form:label path="allergies">Allergeni</form:label>
+                </td>
+                <td>
+                    <table>
+                        <c:forEach items="${allergensList}" var="allergen">
+                            <tr>
+                                <td><form:checkbox path="allergies" value="${allergen}" /></td>
+                                <td><c:out value="${allergen.name}" /></td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td>
+                    <br/><input name="submit" type="submit" value="Aggiorna cliente" />
+                </td>
+            </tr>
+        </table>
+    </form:form>
+
+</body>
 </html>
