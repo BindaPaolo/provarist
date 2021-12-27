@@ -46,6 +46,7 @@ public class Reservation {
 	@JoinTable(name = "reservation_customers",
 			   joinColumns = { @JoinColumn(name = "reservation_id")},
 			   inverseJoinColumns = {@JoinColumn(name = "customer_id")})
+	@NotEmpty(message = "La lista dei  clienti non può essere vuota!")
 	private List<Customer> reservation_customers = new ArrayList<Customer>();
 	
 	

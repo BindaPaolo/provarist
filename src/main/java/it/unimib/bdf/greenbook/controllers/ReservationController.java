@@ -64,12 +64,9 @@ public class ReservationController {
     
     @PostMapping("/addCustomerToReservation")
     public String addCustomerToReservation(Model model,
-    		@Valid @ModelAttribute("reservation") Reservation reservation,
-    		BindingResult result) {
+    		@ModelAttribute("reservation") Reservation reservation
+    		) {
     	
-    	if(result.hasErrors()) {
-    		return "reservation/new-reservation";
-    	}
     	log.info("Entro in addCustomerToReservation");
     	
     	return "redirect:/customer/new-customer";
@@ -85,15 +82,16 @@ public class ReservationController {
         log.info("\n\n\n Entro in ReservationController.saveReservation");
 
     	if (result.hasErrors()) {
-            return "/reservations";
+            return "reservation/new-reservation";
         }
+    	log.info("Saving Reservation and Customer objects...");
+    	service.save(reservation);
+    	log.info("Reservation and Customer objects saved");
+    	
     	log.info("Ending Session...");
     	status.setComplete();
     	
-    	log.info("Saving Reservation and Customer objects...");
-    	service.save(reservation);
-    	
-    	log.info("Reservation and Customer objects saved");
+    	log.info("Removing Reservation object from session");
     	request.removeAttribute("reservation", WebRequest.SCOPE_SESSION);
     	
         
@@ -101,10 +99,16 @@ public class ReservationController {
     }
     
     @PostMapping("/cancelReservation")
-    public String cancelReservation(@Valid @ModelAttribute Reservation reservation, Model model) {
-        log.info("\n\n\n Entro in ReservationController.cancelReservation\n\n\n\n");
-
-        
+    public String cancelReservation(@ModelAttribute Reservation reservation,
+									Model model,
+									WebRequest request,
+									SessionStatus status) {
+        log.info("\n\n\n Entro in cancelReservation\n\n\n\n");
+    	log.info("Ending Session...");
+    	status.setComplete();
+    	
+    	log.info("Removing Reservation object from session");
+    	request.removeAttribute("reservation", WebRequest.SCOPE_SESSION);
         return "reservation/reservations";
     }    
 

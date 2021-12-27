@@ -18,13 +18,12 @@
 			<form:form modelAttribute="reservation" method="post">
 				<div>
 					<button type="submit" class="link-button" formaction="/addCustomerToReservation">Aggiungi cliente</button>
-				</div>			
+				</div>		
+				<br>	
 				<div>
 					<form:label path="date">Data</form:label>
 					<form:input type="date" name="date" id="date" path="date"/>
 					<form:errors path="date" class="validationError"/>
-
-					<br/>
 				</div>
 				<div>
 					<form:label path="shiftEnum">Turno</form:label>
@@ -35,10 +34,16 @@
 					<form:errors path="shiftEnum" class="validationError"/>
 					<br/>
 				</div>
+				<br>
 				<div>
-					<button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</button>
+					<form:button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</form:button>
+					<form:errors path="reservation_customers" class="validationError"/>
+				</div>
+				<br>
+				<div>
 					<button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
 				</div>
+				<br>
 			</form:form>
 		</div>
 	<div>
