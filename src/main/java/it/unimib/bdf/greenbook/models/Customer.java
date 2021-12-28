@@ -17,7 +17,7 @@ public class Customer extends Person {
 	@NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="recommended_by_id")
 	private Customer recommendedById;
 

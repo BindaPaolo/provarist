@@ -97,7 +97,8 @@ public class CustomerController {
             model.addAttribute("allergensList", allergenService.findAll());
             return "customer/new-customer";
         }
-    	
+
+
         model.addAttribute("allergensList", allergenService.findAll());
     	redirectAttributes.addFlashAttribute("customer", customer);
 
@@ -171,9 +172,7 @@ public class CustomerController {
         }
     }
 
-    /*
-    Metodo per cambiare in "null" il referral
-     */
+    //Metodo per cambiare in "null" il referral
     private void changeRefferal(Customer customer) {
 
         /*

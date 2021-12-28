@@ -85,6 +85,7 @@ public class ReservationController {
             return "reservation/new-reservation";
         }
     	log.info("Saving Reservation and Customer objects...");
+		searchIdByPhone(reservation);
     	service.save(reservation);
     	log.info("Reservation and Customer objects saved");
     	
@@ -193,5 +194,29 @@ public class ReservationController {
     	
     	return;
     }
+
+	private void searchIdByPhone(Reservation reservation) {
+
+		for(Customer customer : reservation.getReservation_customers()) {
+
+        /*
+        Se il numero di telefono inserito dall'utente non è nullo viene ricercato, tra tutti i Customer inseriti, l'id associato
+        al numero di telefono inserito e successivamente viene modificato il suo refferral
+        Nel caso il numero di telefono inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedById" con il valore "null"
+        */
+			if (!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
+				for (Customer c : reservation.getReservation_customers()) {
+					if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
+
+						customer.setRecommendedById(c);
+					}
+				}
+
+			} else {
+
+				customer.setRecommendedById(null);
+			}
+		}
+	}
 
 }
