@@ -1,10 +1,9 @@
 package it.unimib.bdf.greenbook.controllers;
 
 import it.unimib.bdf.greenbook.models.Customer;
-import it.unimib.bdf.greenbook.models.Reservation;
+
 import it.unimib.bdf.greenbook.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,11 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import it.unimib.bdf.greenbook.controllers.ReservationController;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -38,7 +35,7 @@ public class CustomerController {
     
     @GetMapping("/customer/new-customer")
     public String showNewCustomerForm(Model model) {
-    	log.info("\n\n Entro in showNewCustomerForm");
+    	log.info("Entro in showNewCustomerForm");
     	
         model.addAttribute("customer", new Customer());
 
@@ -74,6 +71,7 @@ public class CustomerController {
     	return "redirect:/new-reservation"; 
     }
     
+
     
     @GetMapping("/showCustomer/{id}")
     public String showCustomerById(@PathVariable Long id, Model model) {

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 
@@ -22,7 +23,7 @@ import lombok.ToString;
 public class Customer extends Person {
 
 	@Basic(optional = false)
-	@NotEmpty(message = "Il numero di telefono non puo' essere lasciato vuoto")
+	@NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
 	@ManyToOne
@@ -36,8 +37,8 @@ public class Customer extends Person {
 	@OneToMany
 	private List<Allergen> allergies;
 
-	@ManyToMany(mappedBy = "reservation_customers")
-	private List<Reservation> reservations;
+	//@ManyToMany(mappedBy = "reservation_customers")
+	//private List<Reservation> reservations;
 
 }
 

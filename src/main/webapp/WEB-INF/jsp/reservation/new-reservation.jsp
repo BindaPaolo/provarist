@@ -47,24 +47,32 @@
 			</form:form>
 		</div>
 	<div>
-        <table>
-            <tr>
-                <th>Nome</th>
-                <th>Cognome</th>
-                <th>Numero di cellulare</th>
-             </tr>
-             <c:forEach var="customer" items="${reservation.getReservation_customers()}">
+		<table>
+		    <tr>
+		        <th>Nome</th>
+		        <th>Cognome</th>
+		        <th>Numero di cellulare</th>
+		     </tr>             
+		     <c:forEach var="customer" items="${reservation.getReservation_customers()}">
                   <tr>
                       <td>${customer.firstName}</td>
                       <td>${customer.lastName}</td>
                       <td>${customer.mobileNumber}</td>
-                      <td><a href="/showCustomer/${customer.person_id}">Modifica</a>
-                          <form action="/deleteCustomer/${customer.person_id}" method="post">
-                              <input type="submit" value="Elimina" />
-                          </form></td>
+                      <td><a href="/deleteReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Elimina</a></td>
+                  	  <td><a href="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</a></td>
                   </tr>
              </c:forEach>
         </table>
 	</div>
 </body>
 </html>
+
+                      
+                      
+<!-- <form action="/editCustomer/${customer.firstName}+${customer.lastName}+${customer.mobileNumber}"  method="post">
+		<input type="submit" value="Modifica"/>
+		</form> -->
+<!--  <a href="/editCustomer/${customer}">Modifica</a>
+  <form action="/deleteCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}" method="post">
+      <input type="submit" value="Elimina" />
+  </form></td>-->
