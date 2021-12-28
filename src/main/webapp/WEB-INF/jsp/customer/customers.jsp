@@ -31,6 +31,7 @@
                         <th>Cognome</th>
                         <th>Allergie</th>
                         <th>Numero di cellulare</th>
+                        <th>Raccomandato da</th>
                     </tr>
                     <c:forEach var="customer" items="${customers}">
                         <tr>
@@ -39,6 +40,7 @@
                             <td>${customer.lastName}</td>
                             <td>${customer.allergies}</td>
                             <td>${customer.mobileNumber}</td>
+                            <td>${customer.recommendedById.id}</td>
                             <td>
                                 <a href="/showCustomer/${customer.id}">Modifica</a>
                                 <form action="/deleteCustomer/${customer.id}" method="post">

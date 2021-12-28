@@ -44,6 +44,14 @@
             </tr>
             <tr>
                 <td>
+                    <form:label path="recommendedById.mobileNumber">Raccomandato da</form:label>
+                </td>
+                <td>
+                    <form:input type="text" id="recommendedById.mobileNumber" path="recommendedById.mobileNumber" />
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <form:label path="allergies">Allergeni</form:label>
                 </td>
                 <td>

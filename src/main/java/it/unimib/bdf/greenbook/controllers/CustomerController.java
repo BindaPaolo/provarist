@@ -78,6 +78,9 @@ public class CustomerController {
             model.addAttribute("allergensList", allergenService.findAll());
             return "customer/new-customer";
         }
+
+
+        searchIdByPhone(customer);
         service.save(customer);
         model.addAttribute("customers", service.findAll());
         return "customer/customers";
@@ -139,6 +142,21 @@ public class CustomerController {
         service.deleteById(id);
         model.addAttribute("customers", service.findAll());
         return "customer/customers";
+    }
+
+    private void searchIdByPhone(Customer customer) {
+
+        Customer customer_update = new Customer();
+
+        for(Customer c : service.findAll()) {
+            if(c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
+                customer_update = c;
+            }
+        }
+
+        customer.setRecommendedById(customer_update);
+
+        return;
     }
 
 }
