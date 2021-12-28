@@ -129,6 +129,8 @@ public class CustomerController {
         }
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
+
+        searchIdByPhone(customer);
         service.save(customer);
         model.addAttribute("customers", service.findAll());
         return "customer/customers";
