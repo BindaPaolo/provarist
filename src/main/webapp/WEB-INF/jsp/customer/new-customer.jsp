@@ -44,7 +44,7 @@
             </tr>
             <tr>
                 <td>
-                    <form:label path="recommendedById.mobileNumber">Raccomandato da</form:label>
+                    <form:label path="recommendedById.mobileNumber">Raccomandato da (Numero di telefono)</form:label>
                 </td>
                 <td>
                     <form:input type="text" id="recommendedById.mobileNumber" path="recommendedById.mobileNumber" />

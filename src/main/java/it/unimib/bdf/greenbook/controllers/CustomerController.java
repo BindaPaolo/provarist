@@ -148,15 +148,17 @@ public class CustomerController {
 
         Customer customer_update = new Customer();
 
-        for(Customer c : service.findAll()) {
-            if(c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
-                customer_update = c;
+        if(!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
+            for (Customer c : service.findAll()) {
+                if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
+                    customer_update = c;
+                }
             }
+
+            customer.setRecommendedById(customer_update);
+        } else {
+            customer.setRecommendedById(null);
         }
-
-        customer.setRecommendedById(customer_update);
-
-        return;
     }
 
 }
