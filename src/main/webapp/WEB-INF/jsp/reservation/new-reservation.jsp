@@ -17,7 +17,7 @@
 		<div>
 			<form:form modelAttribute="reservation" method="post">
 				<div>
-					<button type="submit" class="link-button" formaction="/addCustomerToReservation">Aggiungi cliente</button>
+					<button type="submit" class="link-button" formaction="/reservation/addCustomerToReservation">Aggiungi cliente</button>
 				</div>		
 				<br>	
 				<div>
@@ -44,35 +44,30 @@
 					<button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
 				</div>
 				<br>
+
+				<div>
+					<table>
+					    <tr>
+					        <th>Nome</th>
+					        <th>Cognome</th>
+					        <th>Numero di cellulare</th>
+					     </tr>             
+					     <c:forEach var="customer" items="${reservation.getReservation_customers()}">
+			                  <tr>
+			                      <td>${customer.firstName}</td>
+			                      <td>${customer.lastName}</td>
+			                      <td>${customer.mobileNumber}</td>
+			                      <td>	<div>
+										<form:button type="submit" name="editReservationCustomer" formaction="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</form:button>
+										</div></td>
+								  <td>  <div>
+										<form:button type="submit" name="deleteReservationCustomer" formaction="/deleteReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Elimina</form:button>
+										</div></td>
+			                  </tr>
+			             </c:forEach>
+			        </table>
+				</div>
 			</form:form>
 		</div>
-	<div>
-		<table>
-		    <tr>
-		        <th>Nome</th>
-		        <th>Cognome</th>
-		        <th>Numero di cellulare</th>
-		     </tr>             
-		     <c:forEach var="customer" items="${reservation.getReservation_customers()}">
-                  <tr>
-                      <td>${customer.firstName}</td>
-                      <td>${customer.lastName}</td>
-                      <td>${customer.mobileNumber}</td>
-                      <td><a href="/deleteReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Elimina</a></td>
-                  	  <td><a href="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</a></td>
-                  </tr>
-             </c:forEach>
-        </table>
-	</div>
 </body>
 </html>
-
-                      
-                      
-<!-- <form action="/editCustomer/${customer.firstName}+${customer.lastName}+${customer.mobileNumber}"  method="post">
-		<input type="submit" value="Modifica"/>
-		</form> -->
-<!--  <a href="/editCustomer/${customer}">Modifica</a>
-  <form action="/deleteCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}" method="post">
-      <input type="submit" value="Elimina" />
-  </form></td>-->

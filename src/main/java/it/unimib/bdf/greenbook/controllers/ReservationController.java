@@ -62,14 +62,14 @@ public class ReservationController {
     }
     
     
-    @PostMapping("/addCustomerToReservation")
+    @PostMapping("/reservation/addCustomerToReservation")
     public String addCustomerToReservation(Model model,
     		@ModelAttribute("reservation") Reservation reservation
     		) {
     	
     	log.info("Entro in addCustomerToReservation");
     	
-    	return "redirect:/customer/new-customer";
+    	return "redirect:/customer/new-reservation-customer";
     }
     
 
@@ -112,26 +112,32 @@ public class ReservationController {
         return "reservation/reservations";
     }    
 
-    @GetMapping("/deleteReservationCustomer/{firstName}&{lastName}&{mobileNumber}")
+    @PostMapping("/deleteReservationCustomer/{firstName}&{lastName}&{mobileNumber}")
     public String deleteReservationCustomer(@PathVariable("firstName") String firstName,
     						    				@PathVariable("lastName") String lastName,
     						    				@PathVariable("mobileNumber") String mobileNumber,
+    						    				@ModelAttribute Reservation reservation,
     						    				Model model){
-    	Reservation reservation = (Reservation) model.getAttribute("reservation");
+    	//Reservation reservation = (Reservation) model.getAttribute("reservation");
     	removeCustomer(firstName, lastName, mobileNumber, reservation);
+    	
+    	log.info("\n\n\n\n"+ reservation.toString()+"\n\n\n\n");
     	
     	return "reservation/new-reservation";
     }
     
     
     //edit = remove + add new
-    @GetMapping("/editReservationCustomer/{firstName}&{lastName}&{mobileNumber}")
+    @PostMapping("/editReservationCustomer/{firstName}&{lastName}&{mobileNumber}")
     public String editReservationCustomer(@PathVariable("firstName") String firstName,
     						    		@PathVariable("lastName") String lastName,
     						    		@PathVariable("mobileNumber") String mobileNumber,
+    						    		@ModelAttribute Reservation reservation,
     						    		RedirectAttributes redirectAttributes,
     						    		Model model){
-    	Reservation reservation = (Reservation) model.getAttribute("reservation");
+    	if(model.getAttribute("reservation") == null) {
+    		log.info(reservation.toString());
+    	}
     	removeCustomer(firstName, lastName, mobileNumber, reservation);
 
     	Customer customer = new Customer();
@@ -141,7 +147,7 @@ public class ReservationController {
     	
     	redirectAttributes.addFlashAttribute("customer", customer);
     	
-    	return "redirect:/customer/edit-customer";
+    	return "redirect:/customer/edit-reservation-customer";
     }
 
     @GetMapping("/showReservation/{id}")

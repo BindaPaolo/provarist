@@ -59,7 +59,10 @@
             </tr>
             <tr>
                 <td>
-                    <br/><input name="submit" type="submit" value="Aggiorna cliente" />
+                    <br/><button type="submit" formaction="/customer/addCustomerToReservation">Annulla</button>
+                </td>
+                <td>
+                    <br/><button type="submit" formaction="/customer/addCustomerToReservation">Salva modifiche</button>
                 </td>
             </tr>
         </table>

@@ -59,10 +59,9 @@
             </tr>
             <tr>
                 <td>
-                    <br/><button type="submit" name="cancel" formaction="/cancelCustomerInsertion">Annulla</button>
                 </td>
                 <td>
-                    <br/><button type="submit" name="save" formaction="/addCustomer">Aggiungi cliente</button>
+                    <br/><input name="submit" type="submit" value="Aggiungi cliente" />
                 </td>
             </tr>
         </table>

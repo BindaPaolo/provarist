@@ -30,6 +30,7 @@ INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Ameglia','Labien
 INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Florianna','Trefoloni','CXC1142EE233DXX3', 'Cameriere');
 INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Dorinda','Clementino','C3411112E22LKDD3', 'Cameriere');
 
+/*
 ------------------------------------------------------
 -- Reservation_Customers:
 ------------------------------------------------------
@@ -37,7 +38,7 @@ INSERT INTO EMPLOYEE (FIRST_NAME, LAST_NAME, CF, ROLE) VALUES ('Dorinda','Clemen
 INSERT INTO RESERVATION_CUSTOMERS (RESERVATION_ID, CUSTOMER_ID) VALUES (1, 2);
 INSERT INTO RESERVATION_CUSTOMERS (RESERVATION_ID, CUSTOMER_ID) VALUES (1, 5);
 INSERT INTO RESERVATION_CUSTOMERS (RESERVATION_ID, CUSTOMER_ID) VALUES (2, 6);
-
+*/
 
 ------------------------------------------------------
 -- Allergen:

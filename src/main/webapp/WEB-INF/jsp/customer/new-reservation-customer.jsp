@@ -6,14 +6,14 @@
 <head>
     <%@ page isELIgnored="false" %>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Modifica Cliente</title>
+    <title>Lista Clienti</title>
 </head>
 <body>
-    <h2>Modifica Cliente</h2>
+    <h2>Nuovo Cliente</h2>
     <a href="#" onclick="history.go(-1)">Torna indietro</a>
     <hr /><br />
 
-    <form:form action="/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
+    <form:form action="/addCustomer" modelAttribute="customer" method="post">
         <table>
             <tr>
                 <td>
@@ -59,7 +59,10 @@
             </tr>
             <tr>
                 <td>
-                    <br/><input name="submit" type="submit" value="Aggiorna cliente" />
+                    <br/><button type="submit" name="cancel" formaction="/cancelCustomerInsertion">Annulla</button>
+                </td>
+                <td>
+                    <br/><button type="submit" name="save" formaction="/customer/addCustomerToReservation">Aggiungi cliente</button>
                 </td>
             </tr>
         </table>
