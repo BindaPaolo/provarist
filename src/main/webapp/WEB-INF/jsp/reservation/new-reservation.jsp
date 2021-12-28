@@ -77,12 +77,14 @@
                 <th>Nome</th>
                 <th>Cognome</th>
                 <th>Numero di cellulare</th>
+                <th>Raccomandato da (numero di cellulare)</th>
              </tr>
              <c:forEach var="customer" items="${reservation.getReservation_customers()}">
                   <tr>
                       <td>${customer.firstName}</td>
                       <td>${customer.lastName}</td>
                       <td>${customer.mobileNumber}</td>
+                      <td>${customer.recommendedById.id}</td>
                       <td>	<div>
                             <form:button type="submit" name="editReservationCustomer" formaction="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</form:button>
                             </div></td>

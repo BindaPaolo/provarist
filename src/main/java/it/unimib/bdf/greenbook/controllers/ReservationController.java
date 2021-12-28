@@ -4,6 +4,7 @@ package it.unimib.bdf.greenbook.controllers;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Employee;
 import it.unimib.bdf.greenbook.models.Reservation;
+import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import javax.validation.Valid;
@@ -36,6 +37,9 @@ public class ReservationController {
 
 	@Autowired
 	private EmployeeService employeeService;
+
+	@Autowired
+	private CustomerService customerService;
 
     @GetMapping("/reservations")
     public String showAllReservations(Model model) {
@@ -92,6 +96,10 @@ public class ReservationController {
             return "reservation/new-reservation";
         }
     	log.info("Saving Reservation and Customer objects...");
+
+		searchIdByPhone(reservation);
+
+		log.info("finito");
     	service.save(reservation);
     	log.info("Reservation and Customer objects saved");
     	
@@ -206,6 +214,36 @@ public class ReservationController {
 		);
 
 		return persistedEmployees;
+	}
+
+	private void searchIdByPhone(Reservation reservation) {
+
+		for(Customer customer : reservation.getReservation_customers()) {
+
+        /*
+        Se il numero di telefono inserito dall'utente non è nullo viene ricercato, tra tutti i Customer, l'id associato
+        al numero inserito e successivamente viene modificato il suo refferral
+        Nel caso il numero inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedById" con il valore "null"
+        */
+			if (!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
+				for (Customer c : reservation.getReservation_customers()) {
+					if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
+
+						customer.setRecommendedById(c);
+					}
+				}
+
+			} else {
+
+				customer.setRecommendedById(null);
+			}
+		}
+	}
+
+	private List<Customer> getPersistedCustomer(){
+		List<Customer> persistedCustomer = customerService.findAll();
+
+		return persistedCustomer;
 	}
 
 }

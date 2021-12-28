@@ -17,11 +17,11 @@ public class Customer extends Person {
 	@NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name="recommended_by_id")
 	private Customer recommendedById;
 
-	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.MERGE)
 	private List<Customer> recommended;
 
 	@ManyToMany(fetch = FetchType.EAGER)
