@@ -26,13 +26,10 @@ public class Customer extends Person {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
-			name = "CUSTOMER_ALLERGIES",
+			name = "customer_allergies",
 			joinColumns = @JoinColumn(name = "customer_id"),
 			inverseJoinColumns = @JoinColumn(name = "allergen_id"))
 	private Set<Allergen> allergies;
-
-	// @ManyToMany
-	// private List<Reservation> reservations;
 
 	@Override
 	public int hashCode() {

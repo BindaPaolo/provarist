@@ -4,70 +4,95 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
 <head>
-<%@ page isELIgnored="false"%>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
-<title>Nuova Prenotazione</title>
+    <%@ page isELIgnored="false"%>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
+    <title>Nuova Prenotazione</title>
 </head>
 <body>
 	<div>
 		<h2>Nuova Prenotazione</h2>
 	</div>
 
-		<div>
-			<form:form modelAttribute="reservation" method="post">
-				<div>
-					<button type="submit" class="link-button" formaction="/reservation/addCustomerToReservation">Aggiungi cliente</button>
-				</div>		
-				<br>	
-				<div>
-					<form:label path="date">Data</form:label>
-					<form:input type="date" name="date" id="date" path="date"/>
-					<form:errors path="date" class="validationError"/>
-				</div>
-				<div>
-					<form:label path="shiftEnum">Turno</form:label>
-					<form:select name="shiftEnum" path = "shiftEnum">
-   						<form:option value = "" label = "Select"/>
-   						<form:options items = "${shiftEnum.values()}" />
-					</form:select>  
-					<form:errors path="shiftEnum" class="validationError"/>
-					<br/>
-				</div>
-				<br>
-				<div>
-					<form:button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</form:button>
-					<form:errors path="reservation_customers" class="validationError"/>
-				</div>
-				<br>
-				<div>
-					<button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
-				</div>
-				<br>
+    <form:form modelAttribute="reservation" method="post">
+        <button type="submit" class="link-button" formaction="/reservation/addCustomerToReservation">
+            Aggiungi cliente alla prenotazione
+        </button>
 
-				<div>
-					<table>
-					    <tr>
-					        <th>Nome</th>
-					        <th>Cognome</th>
-					        <th>Numero di cellulare</th>
-					     </tr>             
-					     <c:forEach var="customer" items="${reservation.getReservation_customers()}">
-			                  <tr>
-			                      <td>${customer.firstName}</td>
-			                      <td>${customer.lastName}</td>
-			                      <td>${customer.mobileNumber}</td>
-			                      <td>	<div>
-										<form:button type="submit" name="editReservationCustomer" formaction="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</form:button>
-										</div></td>
-								  <td>  <div>
-										<form:button type="submit" name="deleteReservationCustomer" formaction="/deleteReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Elimina</form:button>
-										</div></td>
-			                  </tr>
-			             </c:forEach>
-			        </table>
-				</div>
-			</form:form>
-		</div>
+        <br />
+
+        <table>
+            <tr>
+                <td>
+                    <form:label path="date">Data</form:label>
+                </td>
+                <td>
+                    <form:input type="date" name="date" id="date" path="date"/>
+                    <form:errors path="date" class="validationError"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <form:label path="shiftEnum">Turno</form:label>
+                </td>
+                <td>
+                    <form:select name="shiftEnum" path = "shiftEnum">
+                        <form:option value = "" label = "Seleziona"/>
+                        <form:options items = "${shiftEnum.values()}" />
+                    </form:select>
+                    <form:errors path="shiftEnum" class="validationError"/>
+                </td>
+            </tr>
+            <tr>
+                <td>Camerieri</td>
+                <td>
+                    <table>
+                        <c:forEach items="${waitersList}" var="employee">
+                            <tr>
+                                <td><form:checkbox path="reservation_waiters" value="${employee}" /></td>
+                                <td><c:out value="${employee.firstName}" /> <c:out value="${employee.lastName}" /></td>
+                            </tr>
+                        </c:forEach>
+                        <form:errors path="reservation_waiters" class="validationError" />
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br />
+                    <button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
+                </td>
+                <td>
+                    <br />
+                    <form:button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</form:button>
+                </td>
+            </tr>
+        </table>
+
+        <br />
+        <form:errors path="reservation_customers" class="validationError"/>
+
+        <table>
+            <tr>
+                <th>Nome</th>
+                <th>Cognome</th>
+                <th>Numero di cellulare</th>
+             </tr>
+             <c:forEach var="customer" items="${reservation.getReservation_customers()}">
+                  <tr>
+                      <td>${customer.firstName}</td>
+                      <td>${customer.lastName}</td>
+                      <td>${customer.mobileNumber}</td>
+                      <td>	<div>
+                            <form:button type="submit" name="editReservationCustomer" formaction="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</form:button>
+                            </div></td>
+                      <td>  <div>
+                            <form:button type="submit" name="deleteReservationCustomer" formaction="/deleteReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Elimina</form:button>
+                            </div></td>
+                  </tr>
+             </c:forEach>
+        </table>
+    </form:form>
+
 </body>
 </html>

@@ -30,7 +30,7 @@
                         <th>Nome</th>
                         <th>Cognome</th>
                         <th>Ruolo</th>
-                        <th>C.F.</th>
+                        <th>Codice Fiscale</th>
                     </tr>
                     <c:forEach var="employee" items="${employees}">
                         <tr>
@@ -39,10 +39,12 @@
                             <td>${employee.lastName}</td>
                             <td>${employee.role}</td>
                             <td>${employee.cf}</td>
-                            <td><a href="/showEmployee/${employee.id}">Modifica</a>
+                            <td>
+                                <a href="/showEmployee/${employee.id}">Modifica</a>
                                 <form action="/deleteEmployee/${employee.id}" method="post">
                                     <input type="submit" value="Elimina" />
-                                </form></td>
+                                </form>
+                            </td>
                         </tr>
                     </c:forEach>
                 </table>
