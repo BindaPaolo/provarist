@@ -2,7 +2,9 @@ package it.unimib.bdf.greenbook.controllers;
 
 
 import it.unimib.bdf.greenbook.models.Customer;
+import it.unimib.bdf.greenbook.models.Employee;
 import it.unimib.bdf.greenbook.models.Reservation;
+import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 
 @Slf4j
 @Controller
@@ -29,7 +33,10 @@ public class ReservationController {
 	
 	@Autowired
 	private ReservationService service;
-	
+
+	@Autowired
+	private EmployeeService employeeService;
+
     @GetMapping("/reservations")
     public String showAllReservations(Model model) {
         return "reservation/reservations";
@@ -57,18 +64,17 @@ public class ReservationController {
     		Reservation reservation = (Reservation) model.getAttribute("reservation");
     		reservation.addReservationCustomer(newCustomer);
     	}
-    	
-        return "reservation/new-reservation";
+
+		// Show persisted waiters
+		model.addAttribute("waitersList", getPersistedWaiters());
+
+		return "reservation/new-reservation";
     }
     
     
     @PostMapping("/reservation/addCustomerToReservation")
-    public String addCustomerToReservation(Model model,
-    		@ModelAttribute("reservation") Reservation reservation
-    		) {
-    	
+    public String addCustomerToReservation(Model model, @ModelAttribute("reservation") Reservation reservation) {
     	log.info("Entro in addCustomerToReservation");
-    	
     	return "redirect:/customer/new-reservation-customer";
     }
     
@@ -82,6 +88,7 @@ public class ReservationController {
         log.info("Entro in saveReservation");
 
     	if (result.hasErrors()) {
+			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/new-reservation";
         }
     	log.info("Saving Reservation and Customer objects...");
@@ -121,7 +128,7 @@ public class ReservationController {
     	//Reservation reservation = (Reservation) model.getAttribute("reservation");
     	removeCustomer(firstName, lastName, mobileNumber, reservation);
     	
-    	log.info("\n\n\n\n"+ reservation.toString()+"\n\n\n\n");
+    	log.info("\n\n\n\n"+ reservation+"\n\n\n\n");
     	
     	return "reservation/new-reservation";
     }
@@ -188,10 +195,17 @@ public class ReservationController {
     			found = c;
     		}
     	}
+
     	reservation.getReservation_customers().remove(found);
-    	
-    	
-    	return;
     }
+
+	private List<Employee> getPersistedWaiters(){
+		List<Employee> persistedEmployees = employeeService.findAll();
+		persistedEmployees.removeIf(
+			obj -> obj.getRole() != Employee.roleEnumType.Cameriere && obj.getRole() != Employee.roleEnumType.CapoSala
+		);
+
+		return persistedEmployees;
+	}
 
 }

@@ -14,6 +14,8 @@ import org.hibernate.annotations.Fetch;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+
 import lombok.Data;
 import lombok.ToString;
 
@@ -28,7 +30,7 @@ public class Reservation {
 	private long reservation_id;
 
 	public enum shiftEnumType {
-		LUNCH, DINNER
+		Pranzo, Cena
 	}
 	@Enumerated(EnumType.STRING)
 	@NotNull(message="Seleziona il turno!")
@@ -38,16 +40,21 @@ public class Reservation {
 	@NotNull(message="Seleziona la data!")
 	private LocalDate date;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	private List<RestaurantTable> reservedTables;
-
 	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinTable(name = "reservation_customers",
 			   joinColumns = { @JoinColumn(name = "reservation_id")},
 			   inverseJoinColumns = {@JoinColumn(name = "customer_id")})
-	@NotEmpty(message = "La lista dei  clienti non può essere vuota!")
-	private List<Customer> reservation_customers = new ArrayList<Customer>();
+	@NotEmpty(message = "Inserisci almeno un cliente nella prenotazione!")
+	private List<Customer> reservation_customers = new ArrayList<>();
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "reservation_waiters",
+			joinColumns = @JoinColumn(name = "reservation_id"),
+			inverseJoinColumns = @JoinColumn(name = "waiter_id"))
+	@NotEmpty(message = "Seleziona almeno un cameriere dai seguenti:")
+	private List<Employee> reservation_waiters;
 
 	public void addReservationCustomer(Customer c) {
 		this.reservation_customers.add(c);
