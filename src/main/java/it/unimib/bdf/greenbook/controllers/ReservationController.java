@@ -129,14 +129,20 @@ public class ReservationController {
     public String editReservationCustomer(@PathVariable("firstName") String firstName,
     						    		@PathVariable("lastName") String lastName,
     						    		@PathVariable("mobileNumber") String mobileNumber,
+    						    		RedirectAttributes redirectAttributes,
     						    		Model model){
     	Reservation reservation = (Reservation) model.getAttribute("reservation");
     	removeCustomer(firstName, lastName, mobileNumber, reservation);
 
+    	Customer customer = new Customer();
+    	customer.setFirstName(firstName);
+    	customer.setLastName(lastName);
+    	customer.setMobileNumber(mobileNumber);
     	
-    	return "redirect:/customer/new-customer";
+    	redirectAttributes.addFlashAttribute("customer", customer);
+    	
+    	return "redirect:/customer/edit-customer";
     }
-
 
     @GetMapping("/showReservation/{id}")
     public String showReservationById(@PathVariable Long id, Model model) {

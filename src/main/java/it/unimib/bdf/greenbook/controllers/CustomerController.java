@@ -38,8 +38,14 @@ public class CustomerController {
     	log.info("Entro in showNewCustomerForm");
     	
         model.addAttribute("customer", new Customer());
-
+        
         return "/customer/new-customer";
+    }
+    
+    @GetMapping("/customer/edit-customer")
+    public String showEditCustomerForm(Model model) {
+    	log.info("Entro in CustomerController.showEditCustomerForm");
+    	return "/customer/edit-customer";
     }
     
     @GetMapping("/reservation-customers/{reservation_id}")
