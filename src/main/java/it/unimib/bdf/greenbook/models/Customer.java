@@ -1,27 +1,41 @@
 package it.unimib.bdf.greenbook.models;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 
 @Data
 @ToString
-@EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name="customer")
-public class Customer extends Person {
+public class Customer {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="id")
+	private long id;
+	
+	@Basic(optional = false)
+	@NotEmpty(message = "Il nome non puo' essere lasciato vuoto")
+	private String firstName;
+
+	@Basic(optional = false)
+	@NotEmpty(message = "Il cognome non puo' essere lasciato vuoto")
+	private String lastName;
+	
 	@Basic(optional = false)
 	@NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
 	private String mobileNumber;
