@@ -141,15 +141,22 @@ public class CustomerController {
     	log.info("Entro in deleteCustomer");
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
+        changeRefferal(service.findById(id).get());
         service.deleteById(id);
         model.addAttribute("customers", service.findAll());
         return "customer/customers";
     }
 
+    //Metodo per cercare l'id di un Customer attraverso il mobileNumber e successivamente modificare la variabile "recommendedById"
     private void searchIdByPhone(Customer customer) {
 
         Customer customer_update = new Customer();
 
+        /*
+        Se il numero di telefono inserito dall'utente non è nullo viene ricercato, tra tutti i Customer, l'id associato
+        al numero inserito e successivamente viene modificato il suo refferral
+        Nel caso il numero inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedById" con il valore "null"
+        */
         if(!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
             for (Customer c : service.findAll()) {
                 if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
@@ -159,7 +166,29 @@ public class CustomerController {
 
             customer.setRecommendedById(customer_update);
         } else {
+
             customer.setRecommendedById(null);
+        }
+    }
+
+    /*
+    Metodo per cambiare in "null" il referral
+     */
+    private void changeRefferal(Customer customer) {
+
+        /*
+        Viene ricercato, tra tutti i Customer, l'id dei Customer che sono stati consigliati dell'utente che vogliamo eliminare.
+        Successivamete per questi Customer viene cambiato il refferral a "null" e salvata la modifica.
+         */
+        for (Customer c : service.findAll()) {
+            if(c.getRecommendedById() != null) {
+                Long id = c.getRecommendedById().getId();
+
+                if (id.equals(customer.getId())) {
+                    c.setRecommendedById(null);
+                    service.save(c);
+                }
+            }
         }
     }
 
