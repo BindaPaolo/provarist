@@ -6,7 +6,7 @@
 <head>
     <%@ page isELIgnored="false" %>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Lista Clienti</title>
+    <title>Modifica Cliente</title>
 </head>
 <body>
     <h2>Modifica Cliente</h2>
@@ -59,9 +59,10 @@
             </tr>
             <tr>
                 <td>
+                    <br/><button type="submit" formaction="/addCustomer">Annulla</button>
                 </td>
                 <td>
-                    <br/><input name="submit" type="submit" value="Aggiorna cliente" />
+                    <br/><button type="submit" formaction="/addCustomer">Salva modifiche</button>
                 </td>
             </tr>
         </table>
