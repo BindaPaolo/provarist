@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class CustomerService {
 
+	@Autowired
     private CustomerRepository repository;
 
     @Autowired
@@ -28,13 +29,15 @@ public class CustomerService {
         this.repository = repository;
     }
     
+    
+    public List<Customer> findAllCustomersByFirstNameAndLastNameAllIgnoringCase(String firstName, String lastName){
+    	return repository.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(firstName, lastName);
+    }
+    
+    
+    
     public List<Customer> findAllCustomersByReservationId(Long reservation_id){
-    	log.info("\n\n\n\n ENTRO SERVICE \n\n\n\n");
     	List<Long> customer_id_list = this.repository.findAllCustomersByReservationId(reservation_id); 
-    	
-    	log.info(Arrays.toString(customer_id_list.toArray()));
-    	log.info("\n\n\n\n ARRIVO QUIIIIII \n\n\n\n");
-
     	List<Customer> customer_obj_list = new ArrayList<Customer>();
     	
     	for (Long customer_id : customer_id_list) {

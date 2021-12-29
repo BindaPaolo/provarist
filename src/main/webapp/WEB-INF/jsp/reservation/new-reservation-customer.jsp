@@ -6,22 +6,20 @@
 <head>
     <%@ page isELIgnored="false" %>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Modifica Cliente</title>
+    <style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
+    <title>Aggiungi cliente alla prenotazione</title>
 </head>
 <body>
-    <h2>Modifica Cliente</h2>
-    <a href="#" onclick="history.go(-1)">Torna indietro</a>
-    <hr /><br />
-
-    <form:form action="/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
-        <table>
+    <h2>Aggiungi cliente alla prenotazione</h2>
+	<form:form   modelAttribute="customer" method="post">
+        <table>	
             <tr>
                 <td>
                     <form:label path="firstName">Nome</form:label>
                 </td>
                 <td>
                     <form:input type="text" id="firstName" path="firstName" />
-                    <form:errors path="firstName" />
+                    <form:errors path="firstName" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -30,7 +28,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="lastName" path="lastName" />
-                    <form:errors path="lastName" />
+                    <form:errors path="lastName" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -39,7 +37,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="mobileNumber" path="mobileNumber" />
-                    <form:errors path="mobileNumber" />
+                    <form:errors path="mobileNumber" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -59,14 +57,15 @@
             </tr>
             <tr>
                 <td>
-                    <br/><button type="submit" formaction="/customer/addCustomerToReservation">Annulla</button>
+                    <br/><button type="submit" formaction="/reservation/newReservationCustomer?action=add">Aggiungi cliente</button>
                 </td>
-                <td>
-                    <br/><button type="submit" formaction="/customer/addCustomerToReservation">Salva modifiche</button>
-                </td>
-            </tr>
+   
+              	<td>
+    				<br/><button type="submit" formaction="/reservation/newReservationCustomer?action=cancel">Annulla</button>
+				</td>
+			</tr>
         </table>
-    </form:form>
+     </form:form>
 
 </body>
 </html>

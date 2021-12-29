@@ -19,7 +19,7 @@
 			<h2>Clienti</h2>
 			<a href="/">Torna alla homepage</a>
 			<hr />
-			<a href="/new-customer">
+			<a href="/customer/new-customer">
 				<button type="submit">Aggiungi nuovo cliente</button>
 			</a> <br />
 			<br />
@@ -40,8 +40,8 @@
                             <td>${customer.allergies}</td>
                             <td>${customer.mobileNumber}</td>
                             <td>
-                                <a href="/showCustomer/${customer.id}">Modifica</a>
-                                <form action="/deleteCustomer/${customer.id}" method="post">
+                                <a href="/customer/showCustomer/${customer.id}">Modifica</a>
+                                <form action="/customer/deleteCustomer/${customer.id}" method="post">
                                     <input type="submit" value="Elimina" />
                                 </form>
                             </td>

@@ -4,11 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Set;
-import lombok.Data;
-import lombok.ToString;
 
-@Data
-@ToString
+
 @Entity
 @Table(name="customer")
 public class Customer extends Person {
@@ -17,11 +14,11 @@ public class Customer extends Person {
 	@NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="recommended_by_id")
 	private Customer recommendedById;
 
-	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Customer> recommended;
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -47,14 +44,42 @@ public class Customer extends Person {
 		return this.getId() == ((Customer)obj).getId();
 	}
 
+	@Override
+	public String toString() {
+		return this.getId() + ", " + this.getFirstName() + ", " + this.getLastName() 
+				+ ", " + this.getAllergies();
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public Customer getRecommendedById() {
+		return recommendedById;
+	}
+
+	public void setRecommendedById(Customer recommendedById) {
+		this.recommendedById = recommendedById;
+	}
+
+	public List<Customer> getRecommended() {
+		return recommended;
+	}
+
+	public void setRecommended(List<Customer> recommended) {
+		this.recommended = recommended;
+	}
+
+	public Set<Allergen> getAllergies() {
+		return allergies;
+	}
+
+	public void setAllergies(Set<Allergen> allergies) {
+		this.allergies = allergies;
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
