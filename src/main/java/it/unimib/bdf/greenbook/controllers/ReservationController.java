@@ -1,12 +1,9 @@
 package it.unimib.bdf.greenbook.controllers;
 
 
-import it.unimib.bdf.greenbook.models.Allergen;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.ReservationService;
-
-import java.util.List;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
