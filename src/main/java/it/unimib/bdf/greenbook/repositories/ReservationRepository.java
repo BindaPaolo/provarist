@@ -20,7 +20,7 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
 	@Query(value="SELECT customer_id FROM reservation_customers rc where rc.reservation_id = :reservation_id", nativeQuery=true)
 	public List<Long> findAllCustomersByReservationId(@Param("reservation_id") Long reservation_id);
 
-	@Query(value="SELECT r.*"
+	@Query(value="SELECT DISTINCT r.*"
 				+" FROM reservation r JOIN reservation_customers rc on r.reservation_id = rc.reservation_id"
 				+" WHERE r.date = :date", nativeQuery=true)
 	public List<Reservation> findAllReservationsByDate(@Param("date") LocalDate date);

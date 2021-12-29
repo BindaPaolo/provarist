@@ -60,7 +60,7 @@ public class ReservationController {
 		// Show persisted waiters
 		model.addAttribute("waitersList", getPersistedWaiters());
 
-		return "reservation/new-reservation";
+		return "/reservation/new-reservation";
     }
     
     @PostMapping("/newReservationCustomer")
@@ -77,19 +77,19 @@ public class ReservationController {
 				log.info("action = show");
 				model.addAttribute("customer", new Customer());
 				model.addAttribute("allergensList", allergenService.findAll());
-				model.addAttribute("waitersList", getPersistedWaiters());
 				return "/reservation/new-reservation-customer";
 			case "add":
 				log.info("action = add");
 				if (result.hasErrors()) {
 					model.addAttribute("allergensList", allergenService.findAll());
-					model.addAttribute("waitersList", getPersistedWaiters());
 					return "/reservation/new-reservation-customer";
 				}
 				reservation.addReservationCustomer(customer);
+				model.addAttribute("waitersList", getPersistedWaiters());
 				return "/reservation/new-reservation";
 			case "cancel":
 				log.info("action = cancel");
+				model.addAttribute("waitersList", getPersistedWaiters());
 				return "/reservation/new-reservation";
 
 		}
@@ -139,15 +139,15 @@ public class ReservationController {
     	
     	if (action.equals("cancel")) {
     		log.info("action = cancel");
-    		reservation.addReservationCustomer(customerOriginal);
+    		reservation.addReservationCustomer(customerOriginal);			model.addAttribute("waitersList", getPersistedWaiters());
     		return "/reservation/new-reservation";
     	}else if(action.equals("save")) {
     		log.info("action = save");
     		if (result.hasErrors()) {
     			model.addAttribute("allergensList", allergenService.findAll());
-				model.addAttribute("waitersList", getPersistedWaiters());
     			return "/reservation/edit-reservation-customer";
     		}
+			model.addAttribute("waitersList", getPersistedWaiters());
     		reservation.addReservationCustomer(customerMod);
     		return "/reservation/new-reservation";
     	}
@@ -171,7 +171,6 @@ public class ReservationController {
     		model.addAttribute("customerMod", customerMod);
     		model.addAttribute("customerOriginal", customerOriginal);
     		model.addAttribute("allergensList", allergenService.findAll());
-			model.addAttribute("waitersList", getPersistedWaiters());
     		return "/reservation/edit-reservation-customer";
     	}
     	else if(action.equals("delete")) {
