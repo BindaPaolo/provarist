@@ -50,12 +50,14 @@
 					    <tr>
 					        <th>Nome</th>
 					        <th>Cognome</th>
+					        <th>Allergie</th>
 					        <th>Numero di cellulare</th>
 					     </tr>             
 					     <c:forEach var="customer" items="${reservation.getReservation_customers()}">
 			                  <tr>
 			                      <td>${customer.firstName}</td>
 			                      <td>${customer.lastName}</td>
+			                      <td>${customer.allergies}</td>
 			                      <td>${customer.mobileNumber}</td>
 			                      <td>	<div>
 			                      			<form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>
