@@ -91,7 +91,7 @@ public class ReservationController {
 			case "cancel":
 				log.info("action = cancel");
 				return "/reservation/new-reservation";
-				
+
 		}
     	
     	return "error";
