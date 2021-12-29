@@ -7,11 +7,7 @@ import java.util.Set;
 
 import lombok.*;
 
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+
 @Entity
 @Table(name="customer")
 public class Customer extends Person {
@@ -50,6 +46,29 @@ public class Customer extends Person {
 		return this.getId() == ((Customer)obj).getId();
 	}
 
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public Customer getRecommendedById() {
+		return recommendedById;
+	}
+
+	public void setRecommendedById(Customer recommendedById) {
+		this.recommendedById = recommendedById;
+	}
+
+	public Set<Allergen> getAllergies() {
+		return allergies;
+	}
+
+	public void setAllergies(Set<Allergen> allergies) {
+		this.allergies = allergies;
+	}
 }
 
 
