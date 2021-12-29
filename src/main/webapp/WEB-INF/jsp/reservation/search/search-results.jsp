@@ -11,7 +11,12 @@
 </head>
 <body>
 	<div><h1>Risultati ricerca</h1></div>
-	<a href="/reservation/search/search-reservation-by-customer">Nuova ricerca</a>
+	<a href="/reservation/search/search-reservation-by-customer">Nuova ricerca per cliente</a>
+	&nbsp;
+	&nbsp;
+	<a href="/reservation/search/search-reservation-by-date">Nuova ricerca per data</a>	
+	&nbsp;
+	&nbsp;
 	<a href="/">Torna alla Home</a>
 	 <hr noshade size="20">
 	 

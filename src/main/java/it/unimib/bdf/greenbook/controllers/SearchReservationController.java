@@ -17,6 +17,7 @@ import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +34,15 @@ public class SearchReservationController {
     public String searchReservationByCustomer(Model model) {
     	model.addAttribute("customer", new Customer());
     	log.info("Going to search-reservation-by-customer");
+    	
     	return "reservation/search/search-reservation-by-customer";
     }
     
     @GetMapping("/search-reservation-by-date")
     public String serachReservationByDate(Model model) {
+    	model.addAttribute("reservation", new Reservation());
+    	log.info("Going to search-reservatoin-by-date");
+    	
     	return "/reservation/search/search-reservation-by-date";
     }
 	
@@ -71,12 +76,36 @@ public class SearchReservationController {
 		
 		return "/reservation/search/search-results";
 	}
+
+	@PostMapping("/executeSearchReservationByDate")
+	public String executeSearchReservationByDate(Model model, 
+									@Valid @ModelAttribute Reservation reservation,
+									BindingResult result) {
+		
+		log.info("Entro in executeSearchReservationByDate");
+		
+		if(result.getFieldError("date") != null) {
+            return "/reservation/search/search-reservation-by-date";
+        }
+		
+		LocalDate date = reservation.getDate();
+		
+		List<Reservation> reservations = new ArrayList<>();
+		
+		reservations.addAll(reservationService.findAllReservationsByDate(date));
+		
+		model.addAttribute("reservations", reservations);
+		
+		return "/reservation/search/search-results";
+	}
 	
 	@PostMapping("/cancelSearchReservation")
 	public String cancelSearchReservation(Model model) {
 		log.info("Aborting reservation search");
 		return "/reservation/reservations";
 	}
+	
+	
 }
 	
 
