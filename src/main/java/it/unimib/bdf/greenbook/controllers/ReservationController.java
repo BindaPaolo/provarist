@@ -71,25 +71,28 @@ public class ReservationController {
     									@RequestParam("action") String action) {
     	
     	log.info("Entro in newReservationCustomer");
-    	if(action.equals("show")) {
-    		log.info("action = show");
-    		model.addAttribute("customer", new Customer());
-    		model.addAttribute("allergensList", allergenService.findAll());
-    		return "/reservation/new-reservation-customer";
-    	}
-    	else if(action.equals("add")) {
-    		log.info("action = add");
-    		if(result.hasErrors()) {
-    			model.addAttribute("allergensList", allergenService.findAll());
-    			return "/reservation/new-reservation-customer";
-    		}
-    		reservation.addReservationCustomer(customer);
-    		return "/reservation/new-reservation";
-    	}
-    	else if(action.equals("cancel")) {
-    		log.info("action = cancel");
-    		return "/reservation/new-reservation";
-    	}
+
+		switch (action) {
+			case "show":
+				log.info("action = show");
+				model.addAttribute("customer", new Customer());
+				model.addAttribute("allergensList", allergenService.findAll());
+				model.addAttribute("waitersList", getPersistedWaiters());
+				return "/reservation/new-reservation-customer";
+			case "add":
+				log.info("action = add");
+				if (result.hasErrors()) {
+					model.addAttribute("allergensList", allergenService.findAll());
+					model.addAttribute("waitersList", getPersistedWaiters());
+					return "/reservation/new-reservation-customer";
+				}
+				reservation.addReservationCustomer(customer);
+				return "/reservation/new-reservation";
+			case "cancel":
+				log.info("action = cancel");
+				return "/reservation/new-reservation";
+				
+		}
     	
     	return "error";
     }
@@ -142,6 +145,7 @@ public class ReservationController {
     		log.info("action = save");
     		if (result.hasErrors()) {
     			model.addAttribute("allergensList", allergenService.findAll());
+				model.addAttribute("waitersList", getPersistedWaiters());
     			return "/reservation/edit-reservation-customer";
     		}
     		reservation.addReservationCustomer(customerMod);
@@ -167,6 +171,7 @@ public class ReservationController {
     		model.addAttribute("customerMod", customerMod);
     		model.addAttribute("customerOriginal", customerOriginal);
     		model.addAttribute("allergensList", allergenService.findAll());
+			model.addAttribute("waitersList", getPersistedWaiters());
     		return "/reservation/edit-reservation-customer";
     	}
     	else if(action.equals("delete")) {

@@ -50,7 +50,6 @@ public class Reservation {
 	@NotEmpty(message = "Seleziona almeno un cameriere dai seguenti:")
 	private List<Employee> reservation_waiters;
 
-	
 	@Override
 	public String toString() {
 		return "Reservation [reservation_id=" + reservation_id + ", shiftEnum=" + shiftEnum + ", date=" + date
@@ -63,8 +62,7 @@ public class Reservation {
 
 	public void setReservation_id(long reservation_id) {
 		this.reservation_id = reservation_id;
-	}	
-
+	}
 
 	public void addReservationCustomer(Customer c) {
 		this.reservation_customers.add(c);
@@ -100,4 +98,13 @@ public class Reservation {
 	public void setReservation_customers(List<Customer> reservation_customers) {
 		this.reservation_customers = reservation_customers;
 	}
+
+	public List<Employee> getReservation_waiters() {
+		return reservation_waiters;
+	}
+
+	public void setReservation_waiters(List<Employee> reservation_waiters) {
+		this.reservation_waiters = reservation_waiters;
+	}
+
 }

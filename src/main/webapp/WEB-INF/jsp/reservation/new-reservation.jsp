@@ -10,10 +10,8 @@
     <title>Nuova Prenotazione</title>
 </head>
 <body>
-	<div>
-		<h2>Nuova Prenotazione</h2>
-	</div>
 
+	<h2>Nuova Prenotazione</h2>
     <form:form modelAttribute="reservation" method="post">
         <button type="submit" class="link-button" formaction="/reservation/newReservationCustomer?action=show">
             Aggiungi cliente alla prenotazione
@@ -72,6 +70,7 @@
         <br />
         <form:errors path="reservation_customers" class="validationError"/>
 
+        <h2>Clienti</h2>
         <table>
             <tr>
                 <th>Nome</th>

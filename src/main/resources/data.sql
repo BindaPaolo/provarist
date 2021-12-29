@@ -2,8 +2,8 @@
 -- Reservation:
 ------------------------------------------------------
 
-INSERT INTO RESERVATION (SHIFT_ENUM, DATE) VALUES ('LUNCH', '2022-01-01');
-INSERT INTO RESERVATION (SHIFT_ENUM, DATE) VALUES ('DINNER', '2022-04-17');
+INSERT INTO RESERVATION (SHIFT_ENUM, DATE) VALUES ('Pranzo', '2022-01-01');
+INSERT INTO RESERVATION (SHIFT_ENUM, DATE) VALUES ('Cena', '2022-04-17');
 
 ------------------------------------------------------
 -- Customer:
