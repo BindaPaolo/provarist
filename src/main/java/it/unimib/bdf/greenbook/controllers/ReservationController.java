@@ -232,7 +232,7 @@ public class ReservationController {
         al numero inserito e successivamente viene modificato il suo refferral
         Nel caso il numero inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedById" con il valore "null"
         */
-			if (!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
+			if (customer.getRecommendedById() != null && !customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
 
 				//Controller se il Customer è presente tra quelli inseriti nella prenotazione
 				for (Customer c : reservation.getReservation_customers()) {
