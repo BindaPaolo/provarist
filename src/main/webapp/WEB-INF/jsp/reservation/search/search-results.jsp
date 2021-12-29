@@ -11,5 +11,46 @@
 </head>
 <body>
 	<div><h1>Risultati ricerca</h1></div>
+	<a href="/reservation/search/search-reservation-by-customer">Nuova ricerca</a>
+	<a href="/">Torna alla Home</a>
+	 <hr noshade size="20">
+	 
+	<c:choose>
+		<c:when test="${reservations.size() == 0}">
+				<p> Non ci sono prenotazioni con questi parametri!</p>
+		</c:when>
+		<c:otherwise>
+			  <c:forEach var="reservation" items="${reservations}">
+			  		<div>
+			  			<p>Data: "${reservation.getDate()}"</p>
+			  			<p>Turno: "${reservation.getShiftEnum()}"</p>
+			  		</div>
+			  
+			        <div>
+			            <table>
+			                <tr>
+			                    <th>Id</th>
+			                    <th>Nome</th>
+			                    <th>Cognome</th>
+			                    <th>Allergie</th>
+			                    <th>Numero di cellulare</th>
+			                </tr>
+			                <c:forEach var="customer" items="${reservation.getReservation_customers()}">
+			                    <tr>
+			                        <td>${customer.id}</td>
+			                        <td>${customer.firstName}</td>
+			                        <td>${customer.lastName}</td>
+			                        <td>${customer.allergies}</td>
+			                        <td>${customer.mobileNumber}</td>
+			                    </tr>
+			                </c:forEach>
+			            </table>
+			        </div>
+			        <hr noshade size="20">
+			</c:forEach>
+		</c:otherwise>
+	</c:choose>
+
+
 </body>
 </html>

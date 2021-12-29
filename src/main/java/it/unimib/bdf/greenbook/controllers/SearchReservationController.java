@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import it.unimib.bdf.greenbook.models.Customer;
+import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -48,20 +50,24 @@ public class SearchReservationController {
 				result.getFieldErrors("lastName").size() != 0) {
             return "/reservation/search/search-reservation-by-customer";
         }
-		
-		log.info("First name: " + customer.getFirstName() + " Last name: " + customer.getLastName());
-		
+				
 		//Get all customers with given firstName and lastName.
 		//Note: there can be multiple rows in customers with same pair (firstName, lastName)
+		//		and different IDs.
 		List<Customer> customers = customerService.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(customer.getFirstName(), customer.getLastName());
 		
+		List<Reservation> reservations = new ArrayList<>();
 		for(Customer c : customers) {
-			log.info(c.toString());
+			Long id = c.getId();
+			reservations.addAll(reservationService.findAllReservationsByCustomerId(id));
 		}
-			
-			
-		//List<Reservation> reservations = reservationService.
 		
+		for(Reservation r : reservations) {
+			log.info(r.toString());
+		}
+
+
+		model.addAttribute("reservations", reservations);
 		
 		return "/reservation/search/search-results";
 	}

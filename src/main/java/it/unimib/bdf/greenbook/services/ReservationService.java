@@ -27,6 +27,10 @@ public class ReservationService{
         this.reservationRepository = reservationRepository;
         this.customerRepository = customerRepository;
     }
+    
+    public List<Reservation> findAllReservationsByCustomerId(Long id){
+    	return this.reservationRepository.findAllReservationsByCustomerId(id);
+    }
 
     public List<Reservation> findAll() {
         return StreamSupport.stream(reservationRepository.findAll().spliterator(), false)

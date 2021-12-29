@@ -1,10 +1,10 @@
 package it.unimib.bdf.greenbook.models;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 
 import org.hibernate.annotations.FetchMode;
 
@@ -14,12 +14,9 @@ import org.hibernate.annotations.Fetch;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
-import lombok.Data;
-import lombok.ToString;
 
-@Data
+
 @Entity
-@ToString
 @Table(name = "reservation")
 public class Reservation {
 	@Id
@@ -38,9 +35,6 @@ public class Reservation {
 	@NotNull(message="Seleziona la data!")
 	private LocalDate date;
 
-	@OneToMany(fetch = FetchType.EAGER)
-	private List<RestaurantTable> reservedTables;
-
 	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinTable(name = "reservation_customers",
@@ -48,6 +42,22 @@ public class Reservation {
 			   inverseJoinColumns = {@JoinColumn(name = "customer_id")})
 	@NotEmpty(message = "La lista dei  clienti non può essere vuota!")
 	private List<Customer> reservation_customers = new ArrayList<Customer>();
+
+	
+	@Override
+	public String toString() {
+		return "Reservation [reservation_id=" + reservation_id + ", shiftEnum=" + shiftEnum + ", date=" + date
+				+ ", reservation_customers=" + reservation_customers + "]";
+	}
+	
+	public long getReservation_id() {
+		return reservation_id;
+	}
+
+	public void setReservation_id(long reservation_id) {
+		this.reservation_id = reservation_id;
+	}	
+
 
 	public void addReservationCustomer(Customer c) {
 		this.reservation_customers.add(c);
@@ -58,6 +68,30 @@ public class Reservation {
 		this.reservation_customers.add(c);
 		
 		return c;
+	}
+
+	public shiftEnumType getShiftEnum() {
+		return shiftEnum;
+	}
+
+	public void setShiftEnum(shiftEnumType shiftEnum) {
+		this.shiftEnum = shiftEnum;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public List<Customer> getReservation_customers() {
+		return reservation_customers;
+	}
+
+	public void setReservation_customers(List<Customer> reservation_customers) {
+		this.reservation_customers = reservation_customers;
 	}
 }
 
