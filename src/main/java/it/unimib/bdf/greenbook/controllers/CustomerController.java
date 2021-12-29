@@ -80,7 +80,7 @@ public class CustomerController {
         }
 
 
-        searchIdByPhone(customer);
+        AddCustomerRefferralByMobileNumber(customer);
         service.save(customer);
         model.addAttribute("customers", service.findAll());
         return "customer/customers";
@@ -131,7 +131,7 @@ public class CustomerController {
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
 
-        searchIdByPhone(customer);
+        AddCustomerRefferralByMobileNumber(customer);
         service.save(customer);
         model.addAttribute("customers", service.findAll());
         return "customer/customers";
@@ -149,10 +149,9 @@ public class CustomerController {
     }
 
     //Metodo per cercare l'id di un Customer attraverso il mobileNumber e successivamente modificare la variabile "recommendedById"
-    private void searchIdByPhone(Customer customer) {
+    private void AddCustomerRefferralByMobileNumber(Customer customer) {
 
-        Customer customer_update = new Customer();
-
+        boolean numberExist = false;
         /*
         Se il numero di telefono inserito dall'utente non è nullo viene ricercato, tra tutti i Customer, l'id associato
         al numero inserito e successivamente viene modificato il suo refferral
@@ -161,15 +160,18 @@ public class CustomerController {
         if(!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
             for (Customer c : service.findAll()) {
                 if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
-                    customer_update = c;
+                    customer.setRecommendedById(c);
+                    numberExist = true;
                 }
             }
 
-            customer.setRecommendedById(customer_update);
         } else {
 
             customer.setRecommendedById(null);
         }
+
+        if(!numberExist)
+            customer.setRecommendedById(null);
     }
 
     //Metodo per cambiare in "null" il referral

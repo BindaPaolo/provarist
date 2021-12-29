@@ -4,6 +4,7 @@ package it.unimib.bdf.greenbook.controllers;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Employee;
 import it.unimib.bdf.greenbook.models.Reservation;
+import it.unimib.bdf.greenbook.repositories.CustomerRepository;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
@@ -25,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 @Slf4j
@@ -97,10 +100,12 @@ public class ReservationController {
         }
     	log.info("Saving Reservation and Customer objects...");
 
-		searchIdByPhone(reservation);
-
+		AddCustomerRefferralByMobileNumber(reservation);
 		log.info("finito");
-    	service.save(reservation);
+
+		//log.info(reservation.getReservation_customers().toString());
+		service.save(reservation);
+
     	log.info("Reservation and Customer objects saved");
     	
     	log.info("Ending Session...");
@@ -216,20 +221,39 @@ public class ReservationController {
 		return persistedEmployees;
 	}
 
-	private void searchIdByPhone(Reservation reservation) {
+	private void AddCustomerRefferralByMobileNumber(Reservation reservation) {
 
+		List<Customer> customer_all = customerService.findAll();
 		for(Customer customer : reservation.getReservation_customers()) {
 
+			boolean numberExist = false;
         /*
         Se il numero di telefono inserito dall'utente non è nullo viene ricercato, tra tutti i Customer, l'id associato
         al numero inserito e successivamente viene modificato il suo refferral
         Nel caso il numero inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedById" con il valore "null"
         */
 			if (!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
+
+				//Controller se il Customer è presente tra quelli inseriti nella prenotazione
 				for (Customer c : reservation.getReservation_customers()) {
 					if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
 
 						customer.setRecommendedById(c);
+						numberExist = true;
+						break;
+					}
+				}
+
+				//Se non è ancora stato trovato continuo la ricerca, se no vado avanti
+				if(!numberExist) {
+					//Controllo se il Customer è presente tra quelli già inseriti
+					for (Customer c : customer_all) {
+						if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
+
+							customer.setRecommendedById(c);
+							numberExist = true;
+							break;
+						}
 					}
 				}
 
@@ -237,13 +261,13 @@ public class ReservationController {
 
 				customer.setRecommendedById(null);
 			}
+
+			//Se il numero di telefono inserito dall'utente non è stato trovato la raccomandazione non esiste e di conseguenza viene salvata come nulla
+			if(!numberExist)
+				customer.setRecommendedById(null);
 		}
-	}
 
-	private List<Customer> getPersistedCustomer(){
-		List<Customer> persistedCustomer = customerService.findAll();
-
-		return persistedCustomer;
+		//log.info("\n\n\n\n\n DENTRO FOR: " + reservation.getReservation_customers().toString() + "\n\n\n\n\n");
 	}
 
 }

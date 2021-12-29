@@ -4,10 +4,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Set;
-import lombok.Data;
-import lombok.ToString;
 
-@Data
+import lombok.*;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @Entity
 @Table(name="customer")
@@ -21,8 +24,8 @@ public class Customer extends Person {
 	@JoinColumn(name="recommended_by_id")
 	private Customer recommendedById;
 
-	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.MERGE)
-	private List<Customer> recommended;
+	//@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	//private List<Customer> recommended;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
