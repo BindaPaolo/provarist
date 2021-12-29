@@ -15,8 +15,9 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ReservationService{
-
+	@Autowired
     private ReservationRepository reservationRepository;
+	@Autowired
     private CustomerRepository customerRepository;
     
 

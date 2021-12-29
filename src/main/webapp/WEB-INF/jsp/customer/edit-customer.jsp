@@ -6,6 +6,7 @@
 <head>
     <%@ page isELIgnored="false" %>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
     <title>Modifica Cliente</title>
 </head>
 <body>
@@ -13,7 +14,7 @@
     <a href="#" onclick="history.go(-1)">Torna indietro</a>
     <hr /><br />
 
-    <form:form action="/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
+    <form:form action="/customer/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
         <table>
             <tr>
                 <td>
@@ -21,7 +22,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="firstName" path="firstName" />
-                    <form:errors path="firstName" />
+                    <form:errors path="firstName" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -30,7 +31,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="lastName" path="lastName" />
-                    <form:errors path="lastName" />
+                    <form:errors path="lastName" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -39,7 +40,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="mobileNumber" path="mobileNumber" />
-                    <form:errors path="mobileNumber" />
+                    <form:errors path="mobileNumber" class="validationError"/>
                 </td>
             </tr>
             <tr>

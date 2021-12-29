@@ -17,7 +17,7 @@
 		<div>
 			<form:form modelAttribute="reservation" method="post">
 				<div>
-					<button type="submit" class="link-button" formaction="/reservation/addCustomerToReservation">Aggiungi cliente</button>
+					<button type="submit" class="link-button" formaction="/reservation/newReservationCustomer?action=show">Aggiungi cliente</button>
 				</div>		
 				<br>	
 				<div>
@@ -36,12 +36,12 @@
 				</div>
 				<br>
 				<div>
-					<form:button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</form:button>
+					<form:button type="submit" name="save" formaction="/reservation/saveReservation">Salva prenotazione</form:button>
 					<form:errors path="reservation_customers" class="validationError"/>
 				</div>
 				<br>
 				<div>
-					<button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
+					<form:button type="submit" name="cancel" formaction="/reservation/cancelReservation">Annulla prenotazione</form:button>
 				</div>
 				<br>
 
@@ -58,10 +58,10 @@
 			                      <td>${customer.lastName}</td>
 			                      <td>${customer.mobileNumber}</td>
 			                      <td>	<div>
-										<form:button type="submit" name="editReservationCustomer" formaction="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</form:button>
+			                      			<form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>
 										</div></td>
 								  <td>  <div>
-										<form:button type="submit" name="deleteReservationCustomer" formaction="/deleteReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Elimina</form:button>
+								  			<form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=delete">Elimina</form:button>
 										</div></td>
 			                  </tr>
 			             </c:forEach>

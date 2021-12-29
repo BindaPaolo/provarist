@@ -4,24 +4,25 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Set;
+
+
 import lombok.Data;
-import lombok.ToString;
+
 
 @Data
-@ToString
 @Entity
 @Table(name="customer")
-public class Customer extends Person {
+public class Customer extends Person{
 
 	@Basic(optional = false)
 	@NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="recommended_by_id")
 	private Customer recommendedById;
 
-	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Customer> recommended;
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -31,8 +32,9 @@ public class Customer extends Person {
 			inverseJoinColumns = @JoinColumn(name = "allergen_id"))
 	private Set<Allergen> allergies;
 
-	// @ManyToMany
-	// private List<Reservation> reservations;
+	//@ManyToMany
+	//private List<Reservation> reservations;
+
 
 	@Override
 	public int hashCode() {
