@@ -46,7 +46,6 @@ public class ReservationController {
 	
 	@Autowired
 	private AllergenService allergenService;
-	
 
 	@Autowired
 	private CustomerService customerService;

@@ -85,6 +85,7 @@
                       <td>${customer.lastName}</td>
                       <td>${customer.allergies}</td>
                       <td>${customer.mobileNumber}</td>
+                      <td>${customer.recommendedById.mobileNumber}</td>
                       <td>
                         <form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>
                       </td>
