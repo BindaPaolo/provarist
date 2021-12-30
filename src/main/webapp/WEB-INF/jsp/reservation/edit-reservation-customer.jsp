@@ -6,14 +6,13 @@
 <head>
     <%@ page isELIgnored="false" %>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
     <title>Modifica Cliente</title>
 </head>
 <body>
     <h2>Modifica Cliente</h2>
-    <a href="#" onclick="history.go(-1)">Torna indietro</a>
-    <hr /><br />
 
-    <form:form action="/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
+    <form:form  modelAttribute="customerMod" method="post">
         <table>
             <tr>
                 <td>
@@ -21,7 +20,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="firstName" path="firstName" />
-                    <form:errors path="firstName" />
+                    <form:errors path="firstName" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -30,7 +29,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="lastName" path="lastName" />
-                    <form:errors path="lastName" />
+                    <form:errors path="lastName" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -39,7 +38,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="mobileNumber" path="mobileNumber" />
-                    <form:errors path="mobileNumber" />
+                    <form:errors path="mobileNumber" class="validationError"/>
                 </td>
             </tr>
             <tr>
@@ -47,22 +46,22 @@
                     <form:label path="allergies">Allergeni</form:label>
                 </td>
                 <td>
-                    <table>
-                        <c:forEach items="${allergensList}" var="allergen">
-                            <tr>
-                                <td><form:checkbox path="allergies" value="${allergen}" /></td>
-                                <td><c:out value="${allergen.name}" /></td>
-                            </tr>
-                        </c:forEach>
-                    </table>
+					<table>
+					    <c:forEach items="${allergensList}" var="allergen">
+					        <tr>
+					            <td><form:checkbox path="allergies" value="${allergen}" /></td>
+					            <td><c:out value="${allergen.name}"></c:out></td>
+					        </tr>
+					    </c:forEach>
+					</table>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <br/><button type="submit" formaction="/customer/addCustomerToReservation">Annulla</button>
+                    <br/><button type="submit" formaction="/reservation/editReservationCustomer?action=cancel">Annulla</button>
                 </td>
                 <td>
-                    <br/><button type="submit" formaction="/customer/addCustomerToReservation">Salva modifiche</button>
+                    <br/><button type="submit" formaction="/reservation/editReservationCustomer?action=save">Salva modifiche</button>
                 </td>
             </tr>
         </table>

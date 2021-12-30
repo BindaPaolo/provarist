@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,8 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ReservationService{
-
+	@Autowired
     private ReservationRepository reservationRepository;
+	@Autowired
     private CustomerRepository customerRepository;
 
     
@@ -30,6 +32,10 @@ public class ReservationService{
         this.reservationRepository = reservationRepository;
         this.customerRepository = customerRepository;
     }
+    
+    public List<Reservation> findAllReservationsByCustomerId(Long id){
+    	return this.reservationRepository.findAllReservationsByCustomerId(id);
+    }
 
     public List<Reservation> findAll() {
         return StreamSupport.stream(reservationRepository.findAll().spliterator(), false)
@@ -38,6 +44,10 @@ public class ReservationService{
 
     public Optional<Reservation> findById(Long id) {
         return reservationRepository.findById(id);
+    }
+    
+    public List<Reservation> findAllReservationsByDate(LocalDate date){
+    	return reservationRepository.findAllReservationsByDate(date);
     }
 
     @Transactional

@@ -5,8 +5,6 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Set;
 
-import lombok.*;
-
 
 @Entity
 @Table(name="customer")
@@ -16,7 +14,7 @@ public class Customer extends Person {
 	@NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
 	private String mobileNumber;
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name="recommended_by_id")
 	private Customer recommendedById;
 
@@ -46,6 +44,12 @@ public class Customer extends Person {
 		return this.getId() == ((Customer)obj).getId();
 	}
 
+	@Override
+	public String toString() {
+		return this.getId() + ", " + this.getFirstName() + ", " + this.getLastName()
+				+ ", " + this.getAllergies();
+	}
+
 	public String getMobileNumber() {
 		return mobileNumber;
 	}
@@ -69,14 +73,5 @@ public class Customer extends Person {
 	public void setAllergies(Set<Allergen> allergies) {
 		this.allergies = allergies;
 	}
+
 }
-
-
-
-
-
-
-
-
-
-

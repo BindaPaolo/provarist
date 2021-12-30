@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
+@RequestMapping(value="/customer*")
 public class CustomerController {
 
     @Autowired
@@ -33,19 +34,7 @@ public class CustomerController {
     @GetMapping("/customers")
     public String showAllCustomers(Model model) {
         model.addAttribute("customers", service.findAll());
-        return "customer/customers";
-    }
-    
-    @GetMapping("/customer/new-reservation-customer")
-    public String showNewReservationCustomerForm(Model model) {
-    	log.info("Entro in showNewCustomerForm");
-    	
-        model.addAttribute("customer", new Customer());
-
-        // Retrieve persisted allergens list
-        model.addAttribute("allergensList", allergenService.findAll());
-
-        return "customer/new-reservation-customer";
+        return "/customer/customers";
     }
     
     @GetMapping("/new-customer")
@@ -56,61 +45,42 @@ public class CustomerController {
         List<Allergen> persistedAllergens = allergenService.findAll();
         model.addAttribute("allergensList", persistedAllergens);
 
-        return "customer/new-customer";
+        return "/customer/new-customer";
     }
     
-    @GetMapping("/customer/edit-reservation-customer")
+    @GetMapping("/edit-reservation-customer")
     public String showEditCustomerForm(Model model) {
     	log.info("Entro in CustomerController.showEditCustomerForm");
-        //model.addAttribute("allergensList", allergenService.findAll());
+    	//Get the customer object
+    	//that needs editing.
+    	Customer customer = (Customer) model.getAttribute("customer");
+    	log.info(customer.toString());
+    	model.addAttribute("allergensList", allergenService.findAll());
+        //model.addAttribute("allergensChecked", customer.getAllergies());
     	return "/customer/edit-reservation-customer";
     }
     
     @GetMapping("/reservation-customers/{reservation_id}")
     public String showReservationCustomers(@PathVariable Long reservation_id, Model model) {
     	model.addAttribute("customers", service.findAllCustomersByReservationId(reservation_id));
-    	return "/customers";
+    	return "/customer/customers";
     }
     
     @PostMapping("/addCustomer")
     public String addNewCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("allergensList", allergenService.findAll());
-            return "customer/new-customer";
+            return "/customer/new-customer";
         }
 
 
         AddCustomerRefferralByMobileNumber(customer);
         service.save(customer);
         model.addAttribute("customers", service.findAll());
-        return "customer/customers";
+        return "/customer/customers";
     }
 
-    @PostMapping("/customer/addCustomerToReservation")
-    public String addCustomer(@Valid @ModelAttribute Customer customer,
-    						BindingResult result,
-    			    		RedirectAttributes redirectAttributes,
-    						Model model) {
-    	log.info("Entro in CustomerController.addCustomerToReservation()");
-    	
-        if (result.hasErrors()) {
-            model.addAttribute("allergensList", allergenService.findAll());
-            return "customer/new-customer";
-        }
 
-
-        model.addAttribute("allergensList", allergenService.findAll());
-    	redirectAttributes.addFlashAttribute("customer", customer);
-
-        return "redirect:/new-reservation";
-    } 
-
-    @PostMapping("/cancelCustomerInsertion")
-    public String cancelCustomerInsertion(Model model) {
-    	
-    	return "redirect:/new-reservation"; 
-    }
-    
     @GetMapping("/showCustomer/{id}")
     public String showCustomerById(@PathVariable Long id, Model model) {
         Customer customer = service.findById(id)
@@ -119,14 +89,14 @@ public class CustomerController {
         model.addAttribute("customer", customer);
         model.addAttribute("allergensList", allergenService.findAll());
 
-        return "customer/edit-customer";
+        return "/customer/edit-customer";
     }
 
     @PostMapping("/updateCustomer/{id}")
     public String updateCustomer(@PathVariable Long id, @Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("allergensList", allergenService.findAll());
-            return "customer/edit-customer";
+            return "/customer/edit-customer";
         }
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
@@ -134,7 +104,7 @@ public class CustomerController {
         AddCustomerRefferralByMobileNumber(customer);
         service.save(customer);
         model.addAttribute("customers", service.findAll());
-        return "customer/customers";
+        return "/customer/customers";
     }
 
     @PostMapping("/deleteCustomer/{id}")
@@ -145,7 +115,7 @@ public class CustomerController {
         changeRefferal(service.findById(id).get());
         service.deleteById(id);
         model.addAttribute("customers", service.findAll());
-        return "customer/customers";
+        return "/customer/customers";
     }
 
     //Metodo per cercare l'id di un Customer attraverso il mobileNumber e successivamente modificare la variabile "recommendedById"

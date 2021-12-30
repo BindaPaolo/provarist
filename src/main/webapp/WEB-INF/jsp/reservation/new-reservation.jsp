@@ -10,12 +10,10 @@
     <title>Nuova Prenotazione</title>
 </head>
 <body>
-	<div>
-		<h2>Nuova Prenotazione</h2>
-	</div>
 
+	<h2>Nuova Prenotazione</h2>
     <form:form modelAttribute="reservation" method="post">
-        <button type="submit" class="link-button" formaction="/reservation/addCustomerToReservation">
+        <button type="submit" class="link-button" formaction="/reservation/newReservationCustomer?action=show">
             Aggiungi cliente alla prenotazione
         </button>
 
@@ -60,11 +58,11 @@
             <tr>
                 <td>
                     <br />
-                    <button type="submit" name="cancel" formaction="/cancelReservation">Annulla prenotazione</button>
+                    <form:button type="submit" name="cancel" formaction="/reservation/cancelReservation">Annulla prenotazione</form:button>
                 </td>
                 <td>
                     <br />
-                    <form:button type="submit" name="save" formaction="/saveReservation">Salva prenotazione</form:button>
+                    <form:button type="submit" name="save" formaction="/reservation/saveReservation">Salva prenotazione</form:button>
                 </td>
             </tr>
         </table>
@@ -72,10 +70,12 @@
         <br />
         <form:errors path="reservation_customers" class="validationError"/>
 
+        <h2>Clienti</h2>
         <table>
             <tr>
                 <th>Nome</th>
                 <th>Cognome</th>
+                <th>Allergie</th>
                 <th>Numero di cellulare</th>
                 <th>Raccomandato da (numero di cellulare)</th>
              </tr>
@@ -83,14 +83,14 @@
                   <tr>
                       <td>${customer.firstName}</td>
                       <td>${customer.lastName}</td>
+                      <td>${customer.allergies}</td>
                       <td>${customer.mobileNumber}</td>
-                      <td>${customer.recommendedById.mobileNumber}</td>
-                      <td>	<div>
-                            <form:button type="submit" name="editReservationCustomer" formaction="/editReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Modifica</form:button>
-                            </div></td>
-                      <td>  <div>
-                            <form:button type="submit" name="deleteReservationCustomer" formaction="/deleteReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}">Elimina</form:button>
-                            </div></td>
+                      <td>
+                        <form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>
+                      </td>
+                      <td>
+                        <form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=delete">Elimina</form:button>
+                      </td>
                   </tr>
              </c:forEach>
         </table>
