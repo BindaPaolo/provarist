@@ -5,7 +5,7 @@ import javax.validation.constraints.NotEmpty;
 
 
 @MappedSuperclass
-public class Person{
+public class Person implements Cloneable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -41,6 +41,19 @@ public class Person{
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	
+	
+	public Object clone() {
+		try {
+			return super.clone();
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	
+	
+	
 
 
 }

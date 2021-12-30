@@ -8,6 +8,7 @@ import it.unimib.bdf.greenbook.models.ReservationListContainer;
 import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@SessionAttributes({"reservation", "customerOriginal"})
+@SessionAttributes("reservation")
 @RequestMapping(value="/reservation*")
 public class ReservationController {
 
@@ -114,7 +115,9 @@ public class ReservationController {
     	reservationService.save(reservation);
     	log.info("Reservation and Customer objects saved");
         endSessionAndRemoveReservationSessionAttribute(status, request, reservation);
-        return "/reservation/reservations";
+
+
+    	return "/reservation/reservations";
     }
     
     @PostMapping("/cancelReservation")
@@ -132,25 +135,29 @@ public class ReservationController {
     @PostMapping("/editReservationCustomer")
     public String editReservationCustomer(Model model,
     									@ModelAttribute("reservation") Reservation reservation,
-    									@ModelAttribute("customerOriginal") Customer customerOriginal,
-    									@Valid @ModelAttribute("customerMod") Customer customerMod,
+    									@Valid @ModelAttribute("customer") Customer customer,
     									BindingResult result,
-										@RequestParam("action") String action) {
+										@RequestParam("action") String action,
+										HttpSession session) {
 
     	log.info("Entro in editReservationCustomer");
     	
     	if (action.equals("cancel")) {
     		log.info("action = cancel");
-    		reservation.addReservationCustomer(customerOriginal);			model.addAttribute("waitersList", getPersistedWaiters());
+    		reservation.addReservationCustomer((Customer) session.getAttribute("originalCustomer"));			session.removeAttribute("originalCustomer");
+    		model.addAttribute("waitersList", getPersistedWaiters());
     		return "/reservation/new-reservation";
     	}else if(action.equals("save")) {
     		log.info("action = save");
     		if (result.hasErrors()) {
+    			log.info("\n\n ENTRO \n\n");
     			model.addAttribute("allergensList", allergenService.findAll());
+    			model.addAttribute("customer", customer);
     			return "/reservation/edit-reservation-customer";
     		}
 			model.addAttribute("waitersList", getPersistedWaiters());
-    		reservation.addReservationCustomer(customerMod);
+    		reservation.addReservationCustomer(customer);
+    		session.removeAttribute("originalCustomer");
     		return "/reservation/new-reservation";
     	}
     	return "error";
@@ -158,23 +165,31 @@ public class ReservationController {
     
     @PostMapping("/modifyReservationCustomer/{firstName}&{lastName}&{mobileNumber}")
     public String modifyReservationCustomer(Model model,
-    									@PathVariable("firstName") String firstName,
-    									@PathVariable("lastName") String lastName,
-    									@PathVariable("mobileNumber") String mobileNumber,
-    									@ModelAttribute("reservation") Reservation reservation,
-    									@RequestParam("action") String action) {
+    										@PathVariable("firstName") String firstName,
+    										@PathVariable("lastName") String lastName,
+    										@PathVariable("mobileNumber") String mobileNumber,
+    										@ModelAttribute("reservation") Reservation reservation,
+    										@RequestParam("action") String action,
+    										HttpSession session) {
     	log.info("Entro in modifyReservationCustomer");
-		Customer customerOriginal = findCustomer(firstName, lastName, mobileNumber, reservation);
-		reservation.getReservation_customers().remove(customerOriginal);
+    	Customer originalCustomer = findCustomer(firstName, lastName, mobileNumber, reservation);
+		reservation.getReservation_customers().remove(originalCustomer);
+
 		if (action.equals("edit")) {
     		log.info("action = edit");
+    		session.setAttribute("originalCustomer", originalCustomer);
+    		
+    		Customer cloneCustomer = (Customer) originalCustomer.clone();
+        	model.addAttribute("customer", cloneCustomer);    		
 
-    		model.addAttribute("customerOriginal", customerOriginal);
     		model.addAttribute("allergensList", allergenService.findAll());
     		return "/reservation/edit-reservation-customer";
     	}
     	else if(action.equals("delete")) {
     		log.info("action = delete");
+    		
+			model.addAttribute("waitersList", getPersistedWaiters());
+    		
     		return "/reservation/new-reservation";
     	}
     	
@@ -217,6 +232,7 @@ public class ReservationController {
 		return found;
 	}
     
+
     //Helper function
     private void endSessionAndRemoveReservationSessionAttribute(SessionStatus status,
 															    WebRequest request,

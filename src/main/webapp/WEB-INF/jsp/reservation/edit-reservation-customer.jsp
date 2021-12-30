@@ -12,7 +12,7 @@
 <body>
     <h2>Modifica Cliente</h2>
 
-    <form:form  modelAttribute="customerMod" method="post">
+    <form:form  modelAttribute="customer" method="post">
         <table>
             <tr>
                 <td>
