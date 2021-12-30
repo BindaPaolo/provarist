@@ -62,5 +62,9 @@ public class ReservationService{
     public void deleteById(Long id) {
     	reservationRepository.deleteById(id);
     }
+    
+    public List<Reservation> findAllReservationByCustomerFirstNameAndLastName(String firstName, String lastName){
+    	return reservationRepository.findAllReservationByCustomerFirstNameAndLastName(firstName, lastName);
+    }
 
 }

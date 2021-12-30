@@ -8,13 +8,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import it.unimib.bdf.greenbook.models.Customer;
+import it.unimib.bdf.greenbook.models.CustomerListContainer;
 import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.ReservationService;
+import it.unimib.bdf.greenbook.models.ReservationListContainer;
+import it.unimib.bdf.greenbook.models.CustomerListContainer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -55,7 +59,8 @@ public class SearchReservationController {
 				result.getFieldErrors("lastName").size() != 0) {
             return "/reservation/search/search-reservation-by-customer";
         }
-				
+		
+		/*
 		//Get all customers with given firstName and lastName.
 		//Note: there can be multiple rows in customers with same pair (firstName, lastName)
 		//		and different IDs.
@@ -66,13 +71,13 @@ public class SearchReservationController {
 			Long id = c.getId();
 			reservations.addAll(reservationService.findAllReservationsByCustomerId(id));
 		}
+		*/
 		
-		for(Reservation r : reservations) {
-			log.info(r.toString());
-		}
+		ReservationListContainer reservationListContainer = new ReservationListContainer();
+		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(customer.getFirstName(), customer.getLastName()));
 
 
-		model.addAttribute("reservations", reservations);
+		model.addAttribute("reservationListContainer", reservationListContainer);
 		
 		return "/reservation/search/search-results";
 	}
@@ -90,12 +95,9 @@ public class SearchReservationController {
 		
 		LocalDate date = reservation.getDate();
 		
-		List<Reservation> reservations = new ArrayList<>();
-		
-		reservations.addAll(reservationService.findAllReservationsByDate(date));
-		
-		model.addAttribute("reservations", reservations);
-		
+		ReservationListContainer reservationListContainer = new ReservationListContainer();
+		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(date));
+		model.addAttribute("reservationListContainer", reservationListContainer);
 		return "/reservation/search/search-results";
 	}
 	
@@ -105,6 +107,39 @@ public class SearchReservationController {
 		return "/reservation/reservations";
 	}
 	
+	
+    //Al momento questa funzione elimina la reservation solo dalla lista
+    //delle reservations che vengono mostrare in search-result.jsp 
+    //e non dal dbms, in quanto l'eliminazione di una reservation (al momento)
+    //triggera un Referential Constraint violation.
+    @PostMapping("/deleteReservation/{id}")
+    public String deleteReservation(@PathVariable Long id, 
+    								@ModelAttribute("reservations") ReservationListContainer reservationListContainer,
+    								Model model) {
+    	log.info("Entro in deleteReservation");
+    	log.info("Lista delle prenotazioni:  "+reservationListContainer.getReservations());   	
+    	//Elimino la prenotazione selezionata dalla lista delle prenotazioni
+    	//che verrano mostrate in search-results.jsp
+    	reservationListContainer.getReservations().removeIf(r -> (r.getReservation_id() == id));
+
+    	
+    	Reservation reservationToDelete = (Reservation) reservationService.findById(id)
+                							.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
+    	log.info("Reservation da eliminare: "+reservationToDelete.toString());
+    	
+    	List<Reservation> newReservationList = new ArrayList<>();
+    	for(Reservation r : reservationListContainer.getReservations()) {
+    		newReservationList.add(reservationService.findById(r.getReservation_id())
+    							.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id)));
+    	}
+    	reservationListContainer.setReservations(newReservationList);
+    	
+    	//Ancora non posso farlo. Triggera un Referential Constrain error.
+    	//reservationService.deleteById(id); //da errore!!
+    	
+		model.addAttribute("reservationListContainer", reservationListContainer);
+        return "/reservation/search/search-results";
+    }
 	
 }
 	

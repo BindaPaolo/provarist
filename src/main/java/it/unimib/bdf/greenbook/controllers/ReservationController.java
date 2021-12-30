@@ -4,6 +4,7 @@ package it.unimib.bdf.greenbook.controllers;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Employee;
 import it.unimib.bdf.greenbook.models.Reservation;
+import it.unimib.bdf.greenbook.models.ReservationListContainer;
 import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.WebRequest;
+import java.util.ArrayList;
 
 import lombok.extern.slf4j.Slf4j;
 import it.unimib.bdf.greenbook.services.AllergenService;
@@ -166,9 +168,7 @@ public class ReservationController {
 		reservation.getReservation_customers().remove(customerOriginal);
 		if (action.equals("edit")) {
     		log.info("action = edit");
-    		Customer customerMod = (Customer) customerOriginal.clone();
-    		
-    		model.addAttribute("customerMod", customerMod);
+
     		model.addAttribute("customerOriginal", customerOriginal);
     		model.addAttribute("allergensList", allergenService.findAll());
     		return "/reservation/edit-reservation-customer";
@@ -201,14 +201,7 @@ public class ReservationController {
         return "/reservation/reservations";
     }
 
-    @PostMapping("/deleteReservation/{id}")
-    public String deleteReservation(@PathVariable Long id, Model model) {
-    	reservationService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-    	reservationService.deleteById(id);
-        model.addAttribute("reservations", reservationService.findAll());
-        return "/reservation/reservations";
-    }
+
     
     //Helper function
     private Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
@@ -243,4 +236,20 @@ public class ReservationController {
 		return persistedEmployees;
 	}
 
+	@ModelAttribute("reservation")
+	void loadReservationSessionAttribute(Model model) {
+		log.info("Entro in loadReservationSessionAttribute");
+		if(!model.containsAttribute("reservation")) {
+			model.addAttribute("reservation", new Reservation());
+		}
+	}
 }
+
+
+
+
+
+
+
+
+

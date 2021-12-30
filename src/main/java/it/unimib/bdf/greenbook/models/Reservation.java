@@ -40,8 +40,8 @@ public class Reservation {
 			   joinColumns = { @JoinColumn(name = "reservation_id")},
 			   inverseJoinColumns = {@JoinColumn(name = "customer_id")})
 	@NotEmpty(message = "Inserisci almeno un cliente nella prenotazione!")
-	private List<Customer> reservation_customers = new ArrayList<>();
-
+	private List<Customer> reservation_customers = new ArrayList<>();	
+	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "reservation_waiters",
@@ -49,6 +49,16 @@ public class Reservation {
 			inverseJoinColumns = @JoinColumn(name = "waiter_id"))
 	@NotEmpty(message = "Seleziona almeno un cameriere dai seguenti:")
 	private List<Employee> reservation_waiters;
+	
+	
+	@Transient
+	private CustomerListContainer customerListContainer = new CustomerListContainer();
+	
+	public CustomerListContainer getCustomerListContainer() {
+		this.customerListContainer.setCustomers(this.reservation_customers);
+		return this.customerListContainer;
+	}
+
 
 	@Override
 	public String toString() {
@@ -68,12 +78,13 @@ public class Reservation {
 		this.reservation_customers.add(c);
 	}
 	
+	/*
 	public Customer addReservationCustomer() {
 		Customer c = new Customer();
 		this.reservation_customers.add(c);
 		
 		return c;
-	}
+	}*/
 
 	public shiftEnumType getShiftEnum() {
 		return shiftEnum;
