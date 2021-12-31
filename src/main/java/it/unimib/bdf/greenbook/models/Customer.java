@@ -18,9 +18,6 @@ public class Customer extends Person {
 	@JoinColumn(name="recommended_by_id")
 	private Customer recommendedById;
 
-	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-	private List<Customer> recommended;
-
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "customer_allergies",

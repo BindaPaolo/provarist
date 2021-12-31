@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
 	@Query(value="SELECT customer_id FROM reservation_customers rc where rc.reservation_id = :reservation_id", nativeQuery=true)
 	public List<Long> findAllCustomersByReservationId(@Param("reservation_id") Long reservation_id);
+
+	public List<Customer> findAllCustomersByMobileNumber(String mobileNumber);
 	
 	public List<Customer> findAllCustomersByFirstNameAndLastNameAllIgnoringCase(String firstName, String lastName);
 }

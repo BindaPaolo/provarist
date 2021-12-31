@@ -68,15 +68,30 @@ public class CustomerController {
     
     @PostMapping("/addCustomer")
     public String addNewCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
-        if (result.hasErrors()) {
+        boolean recommendedByIsPersisted = isMobileNumberPersisted(customer.getRecommendedById().getMobileNumber());
+
+        if (result.hasErrors() ||
+                (!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted)) {
+
+            if(!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted){
+                model.addAttribute("recommendedByError",
+                        "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
+            }
+
             model.addAttribute("allergensList", allergenService.findAll());
             return "/customer/new-customer";
         }
 
+        // If the recommended by field is left empty by the user, make the RecommendedBy object null
+        if(customer.getRecommendedById().getMobileNumber().isEmpty()) {
+            customer.setRecommendedById(null);
+        } else {
+            customer.setRecommendedById(service.findAllCustomersByMobileNumber(customer.getRecommendedById().getMobileNumber()).get(0));
+        }
 
-        AddCustomerRefferralByMobileNumber(customer);
         service.save(customer);
         model.addAttribute("customers", service.findAll());
+
         return "/customer/customers";
     }
 
@@ -94,14 +109,31 @@ public class CustomerController {
 
     @PostMapping("/updateCustomer/{id}")
     public String updateCustomer(@PathVariable Long id, @Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
-        if (result.hasErrors()) {
+        boolean recommendedByIsPersisted = isMobileNumberPersisted(customer.getRecommendedById().getMobileNumber());
+
+        if (result.hasErrors() ||
+                (!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted)) {
+            model.addAttribute("allergensList", allergenService.findAll());
+
+            if(!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted){
+                model.addAttribute("recommendedByError",
+                        "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
+            }
+
             model.addAttribute("allergensList", allergenService.findAll());
             return "/customer/edit-customer";
         }
+
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
 
-        AddCustomerRefferralByMobileNumber(customer);
+        // If the recommended by field is left empty by the user, make the RecommendedBy object null
+        if(customer.getRecommendedById().getMobileNumber().isEmpty()) {
+            customer.setRecommendedById(null);
+        } else {
+            customer.setRecommendedById(service.findAllCustomersByMobileNumber(customer.getRecommendedById().getMobileNumber()).get(0));
+        }
+
         service.save(customer);
         model.addAttribute("customers", service.findAll());
         return "/customer/customers";
@@ -112,55 +144,15 @@ public class CustomerController {
     	log.info("Entro in deleteCustomer");
         service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
-        changeRefferal(service.findById(id).get());
+        //changeRefferal(service.findById(id).get());
         service.deleteById(id);
         model.addAttribute("customers", service.findAll());
         return "/customer/customers";
     }
 
-    //Metodo per cercare l'id di un Customer attraverso il mobileNumber e successivamente modificare la variabile "recommendedById"
-    private void AddCustomerRefferralByMobileNumber(Customer customer) {
-
-        boolean numberExist = false;
-        /*
-        Se il numero di telefono inserito dall'utente non è nullo viene ricercato, tra tutti i Customer, l'id associato
-        al numero inserito e successivamente viene modificato il suo refferral
-        Nel caso il numero inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedById" con il valore "null"
-        */
-        if(!customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
-            for (Customer c : service.findAll()) {
-                if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
-                    customer.setRecommendedById(c);
-                    numberExist = true;
-                }
-            }
-
-        } else {
-
-            customer.setRecommendedById(null);
-        }
-
-        if(!numberExist)
-            customer.setRecommendedById(null);
-    }
-
-    //Metodo per cambiare in "null" il referral
-    private void changeRefferal(Customer customer) {
-
-        /*
-        Viene ricercato, tra tutti i Customer, l'id dei Customer che sono stati consigliati dell'utente che vogliamo eliminare.
-        Successivamete per questi Customer viene cambiato il refferral a "null" e salvata la modifica.
-         */
-        for (Customer c : service.findAll()) {
-            if(c.getRecommendedById() != null) {
-                Long id = c.getRecommendedById().getId();
-
-                if (id.equals(customer.getId())) {
-                    c.setRecommendedById(null);
-                    service.save(c);
-                }
-            }
-        }
+    // Checks if the user is already present, via mobile number
+    private boolean isMobileNumberPersisted(String mobileNumber){
+        return !service.findAllCustomersByMobileNumber(mobileNumber).isEmpty();
     }
 
 }

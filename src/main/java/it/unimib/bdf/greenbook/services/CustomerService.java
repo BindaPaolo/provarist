@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +33,9 @@ public class CustomerService {
     	return repository.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(firstName, lastName);
     }
     
-    
+    public List<Customer> findAllCustomersByMobileNumber(String mobileNumber){
+        return repository.findAllCustomersByMobileNumber(mobileNumber);
+    }
     
     public List<Customer> findAllCustomersByReservationId(Long reservation_id){
     	List<Long> customer_id_list = this.repository.findAllCustomersByReservationId(reservation_id); 

@@ -22,7 +22,7 @@
                 </td>
                 <td>
                     <form:input type="text" id="firstName" path="firstName" />
-                    <form:errors path="firstName" class="validationError"/>
+                    <form:errors path="firstName" class="validationError" />
                 </td>
             </tr>
             <tr>
@@ -49,6 +49,9 @@
                 </td>
                 <td>
                     <form:input type="text" id="recommendedById.mobileNumber" path="recommendedById.mobileNumber" />
+                    <c:if test="${not empty recommendedByError}">
+                       <div class="validationError">Errore: ${recommendedByError}</div>
+                    </c:if>
                 </td>
             </tr>
             <tr>
