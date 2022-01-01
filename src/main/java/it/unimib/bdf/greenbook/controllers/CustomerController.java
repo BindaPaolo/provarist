@@ -1,28 +1,20 @@
 package it.unimib.bdf.greenbook.controllers;
 
-import it.unimib.bdf.greenbook.models.Allergen;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Controller
-@RequestMapping(value="/customer*")
+@RequestMapping(value = "/customer*")
 public class CustomerController {
 
     @Autowired
@@ -36,123 +28,165 @@ public class CustomerController {
         model.addAttribute("customers", service.findAll());
         return "/customer/customers";
     }
-    
+
     @GetMapping("/new-customer")
     public String showNewCustomerForm(Model model) {
         model.addAttribute("customer", new Customer());
 
-        // Retrieve persisted allergens list
-        List<Allergen> persistedAllergens = allergenService.findAll();
-        model.addAttribute("allergensList", persistedAllergens);
+        // Load persisted allergens list
+        model.addAttribute("allergensList", allergenService.findAll());
 
         return "/customer/new-customer";
     }
-    
+
     @GetMapping("/edit-reservation-customer")
     public String showEditCustomerForm(Model model) {
-    	log.info("Entro in CustomerController.showEditCustomerForm");
-    	//Get the customer object
-    	//that needs editing.
-    	Customer customer = (Customer) model.getAttribute("customer");
-    	log.info(customer.toString());
-    	model.addAttribute("allergensList", allergenService.findAll());
-        //model.addAttribute("allergensChecked", customer.getAllergies());
-    	return "/customer/edit-reservation-customer";
+        log.info("Entro in CustomerController.showEditCustomerForm");
+
+        // Get the customer object that needs editing.
+        Customer customer = (Customer) model.getAttribute("customer");
+        log.info(customer.toString());
+
+        // Load persisted allergens list
+        model.addAttribute("allergensList", allergenService.findAll());
+
+        return "/customer/edit-reservation-customer";
     }
-    
+
     @GetMapping("/reservation-customers/{reservation_id}")
     public String showReservationCustomers(@PathVariable Long reservation_id, Model model) {
-    	model.addAttribute("customers", service.findAllCustomersByReservationId(reservation_id));
-    	return "/customer/customers";
+        model.addAttribute("customers", service.findAllCustomersByReservationId(reservation_id));
+        return "/customer/customers";
     }
-    
+
     @PostMapping("/addCustomer")
     public String addNewCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
-        boolean recommendedByIsPersisted = isMobileNumberPersisted(customer.getRecommendedById().getMobileNumber());
 
-        if (result.hasErrors() ||
-                (!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted)) {
+        // Get the mobile number of the referral user
+        String recommendedByMobileNumber = customer.getRecommendedById().getMobileNumber();
 
-            if(!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted){
-                model.addAttribute("recommendedByError",
-                        "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
-            }
-
-            model.addAttribute("allergensList", allergenService.findAll());
+        // Check for validation errors or data lacks in the database persistence
+        if (checkForErrors(result, model, recommendedByMobileNumber))
             return "/customer/new-customer";
-        }
 
-        // If the recommended by field is left empty by the user, make the RecommendedBy object null
-        if(customer.getRecommendedById().getMobileNumber().isEmpty()) {
-            customer.setRecommendedById(null);
-        } else {
-            customer.setRecommendedById(service.findAllCustomersByMobileNumber(customer.getRecommendedById().getMobileNumber()).get(0));
-        }
+        // Check if the recommended-by field is left empty
+        fixRecommendedByIDForeignKey(customer, recommendedByMobileNumber);
 
+        // Persist customer's data
         service.save(customer);
-        model.addAttribute("customers", service.findAll());
 
+        // Show all customers' data in customers list
+        model.addAttribute("customers", service.findAll());
         return "/customer/customers";
     }
 
 
     @GetMapping("/showCustomer/{id}")
     public String showCustomerById(@PathVariable Long id, Model model) {
+
+        // Check if the customer's id exists, otherwise throw an exception and show error page
         Customer customer = service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
 
         model.addAttribute("customer", customer);
+
+        // Load persisted allergens list
         model.addAttribute("allergensList", allergenService.findAll());
 
+        // Show the page meant to edit the customer's data
         return "/customer/edit-customer";
     }
 
     @PostMapping("/updateCustomer/{id}")
     public String updateCustomer(@PathVariable Long id, @Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
-        boolean recommendedByIsPersisted = isMobileNumberPersisted(customer.getRecommendedById().getMobileNumber());
 
-        if (result.hasErrors() ||
-                (!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted)) {
-            model.addAttribute("allergensList", allergenService.findAll());
+        // Check if the customer's id exists, otherwise throw an exception and show error page
+        service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
 
-            if(!customer.getRecommendedById().getMobileNumber().isEmpty() && !recommendedByIsPersisted){
-                model.addAttribute("recommendedByError",
-                        "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
-            }
+        // Get the mobile number of the referral user
+        String recommendedByMobileNumber = customer.getRecommendedById().getMobileNumber();
 
-            model.addAttribute("allergensList", allergenService.findAll());
+        // Check for validation errors or data lacks in the database persistence
+        if (checkForErrors(result, model, recommendedByMobileNumber))
             return "/customer/edit-customer";
-        }
 
-        service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
+        // Check if the recommended-by field is left empty
+        fixRecommendedByIDForeignKey(customer, recommendedByMobileNumber);
 
-        // If the recommended by field is left empty by the user, make the RecommendedBy object null
-        if(customer.getRecommendedById().getMobileNumber().isEmpty()) {
-            customer.setRecommendedById(null);
-        } else {
-            customer.setRecommendedById(service.findAllCustomersByMobileNumber(customer.getRecommendedById().getMobileNumber()).get(0));
-        }
-
+        // Persist updated customer's data
         service.save(customer);
+
+        // Show all customers' data in customers list
         model.addAttribute("customers", service.findAll());
         return "/customer/customers";
     }
 
     @PostMapping("/deleteCustomer/{id}")
     public String deleteCustomer(@PathVariable Long id, Model model) {
-    	log.info("Entro in deleteCustomer");
-        service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
-        //changeRefferal(service.findById(id).get());
+        log.info("Entro in deleteCustomer");
+
+        // Check if the customer's id exists, otherwise throw an exception and show error page
+        service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
+
+        // Delete the persisted customer by id
         service.deleteById(id);
+
         model.addAttribute("customers", service.findAll());
         return "/customer/customers";
     }
 
-    // Checks if the user is already present, via mobile number
-    private boolean isMobileNumberPersisted(String mobileNumber){
-        return !service.findAllCustomersByMobileNumber(mobileNumber).isEmpty();
+    /**
+     * There is an error if:
+     * - there is some validation error
+     * - the customer related to the mobile number given by the user is not persisted on the database (but only
+     * if the mobile number field contains something, otherwise it doesn't get checked)
+     *
+     * @param result                    object that eventually contains validation errors
+     * @param model                     set of attributes of the .jsp page shown to the user
+     * @param recommendedByMobileNumber mobile number of the recommended-by customer
+     * @return true if there is an error and some page needs to be shown to the user; false otherwise
+     */
+    private boolean checkForErrors(BindingResult result, Model model, String recommendedByMobileNumber) {
+
+        // Check if the customer related to the mobile number given by the user is actually persisted on the database
+        boolean recommendedByIsPersisted =
+                !service.findAllCustomersByMobileNumber((recommendedByMobileNumber)).isEmpty();
+
+        // IF -> presence of validation errors
+        // OR IF -> user has entered some recommended-by mobile phone AND it is not persisted in the database
+        if (result.hasErrors() || (!recommendedByMobileNumber.isEmpty() && !recommendedByIsPersisted)) {
+
+            // If the user has given a referral mobile number but it's not persisted, show an error message
+            if (!recommendedByMobileNumber.isEmpty() && !recommendedByIsPersisted) {
+                model.addAttribute("recommendedByError",
+                        "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
+            }
+
+            // Load persisted allergens list
+            model.addAttribute("allergensList", allergenService.findAll());
+
+            // Show again the page meant to insert/edit the customer's data
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * If the recommended by field is left empty by the user, make the RecommendedBy object null so that the foreign
+     * key in the database is set to null
+     *
+     * @param customer                  the customer object
+     * @param recommendedByMobileNumber mobile number of the recommended-by customer
+     */
+    private void fixRecommendedByIDForeignKey(Customer customer, String recommendedByMobileNumber) {
+        if (recommendedByMobileNumber.isEmpty()) {
+            // If the recommended by field is left empty by the user, make the RecommendedBy object null
+            customer.setRecommendedById(null);
+        } else {
+            // Fetch the customer in the database which has the mobile number given by the user
+            customer.setRecommendedById(service.findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
+        }
     }
 
 }

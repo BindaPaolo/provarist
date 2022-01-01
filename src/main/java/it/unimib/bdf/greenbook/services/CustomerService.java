@@ -2,12 +2,10 @@ package it.unimib.bdf.greenbook.services;
 
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.repositories.CustomerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.extern.slf4j.Slf4j;
-
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +37,7 @@ public class CustomerService {
     
     public List<Customer> findAllCustomersByReservationId(Long reservation_id){
     	List<Long> customer_id_list = this.repository.findAllCustomersByReservationId(reservation_id); 
-    	List<Customer> customer_obj_list = new ArrayList<Customer>();
+    	List<Customer> customer_obj_list = new ArrayList<>();
     	
     	for (Long customer_id : customer_id_list) {
     		customer_obj_list.add(this.findById(customer_id).get());

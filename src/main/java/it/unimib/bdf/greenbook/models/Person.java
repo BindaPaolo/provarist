@@ -1,8 +1,9 @@
 package it.unimib.bdf.greenbook.models;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import lombok.Data;
 
 @Data
 @MappedSuperclass
@@ -20,11 +21,11 @@ public class Person implements Cloneable {
     private String lastName;
 
     public Object clone() {
-    	try {
-    		return super.clone();
-    	}catch(Exception e) {
-    		return null;
-    	}
+        try {
+            return super.clone();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

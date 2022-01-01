@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.validation.Valid;
-
 @Controller
 public class AllergenController {
 
@@ -34,39 +32,50 @@ public class AllergenController {
 
     @PostMapping(value = "/addAllergen", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String addNewAllergen(@ModelAttribute Allergen allergen, BindingResult result, Model model) {
+        // If there are some validation errors:
         if (result.hasErrors()) {
             return "allergen/new-allergen";
         }
+
         service.save(allergen);
+
         model.addAttribute("allergens", service.findAll());
         return "allergen/allergens";
     }
 
     @GetMapping("/showAllergen/{id}")
     public String showAllergenById(@PathVariable Long id, Model model) {
+        // Check if the allergen is actually persisted in the database, otherwise show an error page
         Allergen allergen = service.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid allergen Id:" + id));
+
         model.addAttribute("allergen", allergen);
         return "allergen/edit-allergen";
     }
 
     @PostMapping("/updateAllergen/{id}")
     public String updateAllergen(@PathVariable Long id, @ModelAttribute Allergen allergen, BindingResult result, Model model) {
+        // Check if the allergen is actually persisted in the database, otherwise show an error page
+        service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid allergen Id:" + id));
+
+        // If there are some validation errors:
         if (result.hasErrors()) {
             return "allergen/edit-allergen";
         }
-        service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid allergen Id:" + id));
+
         service.save(allergen);
+
         model.addAttribute("allergens", service.findAll());
         return "allergen/allergens";
     }
 
     @PostMapping("/deleteAllergen/{id}")
     public String deleteAllergen(@PathVariable Long id, Model model) {
-        service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid allergen Id:" + id));
+        // Check if the allergen is actually persisted in the database, otherwise show an error page
+        service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid allergen Id:" + id));
+
         service.deleteById(id);
+
         model.addAttribute("allergens", service.findAll());
         return "allergen/allergens";
     }

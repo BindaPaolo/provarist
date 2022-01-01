@@ -16,47 +16,56 @@ import javax.validation.Valid;
 
 @Controller
 public class EmployeeController {
-    
-	@Autowired
+
+    @Autowired
     private EmployeeService service;
-	
-	@GetMapping("/employees")
+
+    @GetMapping("/employees")
     public String showAllEmployees(Model model) {
         model.addAttribute("employees", service.findAll());
         return "employee/employees";
     }
 
-	@GetMapping("/new-employee")
+    @GetMapping("/new-employee")
     public String showNewEmployeeForm(Model model) {
         model.addAttribute("employee", new Employee());
         return "employee/new-employee";
     }
-	
-	@PostMapping(value = "/addEmployee", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+
+    @PostMapping(value = "/addEmployee", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String addNewEmployee(@Valid @ModelAttribute Employee employee, BindingResult result, Model model) {
+        // Check for validation errors
         if (result.hasErrors()) {
             return "employee/new-employee";
         }
+
         service.save(employee);
+
         model.addAttribute("employees", service.findAll());
         return "employee/employees";
     }
-	
-	@GetMapping("/showEmployee/{id}")
+
+    @GetMapping("/showEmployee/{id}")
     public String showEmployeeById(@PathVariable Long id, Model model) {
-        Employee employee = service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+        // Check if the employee is actually persisted in the database, otherwise show an error page
+        Employee employee =
+                service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+
         model.addAttribute("employee", employee);
         return "employee/edit-employee";
     }
 
     @PostMapping("/updateEmployee/{id}")
     public String updateEmployee(@PathVariable Long id, @Valid @ModelAttribute Employee employee, BindingResult result, Model model) {
+        // Check if the employee is actually persisted in the database, otherwise show an error page
+        service.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+
+        // Check for validation errors
         if (result.hasErrors()) {
             return "employee/edit-employee";
         }
-        service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+
         service.save(employee);
         model.addAttribute("employees", service.findAll());
         return "employee/employees";
@@ -64,9 +73,11 @@ public class EmployeeController {
 
     @PostMapping("/deleteEmployee/{id}")
     public String deleteEmployee(@PathVariable Long id, Model model) {
-        service.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+        // Check if the employee is actually persisted in the database, otherwise show an error page
+        service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+
         service.deleteById(id);
+
         model.addAttribute("employees", service.findAll());
         return "employee/employees";
     }
