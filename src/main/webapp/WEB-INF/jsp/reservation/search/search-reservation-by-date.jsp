@@ -23,18 +23,21 @@
 				<form:errors path="date" class="validationError"/>
               </td>
             </tr>
+            
             <br>
+            
             <tr>
-                <td> <br/> <button type="submit" formaction="/reservation/search/cancelSearchReservation">Annulla</button>
-               </td>
+              <td>
+                  <br/><button type="submit" formaction="/reservation/search/executeSearchReservationByDate">Esegui Ricerca</button>
+              </td>
             </tr>
             
              <br>
              
             <tr>
-              <td>
-                  <br/><button type="submit" formaction="/reservation/search/executeSearchReservationByDate">Esegui Ricerca</button>
-              </td>
+                <td> 
+                	<br/> <button type="submit" formaction="/reservation/search/cancelSearchReservation">Annulla</button>
+               </td>
             </tr>
 		</form:form>	
 	   </div>

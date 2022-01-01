@@ -16,11 +16,8 @@ public class Customer extends Person {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="recommended_by_id")
-	private Customer recommendedById;
-
-	@OneToMany(mappedBy = "recommendedById", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private List<Customer> recommended;
-
+	private Customer recommendedBy;
+	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "customer_allergies",
@@ -58,20 +55,12 @@ public class Customer extends Person {
 		this.mobileNumber = mobileNumber;
 	}
 
-	public Customer getRecommendedById() {
-		return recommendedById;
+	public void setRecommendedBy(Customer recommendedBy) {
+		this.recommendedBy = recommendedBy;
 	}
-
-	public void setRecommendedById(Customer recommendedById) {
-		this.recommendedById = recommendedById;
-	}
-
-	public List<Customer> getRecommended() {
-		return recommended;
-	}
-
-	public void setRecommended(List<Customer> recommended) {
-		this.recommended = recommended;
+	
+	public Customer getRecommendedBy() {
+		return recommendedBy;
 	}
 
 	public Set<Allergen> getAllergies() {

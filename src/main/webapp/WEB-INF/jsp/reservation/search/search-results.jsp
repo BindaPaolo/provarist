@@ -62,7 +62,14 @@
 			            </table>
 			        </div>
 			        <br>
-			        	<div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}">Elimina prenotazione</form:button></div>
+		              <c:choose>
+		              	<c:when test="${searchType == 'byCustomer'}">
+  							<div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}?searchType=${searchType}&firstName=${firstName}&lastName=${lastName}">Elimina prenotazione</form:button></div>
+  						</c:when>
+  						<c:otherwise>
+  							<div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}?searchType=${searchType}&date=${date}">Elimina prenotazione</form:button></div>
+  						</c:otherwise>
+  					</c:choose>
 			        <hr noshade size="20">
 				</c:forEach>
 		 	</form:form>

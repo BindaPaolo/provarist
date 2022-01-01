@@ -2,6 +2,8 @@ package it.unimib.bdf.greenbook.services;
 
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.repositories.CustomerRepository;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +14,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 @Transactional
-
 public class CustomerService {
 
 	@Autowired
@@ -57,7 +59,21 @@ public class CustomerService {
     }
 
     public void deleteById(Long id) {
+    	log.info("\n\nENTRO in deleteById\n\n");
+    	updateRecommendedBy(id);
         repository.deleteById(id);
+    }
+    
+    public void updateRecommendedBy(Long id) {
+    	for(Customer c: repository.findAll()) {
+    		
+    		if(c.getRecommendedBy() != null) {
+    			if(c.getRecommendedBy().getId() == id) {
+    				c.setRecommendedBy(null);
+    				repository.updateRecommendedBy(c.getId(), null);
+    			}
+    		}
+    	}
     }
 
 }

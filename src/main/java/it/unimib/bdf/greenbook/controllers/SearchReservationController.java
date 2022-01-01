@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.unimib.bdf.greenbook.models.Customer;
 
@@ -22,8 +23,7 @@ import it.unimib.bdf.greenbook.models.ReservationListContainer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Slf4j
 @Controller
@@ -65,6 +65,9 @@ public class SearchReservationController {
 
 
 		model.addAttribute("reservationListContainer", reservationListContainer);
+		model.addAttribute("searchType", "byCustomer");
+		model.addAttribute("firstName", customer.getFirstName());
+		model.addAttribute("lastName", customer.getLastName());
 		
 		return "/reservation/search/search-results";
 	}
@@ -85,6 +88,9 @@ public class SearchReservationController {
 		ReservationListContainer reservationListContainer = new ReservationListContainer();
 		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(date));
 		model.addAttribute("reservationListContainer", reservationListContainer);
+		model.addAttribute("searchType", "byDate");
+		model.addAttribute("date", date);
+
 		return "/reservation/search/search-results";
 	}
 	
@@ -94,37 +100,32 @@ public class SearchReservationController {
 		return "/reservation/reservations";
 	}
 	
-	
-    //Al momento questa funzione elimina la reservation solo dalla lista
-    //delle reservations che vengono mostrare in search-result.jsp 
-    //e non dal dbms, in quanto l'eliminazione di una reservation (al momento)
-    //triggera un Referential Constraint violation.
     @PostMapping("/deleteReservation/{id}")
     public String deleteReservation(@PathVariable Long id, 
     								@ModelAttribute("reservations") ReservationListContainer reservationListContainer,
+    								@RequestParam(value="searchType", required=false) String searchType,
+    								@RequestParam(value="firstName", required=false) String firstName,
+    								@RequestParam(value="lastName", required=false) String lastName,
+    								@RequestParam(value="date", required=false) String date,
     								Model model) {
-    	log.info("Entro in deleteReservation");
-    	log.info("Lista delle prenotazioni:  "+reservationListContainer.getReservations());   	
-    	//Elimino la prenotazione selezionata dalla lista delle prenotazioni
-    	//che verrano mostrate in search-results.jsp
-    	reservationListContainer.getReservations().removeIf(r -> (r.getReservation_id() == id));
+    	
+		reservationService.deleteById(id);
 
-    	
-    	Reservation reservationToDelete = (Reservation) reservationService.findById(id)
-                							.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-    	log.info("Reservation da eliminare: "+reservationToDelete.toString());
-    	
-    	List<Reservation> newReservationList = new ArrayList<>();
-    	for(Reservation r : reservationListContainer.getReservations()) {
-    		newReservationList.add(reservationService.findById(r.getReservation_id())
-    							.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id)));
+    	if (searchType.equals("byCustomer")) {
+    		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(firstName, lastName));
+    		model.addAttribute("firstName", firstName);
+    		model.addAttribute("lastName", lastName);
+    	}  	
+    	else{
+    		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(LocalDate.parse(date)));    		
+    		model.addAttribute("date", date);
     	}
-    	reservationListContainer.setReservations(newReservationList);
     	
-    	//Ancora non posso farlo. Triggera un Referential Constrain error.
-    	reservationService.deleteById(id); //da errore!!
-    	
+
 		model.addAttribute("reservationListContainer", reservationListContainer);
+		model.addAttribute("searchType", searchType);
+
+		
         return "/reservation/search/search-results";
     }
 	
