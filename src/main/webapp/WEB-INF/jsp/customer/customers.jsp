@@ -40,7 +40,7 @@
                             <td>${customer.lastName}</td>
                             <td>${customer.allergies}</td>
                             <td>${customer.mobileNumber}</td>
-                            <td>${customer.recommendedById.id}</td>
+                            <td>${customer.recommendedBy.id}</td>
                             <td>
                                 <a href="/customer/showCustomer/${customer.id}">Modifica</a>
                                 <form action="/customer/deleteCustomer/${customer.id}" method="post">

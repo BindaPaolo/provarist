@@ -249,15 +249,15 @@ public class ReservationController {
         /*
         Se il numero di telefono inserito dall'utente non è nullo viene ricercato, tra tutti i Customer, l'id associato
         al numero inserito e successivamente viene modificato il suo refferral
-        Nel caso il numero inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedById" con il valore "null"
+        Nel caso il numero inserito dall'utente fosse nullo viene aggiornata la variabile "recommendedBy" con il valore "null"
         */
-            if (customer.getRecommendedById() != null && !customer.getRecommendedById().getMobileNumber().equalsIgnoreCase("")) {
+            if (customer.getRecommendedBy() != null && !customer.getRecommendedBy().getMobileNumber().equalsIgnoreCase("")) {
 
                 //Controller se il Customer è presente tra quelli inseriti nella prenotazione
                 for (Customer c : reservation.getReservation_customers()) {
-                    if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
+                    if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedBy().getMobileNumber())) {
 
-                        customer.setRecommendedById(c);
+                        customer.setRecommendedBy(c);
                         numberExist = true;
                         break;
                     }
@@ -267,9 +267,9 @@ public class ReservationController {
                 if (!numberExist) {
                     //Controllo se il Customer è presente tra quelli già inseriti
                     for (Customer c : customer_all) {
-                        if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedById().getMobileNumber())) {
+                        if (c.getMobileNumber().equalsIgnoreCase(customer.getRecommendedBy().getMobileNumber())) {
 
-                            customer.setRecommendedById(c);
+                            customer.setRecommendedBy(c);
                             numberExist = true;
                             break;
                         }
@@ -278,12 +278,12 @@ public class ReservationController {
 
             } else {
 
-                customer.setRecommendedById(null);
+                customer.setRecommendedBy(null);
             }
 
             //Se il numero di telefono inserito dall'utente non è stato trovato la raccomandazione non esiste e di conseguenza viene salvata come nulla
             if (!numberExist)
-                customer.setRecommendedById(null);
+                customer.setRecommendedBy(null);
         }
 
         //log.info("\n\n\n\n\n DENTRO FOR: " + reservation.getReservation_customers().toString() + "\n\n\n\n\n");

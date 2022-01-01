@@ -45,10 +45,10 @@
             </tr>
             <tr>
                 <td>
-                    <form:label path="recommendedById.mobileNumber">Raccomandato da (Numero di telefono)</form:label>
+                    <form:label path="recommendedBy.mobileNumber">Raccomandato da (Numero di telefono)</form:label>
                 </td>
                 <td>
-                    <form:input type="text" id="recommendedById.mobileNumber" path="recommendedById.mobileNumber" />
+                    <form:input type="text" id="recommendedBy.mobileNumber" path="recommendedBy.mobileNumber" />
                     <c:if test="${not empty recommendedByError}">
                        <div class="validationError">Errore: ${recommendedByError}</div>
                     </c:if>

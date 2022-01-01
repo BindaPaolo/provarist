@@ -13,9 +13,9 @@ public class Customer extends Person {
     @NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
     private String mobileNumber;
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "recommended_by_id")
-    private Customer recommendedById;
+    private Customer recommendedBy;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -54,12 +54,12 @@ public class Customer extends Person {
         this.mobileNumber = mobileNumber;
     }
 
-    public Customer getRecommendedById() {
-        return recommendedById;
+    public Customer getRecommendedBy() {
+        return recommendedBy;
     }
 
-    public void setRecommendedById(Customer recommendedById) {
-        this.recommendedById = recommendedById;
+    public void setRecommendedBy(Customer recommendedBy) {
+        this.recommendedBy = recommendedBy;
     }
 
     public Set<Allergen> getAllergies() {

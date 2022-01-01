@@ -1,9 +1,12 @@
 package it.unimib.bdf.greenbook.controllers;
 
 import it.unimib.bdf.greenbook.models.Customer;
+import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
+import it.unimib.bdf.greenbook.services.ReservationService;
 import lombok.extern.slf4j.Slf4j;
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -22,6 +26,9 @@ public class CustomerController {
 
     @Autowired
     private AllergenService allergenService;
+
+    @Autowired
+    private ReservationService reservationService;
 
     @GetMapping("/customers")
     public String showAllCustomers(Model model) {
@@ -43,10 +50,6 @@ public class CustomerController {
     public String showEditCustomerForm(Model model) {
         log.info("Entro in CustomerController.showEditCustomerForm");
 
-        // Get the customer object that needs editing.
-        Customer customer = (Customer) model.getAttribute("customer");
-        log.info(customer.toString());
-
         // Load persisted allergens list
         model.addAttribute("allergensList", allergenService.findAll());
 
@@ -63,14 +66,14 @@ public class CustomerController {
     public String addNewCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
 
         // Get the mobile number of the referral user
-        String recommendedByMobileNumber = customer.getRecommendedById().getMobileNumber();
+        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
 
         // Check for validation errors or data lacks in the database persistence
         if (checkForErrors(result, model, recommendedByMobileNumber))
             return "/customer/new-customer";
 
         // Check if the recommended-by field is left empty
-        fixRecommendedByIDForeignKey(customer, recommendedByMobileNumber);
+        fixRecommendedByForeignKey(customer, recommendedByMobileNumber);
 
         // Persist customer's data
         service.save(customer);
@@ -104,14 +107,14 @@ public class CustomerController {
         service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
 
         // Get the mobile number of the referral user
-        String recommendedByMobileNumber = customer.getRecommendedById().getMobileNumber();
+        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
 
         // Check for validation errors or data lacks in the database persistence
         if (checkForErrors(result, model, recommendedByMobileNumber))
             return "/customer/edit-customer";
 
         // Check if the recommended-by field is left empty
-        fixRecommendedByIDForeignKey(customer, recommendedByMobileNumber);
+        fixRecommendedByForeignKey(customer, recommendedByMobileNumber);
 
         // Persist updated customer's data
         service.save(customer);
@@ -126,7 +129,14 @@ public class CustomerController {
         log.info("Entro in deleteCustomer");
 
         // Check if the customer's id exists, otherwise throw an exception and show error page
-        service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
+        Customer customerToBeDeleted = service.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Invalid customer Id:" + id));
+
+        // Set recommended-by field to null before removing the record (so that the recommended-by customer persists)
+        customerToBeDeleted.setRecommendedBy(null);
+
+        // Set customer's ID to null in related reservations (so that they persist)
+        cleanCustomerReservations(customerToBeDeleted);
 
         // Delete the persisted customer by id
         service.deleteById(id);
@@ -179,13 +189,33 @@ public class CustomerController {
      * @param customer                  the customer object
      * @param recommendedByMobileNumber mobile number of the recommended-by customer
      */
-    private void fixRecommendedByIDForeignKey(Customer customer, String recommendedByMobileNumber) {
+    private void fixRecommendedByForeignKey(Customer customer, String recommendedByMobileNumber) {
         if (recommendedByMobileNumber.isEmpty()) {
             // If the recommended by field is left empty by the user, make the RecommendedBy object null
-            customer.setRecommendedById(null);
+            customer.setRecommendedBy(null);
         } else {
             // Fetch the customer in the database which has the mobile number given by the user
-            customer.setRecommendedById(service.findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
+            customer.setRecommendedBy(service.findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
+        }
+    }
+
+    /**
+     * Before deleting the customer, remove his reference from all the reservations that include him
+     *
+     * @param customerToBeDeleted the customer being removed from the database
+     *
+     */
+    private void cleanCustomerReservations(Customer customerToBeDeleted) {
+        List<Reservation> customerToBeDeletedReservations =
+                reservationService.findAllReservationsByCustomerId(customerToBeDeleted.getId());
+
+        for(Reservation reservation: customerToBeDeletedReservations){
+            List<Customer> reservationCustomers = reservation.getReservation_customers();
+
+            reservationCustomers.removeIf(
+                    reservationCustomer -> reservationCustomer.getId() == customerToBeDeleted.getId());
+
+            reservationService.save(reservation);
         }
     }
 
