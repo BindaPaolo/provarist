@@ -16,7 +16,7 @@
     <hr />
 
     <ul>
-        <li><a href="/reservation/new-reservation">Nuova prenotazione</a></li>
+        <li><a href="/reservation/new/new-reservation">Nuova prenotazione</a></li>
         <li><a href="/reservation/search/search-reservation-by-customer">Ricerca prenotazione per cliente</a></li>
         <li><a href="/reservation/search/search-reservation-by-date">Ricerca prenotazione per data</a></li>
     </ul>

@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import it.unimib.bdf.greenbook.models.Customer;
-import it.unimib.bdf.greenbook.models.CustomerListContainer;
+
 import it.unimib.bdf.greenbook.models.Reservation;
-import it.unimib.bdf.greenbook.services.CustomerService;
+
 import it.unimib.bdf.greenbook.services.ReservationService;
 import it.unimib.bdf.greenbook.models.ReservationListContainer;
-import it.unimib.bdf.greenbook.models.CustomerListContainer;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -27,12 +27,11 @@ import java.util.List;
 
 @Slf4j
 @Controller
-@RequestMapping(value= "/reservation/search*")
+@RequestMapping("/reservation/search*")
 public class SearchReservationController {
 	@Autowired
 	private ReservationService reservationService;
-	@Autowired
-	private CustomerService customerService;
+
 	
     @GetMapping("/search-reservation-by-customer")
     public String searchReservationByCustomer(Model model) {
@@ -60,18 +59,6 @@ public class SearchReservationController {
             return "/reservation/search/search-reservation-by-customer";
         }
 		
-		/*
-		//Get all customers with given firstName and lastName.
-		//Note: there can be multiple rows in customers with same pair (firstName, lastName)
-		//		and different IDs.
-		List<Customer> customers = customerService.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(customer.getFirstName(), customer.getLastName());
-		
-		List<Reservation> reservations = new ArrayList<>();
-		for(Customer c : customers) {
-			Long id = c.getId();
-			reservations.addAll(reservationService.findAllReservationsByCustomerId(id));
-		}
-		*/
 		
 		ReservationListContainer reservationListContainer = new ReservationListContainer();
 		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(customer.getFirstName(), customer.getLastName()));

@@ -1,6 +1,5 @@
 package it.unimib.bdf.greenbook.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationListContainer {

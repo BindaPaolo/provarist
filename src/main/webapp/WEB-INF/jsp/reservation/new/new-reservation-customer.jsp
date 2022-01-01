@@ -7,13 +7,12 @@
     <%@ page isELIgnored="false" %>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
-    <title>Modifica Cliente</title>
+    <title>Aggiungi cliente alla prenotazione</title>
 </head>
 <body>
-    <h2>Modifica Cliente</h2>
-
-    <form:form  modelAttribute="customer" method="post">
-        <table>
+    <h2>Aggiungi cliente alla prenotazione</h2>
+	<form:form   modelAttribute="customer" method="post">
+        <table>	
             <tr>
                 <td>
                     <form:label path="firstName">Nome</form:label>
@@ -46,26 +45,27 @@
                     <form:label path="allergies">Allergeni</form:label>
                 </td>
                 <td>
-					<table>
-					    <c:forEach items="${allergensList}" var="allergen">
-					        <tr>
-					            <td><form:checkbox path="allergies" value="${allergen}" /></td>
-					            <td><c:out value="${allergen.name}"></c:out></td>
-					        </tr>
-					    </c:forEach>
-					</table>
+                    <table>
+                        <c:forEach items="${allergensList}" var="allergen">
+                            <tr>
+                                <td><form:checkbox path="allergies" value="${allergen}" /></td>
+                                <td><c:out value="${allergen.name}" /></td>
+                            </tr>
+                        </c:forEach>
+                    </table>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <br/><button type="submit" formaction="/reservation/editReservationCustomer?action=cancel">Annulla</button>
+                    <br/><button type="submit" formaction="/reservation/new/newReservationCustomer?action=add">Aggiungi cliente</button>
                 </td>
-                <td>
-                    <br/><button type="submit" formaction="/reservation/editReservationCustomer?action=save">Salva modifiche</button>
-                </td>
-            </tr>
+   
+              	<td>
+    				<br/><button type="submit" formaction="/reservation/new/newReservationCustomer?action=cancel">Annulla</button>
+				</td>
+			</tr>
         </table>
-    </form:form>
+     </form:form>
 
 </body>
 </html>

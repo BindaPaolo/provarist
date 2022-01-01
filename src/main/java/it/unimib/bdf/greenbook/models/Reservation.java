@@ -50,7 +50,7 @@ public class Reservation {
 	@NotEmpty(message = "Seleziona almeno un cameriere dai seguenti:")
 	private List<Employee> reservation_waiters;
 	
-	
+	/*
 	@Transient
 	private CustomerListContainer customerListContainer = new CustomerListContainer();
 	
@@ -64,7 +64,7 @@ public class Reservation {
 	public String toString() {
 		return "Reservation [reservation_id=" + reservation_id + ", shiftEnum=" + shiftEnum + ", date=" + date
 				+ ", reservation_customers=" + reservation_customers + "]";
-	}
+	}*/
 	
 	public long getReservation_id() {
 		return reservation_id;
