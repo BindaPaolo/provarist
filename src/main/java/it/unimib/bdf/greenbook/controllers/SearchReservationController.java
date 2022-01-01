@@ -122,7 +122,7 @@ public class SearchReservationController {
     	reservationListContainer.setReservations(newReservationList);
     	
     	//Ancora non posso farlo. Triggera un Referential Constrain error.
-    	//reservationService.deleteById(id); //da errore!!
+    	reservationService.deleteById(id); //da errore!!
     	
 		model.addAttribute("reservationListContainer", reservationListContainer);
         return "/reservation/search/search-results";

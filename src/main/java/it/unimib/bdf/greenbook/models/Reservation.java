@@ -34,7 +34,7 @@ public class Reservation {
 	@NotNull(message="Seleziona la data!")
 	private LocalDate date;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinTable(name = "reservation_customers",
 			   joinColumns = { @JoinColumn(name = "reservation_id")},
@@ -42,7 +42,7 @@ public class Reservation {
 	@NotEmpty(message = "Inserisci almeno un cliente nella prenotazione!")
 	private List<Customer> reservation_customers = new ArrayList<>();	
 	
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(
 			name = "reservation_waiters",
 			joinColumns = @JoinColumn(name = "reservation_id"),
@@ -50,21 +50,6 @@ public class Reservation {
 	@NotEmpty(message = "Seleziona almeno un cameriere dai seguenti:")
 	private List<Employee> reservation_waiters;
 	
-	/*
-	@Transient
-	private CustomerListContainer customerListContainer = new CustomerListContainer();
-	
-	public CustomerListContainer getCustomerListContainer() {
-		this.customerListContainer.setCustomers(this.reservation_customers);
-		return this.customerListContainer;
-	}
-
-
-	@Override
-	public String toString() {
-		return "Reservation [reservation_id=" + reservation_id + ", shiftEnum=" + shiftEnum + ", date=" + date
-				+ ", reservation_customers=" + reservation_customers + "]";
-	}*/
 	
 	public long getReservation_id() {
 		return reservation_id;
