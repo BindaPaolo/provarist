@@ -28,8 +28,6 @@ public class CustomerController {
     @Autowired
     private AllergenService allergenService;
 
-    @Autowired
-    private ReservationService reservationService;
 
     @GetMapping("/customers")
     public String showAllCustomers(Model model) {
@@ -66,15 +64,9 @@ public class CustomerController {
     @PostMapping("/addCustomer")
     public String addNewCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, Model model) {
 
-        // Get the mobile number of the referral user
-        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
-
         // Check for validation errors or data lacks in the database persistence
         if (checkForErrors(result, model, customer, true))
             return "/customer/new-customer";
-
-        // Check if the recommended-by field is left empty
-        fixRecommendedByForeignKey(customer);
 
         // Persist customer's data
         service.save(customer);
@@ -110,9 +102,6 @@ public class CustomerController {
         // Check for validation errors or data lacks in the database persistence
         if (checkForErrors(result, model, customer, false))
             return "/customer/edit-customer";
-
-        // Check if the recommended-by field is left empty
-        fixRecommendedByForeignKey(customer);
 
         // Persist updated customer's data
         service.save(customer);
@@ -235,22 +224,6 @@ public class CustomerController {
         return alreadyPresent;
     }
 
-    /**
-     * If the recommended by field is left empty by the user, make the RecommendedBy object null so that the foreign
-     * key in the database is set to null
-     *
-     * @param customer the customer object
-     */
-    private void fixRecommendedByForeignKey(Customer customer) {
-        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
 
-        if (recommendedByMobileNumber.isEmpty()) {
-            // If the recommended by field is left empty by the user, make the RecommendedBy object null
-            customer.setRecommendedBy(null);
-        } else {
-            // Fetch the customer in the database which has the mobile number given by the user
-            customer.setRecommendedBy(service.findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
-        }
-    }
 
 }

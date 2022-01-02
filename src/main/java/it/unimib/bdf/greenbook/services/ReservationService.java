@@ -57,15 +57,12 @@ public class ReservationService{
     	//Save the reservation object.
     	//Save each customer object.
 
+    	for (Customer customer : reservation.getReservation_customers()) {
+        	customerService.save(customer);
+    	}
+    	
         log.info("\n\n\n" + reservation.toString() + "\n\n\n\n");
     	reservationRepository.save(reservation);
-
-
-
-
-    	for (Customer customer : reservation.getReservation_customers()) {
-        	customerRepository.save(customer);
-    	}
     	
         return reservation;
     }

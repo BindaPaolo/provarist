@@ -7,7 +7,7 @@ import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import it.unimib.bdf.greenbook.services.AllergenService;
-
+import it.unimib.bdf.greenbook.controllers.CustomerController;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +42,10 @@ public class NewReservationController {
 	
 	@Autowired
 	private AllergenService allergenService;
-
     
     @GetMapping("/new-reservation")
     public String showNewReservationForm(Model model) {
     	log.info("Entro in new-reservation");
-    	
 
 		// Show persisted waiters
 		model.addAttribute("waitersList", getPersistedWaiters());
