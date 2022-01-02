@@ -5,9 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
-@Data
+
 @MappedSuperclass
-public class Person implements Cloneable {
+public class Person implements Cloneable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -20,12 +20,42 @@ public class Person implements Cloneable {
     @NotEmpty(message = "Il cognome non puo' essere lasciato vuoto")
     private String lastName;
 
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (Exception e) {
-            return null;
-        }
-    }
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	
+	
+	public Object clone() {
+		try {
+			return super.clone();
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	
+	
+	
+
 
 }

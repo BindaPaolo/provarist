@@ -23,7 +23,9 @@ public class ReservationService{
     private ReservationRepository reservationRepository;
 	@Autowired
     private CustomerRepository customerRepository;
-
+	@Autowired
+	private CustomerService customerService;
+	
     
 
     @Autowired
@@ -70,7 +72,17 @@ public class ReservationService{
 
 
     public void deleteById(Long id) {
+    	//Take care of the recommended by stuff
+    	Reservation reservation = this.findById(id)
+    			.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
+    	for(Customer c : reservation.getReservation_customers()) {
+    		customerService.updateRecommendedBy(c.getId());
+    	}
     	reservationRepository.deleteById(id);
+    }
+    
+    public List<Reservation> findAllReservationByCustomerFirstNameAndLastName(String firstName, String lastName){
+    	return reservationRepository.findAllReservationByCustomerFirstNameAndLastName(firstName, lastName);
     }
 
 }

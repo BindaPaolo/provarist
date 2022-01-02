@@ -12,7 +12,7 @@
 <body>
     <h2>Modifica Cliente</h2>
 
-    <form:form  modelAttribute="customerMod" method="post">
+    <form:form  modelAttribute="customer" method="post">
         <table>
             <tr>
                 <td>
@@ -66,10 +66,10 @@
             </tr>
             <tr>
                 <td>
-                    <br/><button type="submit" formaction="/reservation/editReservationCustomer?action=cancel">Annulla</button>
+                    <br/><button type="submit" formaction="/reservation/new/editReservationCustomer?action=cancel">Annulla</button>
                 </td>
                 <td>
-                    <br/><button type="submit" formaction="/reservation/editReservationCustomer?action=save">Salva modifiche</button>
+                    <br/><button type="submit" formaction="/reservation/new/editReservationCustomer?action=save">Salva modifiche</button>
                 </td>
             </tr>
         </table>

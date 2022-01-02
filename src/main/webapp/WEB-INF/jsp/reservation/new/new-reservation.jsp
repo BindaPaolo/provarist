@@ -13,7 +13,7 @@
 
 	<h2>Nuova Prenotazione</h2>
     <form:form modelAttribute="reservation" method="post">
-        <button type="submit" class="link-button" formaction="/reservation/newReservationCustomer?action=show">
+        <button type="submit" class="link-button" formaction="/reservation/new/newReservationCustomer?action=show">
             Aggiungi cliente alla prenotazione
         </button>
 
@@ -58,11 +58,11 @@
             <tr>
                 <td>
                     <br />
-                    <form:button type="submit" name="cancel" formaction="/reservation/cancelReservation">Annulla prenotazione</form:button>
+                    <form:button type="submit" name="cancel" formaction="/reservation/new/cancelReservation">Annulla prenotazione</form:button>
                 </td>
                 <td>
                     <br />
-                    <form:button type="submit" name="save" formaction="/reservation/saveReservation">Salva prenotazione</form:button>
+                    <form:button type="submit" name="save" formaction="/reservation/new/saveReservation">Salva prenotazione</form:button>
                 </td>
             </tr>
         </table>
@@ -87,10 +87,14 @@
                       <td>${customer.mobileNumber}</td>
                       <td>${customer.recommendedBy.mobileNumber}</td>
                       <td>
+<<<<<<< HEAD:src/main/webapp/WEB-INF/jsp/reservation/new-reservation.jsp
                         <form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>
+=======
+                        <form:button type="submit" formaction="/reservation/new/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>				
+>>>>>>> dev-dapa:src/main/webapp/WEB-INF/jsp/reservation/new/new-reservation.jsp
                       </td>
                       <td>
-                        <form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=delete">Elimina</form:button>
+                        <form:button type="submit" formaction="/reservation/new/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=delete">Elimina</form:button>
                       </td>
                   </tr>
              </c:forEach>

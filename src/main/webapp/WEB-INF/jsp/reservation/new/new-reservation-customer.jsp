@@ -65,11 +65,11 @@
             </tr>
             <tr>
                 <td>
-                    <br/><button type="submit" formaction="/reservation/newReservationCustomer?action=add">Aggiungi cliente</button>
+                    <br/><button type="submit" formaction="/reservation/new/newReservationCustomer?action=add">Aggiungi cliente</button>
                 </td>
    
               	<td>
-    				<br/><button type="submit" formaction="/reservation/newReservationCustomer?action=cancel">Annulla</button>
+    				<br/><button type="submit" formaction="/reservation/new/newReservationCustomer?action=cancel">Annulla</button>
 				</td>
 			</tr>
         </table>

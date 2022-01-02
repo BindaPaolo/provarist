@@ -11,25 +11,31 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
+import it.unimib.bdf.greenbook.models.Customer;
+
+import it.unimib.bdf.greenbook.models.Reservation;
+
+import it.unimib.bdf.greenbook.services.ReservationService;
+import it.unimib.bdf.greenbook.models.ReservationListContainer;
+
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Slf4j
 @Controller
-@RequestMapping(value = "/reservation/search*")
+@RequestMapping("/reservation/search*")
 public class SearchReservationController {
+	@Autowired
+	private ReservationService reservationService;
 
-    @Autowired
-    private ReservationService reservationService;
-
-    @Autowired
-    private CustomerService customerService;
-
+	
     @GetMapping("/search-reservation-by-customer")
     public String searchReservationByCustomer(Model model) {
         model.addAttribute("customer", new Customer());
@@ -55,57 +61,77 @@ public class SearchReservationController {
                 result.getFieldErrors("lastName").size() != 0) {
             return "/reservation/search/search-reservation-by-customer";
         }
-
-        //Get all customers with given firstName and lastName.
-        //Note: there can be multiple rows in customers with same pair (firstName, lastName)
-        //		and different IDs.
-        List<Customer> customers = customerService.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(customer.getFirstName(), customer.getLastName());
-
-        List<Reservation> reservations = new ArrayList<>();
-        for (Customer c : customers) {
-            Long id = c.getId();
-            reservations.addAll(reservationService.findAllReservationsByCustomerId(id));
-        }
-
-        for (Reservation r : reservations) {
-            log.info(r.toString());
-        }
+		
+		
+		ReservationListContainer reservationListContainer = new ReservationListContainer();
+		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(customer.getFirstName(), customer.getLastName()));
 
 
-        model.addAttribute("reservations", reservations);
+		model.addAttribute("reservationListContainer", reservationListContainer);
+		model.addAttribute("searchType", "byCustomer");
+		model.addAttribute("firstName", customer.getFirstName());
+		model.addAttribute("lastName", customer.getLastName());
+		
+		return "/reservation/search/search-results";
+	}
 
-        return "/reservation/search/search-results";
-    }
-
-    @PostMapping("/executeSearchReservationByDate")
-    public String executeSearchReservationByDate(Model model,
-                                                 @Valid @ModelAttribute Reservation reservation,
-                                                 BindingResult result) {
-
-        log.info("Entro in executeSearchReservationByDate");
-
-        if (result.getFieldError("date") != null) {
+	@PostMapping("/executeSearchReservationByDate")
+	public String executeSearchReservationByDate(Model model, 
+									@Valid @ModelAttribute Reservation reservation,
+									BindingResult result) {
+		
+		log.info("Entro in executeSearchReservationByDate");
+		
+		if(result.getFieldError("date") != null) {
             return "/reservation/search/search-reservation-by-date";
         }
+		
+		LocalDate date = reservation.getDate();
+		
+		ReservationListContainer reservationListContainer = new ReservationListContainer();
+		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(date));
+		model.addAttribute("reservationListContainer", reservationListContainer);
+		model.addAttribute("searchType", "byDate");
+		model.addAttribute("date", date);
 
-        LocalDate date = reservation.getDate();
+		return "/reservation/search/search-results";
+	}
+	
+	@PostMapping("/cancelSearchReservation")
+	public String cancelSearchReservation(Model model) {
+		log.info("Aborting reservation search");
+		return "/reservation/reservations";
+	}
+	
+    @PostMapping("/deleteReservation/{id}")
+    public String deleteReservation(@PathVariable Long id, 
+    								@ModelAttribute("reservations") ReservationListContainer reservationListContainer,
+    								@RequestParam(value="searchType", required=false) String searchType,
+    								@RequestParam(value="firstName", required=false) String firstName,
+    								@RequestParam(value="lastName", required=false) String lastName,
+    								@RequestParam(value="date", required=false) String date,
+    								Model model) {
+    	
+		reservationService.deleteById(id);
 
-        List<Reservation> reservations = new ArrayList<>();
+    	if (searchType.equals("byCustomer")) {
+    		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(firstName, lastName));
+    		model.addAttribute("firstName", firstName);
+    		model.addAttribute("lastName", lastName);
+    	}  	
+    	else{
+    		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(LocalDate.parse(date)));    		
+    		model.addAttribute("date", date);
+    	}
+    	
 
-        reservations.addAll(reservationService.findAllReservationsByDate(date));
+		model.addAttribute("reservationListContainer", reservationListContainer);
+		model.addAttribute("searchType", searchType);
 
-        model.addAttribute("reservations", reservations);
-
+		
         return "/reservation/search/search-results";
     }
-
-    @PostMapping("/cancelSearchReservation")
-    public String cancelSearchReservation(Model model) {
-        log.info("Aborting reservation search");
-        return "/reservation/reservations";
-    }
-
-
+	
 }
 	
 
