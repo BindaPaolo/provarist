@@ -87,11 +87,7 @@
                       <td>${customer.mobileNumber}</td>
                       <td>${customer.recommendedBy.mobileNumber}</td>
                       <td>
-<<<<<<< HEAD:src/main/webapp/WEB-INF/jsp/reservation/new-reservation.jsp
-                        <form:button type="submit" formaction="/reservation/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>
-=======
                         <form:button type="submit" formaction="/reservation/new/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>				
->>>>>>> dev-dapa:src/main/webapp/WEB-INF/jsp/reservation/new/new-reservation.jsp
                       </td>
                       <td>
                         <form:button type="submit" formaction="/reservation/new/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=delete">Elimina</form:button>
