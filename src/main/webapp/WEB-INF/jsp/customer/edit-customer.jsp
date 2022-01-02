@@ -6,7 +6,7 @@
 <head>
     <%@ page isELIgnored="false" %>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<style> <%@include file="/WEB-INF/static/css/styles.css"%></style>
+	<style><%@include file="/WEB-INF/static/css/styles.css"%></style>
     <title>Modifica Cliente</title>
 </head>
 <body>
@@ -41,11 +41,14 @@
                 <td>
                     <form:input type="text" id="mobileNumber" path="mobileNumber" />
                     <form:errors path="mobileNumber" class="validationError"/>
+                    <c:if test="${not empty mobileNumberError}">
+                       <div class="validationError">Errore: ${mobileNumberError}</div>
+                    </c:if>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <form:label path="recommendedBy.mobileNumber">Raccomandato da (Numero di telefono)</form:label>
+                    <form:label path="recommendedBy.mobileNumber">Referreal</form:label>
                 </td>
                 <td>
                     <form:input type="text" id="recommendedBy.mobileNumber" path="recommendedBy.mobileNumber" />

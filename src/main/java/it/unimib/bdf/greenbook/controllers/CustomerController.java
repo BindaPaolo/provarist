@@ -8,6 +8,7 @@ import it.unimib.bdf.greenbook.services.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,11 +70,11 @@ public class CustomerController {
         String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
 
         // Check for validation errors or data lacks in the database persistence
-        if (checkForErrors(result, model, recommendedByMobileNumber))
+        if (checkForErrors(result, model, customer, true))
             return "/customer/new-customer";
 
         // Check if the recommended-by field is left empty
-        fixRecommendedByForeignKey(customer, recommendedByMobileNumber);
+        fixRecommendedByForeignKey(customer);
 
         // Persist customer's data
         service.save(customer);
@@ -106,15 +107,12 @@ public class CustomerController {
         // Check if the customer's id exists, otherwise throw an exception and show error page
         service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
 
-        // Get the mobile number of the referral user
-        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
-
         // Check for validation errors or data lacks in the database persistence
-        if (checkForErrors(result, model, recommendedByMobileNumber))
+        if (checkForErrors(result, model, customer, false))
             return "/customer/edit-customer";
 
         // Check if the recommended-by field is left empty
-        fixRecommendedByForeignKey(customer, recommendedByMobileNumber);
+        fixRecommendedByForeignKey(customer);
 
         // Persist updated customer's data
         service.save(customer);
@@ -135,11 +133,13 @@ public class CustomerController {
         // Set recommended-by field to null before removing the record (so that the recommended-by customer persists)
         customerToBeDeleted.setRecommendedBy(null);
 
-        // Set customer's ID to null in related reservations (so that they persist)
-        cleanCustomerReservations(customerToBeDeleted);
-
         // Delete the persisted customer by id
-        service.deleteById(id);
+        try {
+            service.deleteById(id);
+        } catch(DataIntegrityViolationException e) {
+            model.addAttribute("dataIntegrityError", "Impossibile eliminare l'utente con ID " +
+                    customerToBeDeleted.getId() + ": verifica che non faccia parte di una prenotazione.");
+        }
 
         model.addAttribute("customers", service.findAll());
         return "/customer/customers";
@@ -153,25 +153,50 @@ public class CustomerController {
      *
      * @param result                    object that eventually contains validation errors
      * @param model                     set of attributes of the .jsp page shown to the user
-     * @param recommendedByMobileNumber mobile number of the recommended-by customer
+     * @param customer                  object of the customer that the user is inserting/editing
+     * @param insertAction              defines if the current action is an insert (1) or an update (0)
      * @return true if there is an error and some page needs to be shown to the user; false otherwise
      */
-    private boolean checkForErrors(BindingResult result, Model model, String recommendedByMobileNumber) {
+    private boolean checkForErrors(BindingResult result, Model model, Customer customer, boolean insertAction) {
+
+        // Flag = presence of errors
+        boolean errorPresence = false;
+
+        // Check if the mobile number of the customer is already persisted in the database
+        boolean mobileNumberAlreadyPersisted = isMobileNumberPersisted(customer.getMobileNumber());
 
         // Check if the customer related to the mobile number given by the user is actually persisted on the database
+        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
         boolean recommendedByIsPersisted =
                 !service.findAllCustomersByMobileNumber((recommendedByMobileNumber)).isEmpty();
 
         // IF -> presence of validation errors
-        // OR IF -> user has entered some recommended-by mobile phone AND it is not persisted in the database
-        if (result.hasErrors() || (!recommendedByMobileNumber.isEmpty() && !recommendedByIsPersisted)) {
+        if (result.hasErrors())
+            errorPresence = true;
 
-            // If the user has given a referral mobile number but it's not persisted, show an error message
-            if (!recommendedByMobileNumber.isEmpty() && !recommendedByIsPersisted) {
-                model.addAttribute("recommendedByError",
-                        "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
+        // IF -> a customer with the same mobile number is already present in the database
+        if(mobileNumberAlreadyPersisted) {
+            String duplicatedError = "Il numero di telefono è già registrato per un altro utente.";
+
+            if (insertAction) {
+                model.addAttribute("mobileNumberError", duplicatedError);
+                errorPresence = true;
+            } else {
+                if (checkForMobileNumberDuplicates(customer.getId(), customer.getMobileNumber())) {
+                    model.addAttribute("mobileNumberError", duplicatedError);
+                    errorPresence = true;
+                }
             }
+        }
 
+        // IF -> user has entered some recommended-by mobile phone AND it is not persisted in the database
+        if (!recommendedByMobileNumber.isEmpty() && !recommendedByIsPersisted) {
+            model.addAttribute("recommendedByError",
+                    "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
+            errorPresence = true;
+        }
+
+        if(errorPresence) {
             // Load persisted allergens list
             model.addAttribute("allergensList", allergenService.findAll());
 
@@ -183,39 +208,48 @@ public class CustomerController {
     }
 
     /**
+     * Checks that the mobile number is stored in the database (in this case, the user is inserting a duplicate)
+     *
+     * @param mobileNumber mobile number of the customer that the user wants to insert
+     */
+    private boolean isMobileNumberPersisted(String mobileNumber){
+        return !service.findAllCustomersByMobileNumber(mobileNumber).isEmpty();
+    }
+
+    /**
+     * Checks for mobile number duplicates
+     *
+     * @param mobileNumber mobile number of the customer that the user wants to update
+     */
+    private boolean checkForMobileNumberDuplicates(Long id, String mobileNumber){
+        List<Customer> customersList = service.findAllCustomersByMobileNumber(mobileNumber);
+        boolean alreadyPresent = false;
+
+        for(Customer c : customersList){
+            if (c.getId() != id) {
+                alreadyPresent = true;
+                break;
+            }
+        }
+
+        return alreadyPresent;
+    }
+
+    /**
      * If the recommended by field is left empty by the user, make the RecommendedBy object null so that the foreign
      * key in the database is set to null
      *
-     * @param customer                  the customer object
-     * @param recommendedByMobileNumber mobile number of the recommended-by customer
+     * @param customer the customer object
      */
-    private void fixRecommendedByForeignKey(Customer customer, String recommendedByMobileNumber) {
+    private void fixRecommendedByForeignKey(Customer customer) {
+        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
+
         if (recommendedByMobileNumber.isEmpty()) {
             // If the recommended by field is left empty by the user, make the RecommendedBy object null
             customer.setRecommendedBy(null);
         } else {
             // Fetch the customer in the database which has the mobile number given by the user
             customer.setRecommendedBy(service.findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
-        }
-    }
-
-    /**
-     * Before deleting the customer, remove his reference from all the reservations that include him
-     *
-     * @param customerToBeDeleted the customer being removed from the database
-     *
-     */
-    private void cleanCustomerReservations(Customer customerToBeDeleted) {
-        List<Reservation> customerToBeDeletedReservations =
-                reservationService.findAllReservationsByCustomerId(customerToBeDeleted.getId());
-
-        for(Reservation reservation: customerToBeDeletedReservations){
-            List<Customer> reservationCustomers = reservation.getReservation_customers();
-
-            reservationCustomers.removeIf(
-                    reservationCustomer -> reservationCustomer.getId() == customerToBeDeleted.getId());
-
-            reservationService.save(reservation);
         }
     }
 

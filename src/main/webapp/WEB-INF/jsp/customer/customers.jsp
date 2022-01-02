@@ -4,14 +4,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ page isELIgnored="false"%>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Lista Clienti</title>
-<style type="text/css">
-  td {
-    padding: 0 15px;
-  }
-</style>
+    <%@ page isELIgnored="false"%>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Lista Clienti</title>
+    <style><%@include file="/WEB-INF/static/css/styles.css"%></style>
+    <style type="text/css">
+      td {
+        padding: 0 15px;
+      }
+    </style>
 </head>
 <body>
 	<div>
@@ -19,6 +20,9 @@
 			<h2>Clienti</h2>
 			<a href="/">Torna alla homepage</a>
 			<hr />
+			<c:if test="${not empty dataIntegrityError}">
+                <br /><div class="validationError">${dataIntegrityError}</div><br />
+            </c:if>
 			<a href="/customer/new-customer">
 				<button type="submit">Aggiungi nuovo cliente</button>
 			</a> <br />

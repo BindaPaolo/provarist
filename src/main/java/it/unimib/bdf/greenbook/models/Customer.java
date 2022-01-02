@@ -9,7 +9,7 @@ import java.util.Set;
 @Table(name = "customer")
 public class Customer extends Person {
 
-    @Basic(optional = false)
+    @Column(unique=true)
     @NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
     private String mobileNumber;
 
