@@ -151,6 +151,7 @@ public class NewReservationController {
     	}else if(action.equals("save")) {
     		log.info("action = save");
     		if (checkForErrors(result, model, customer)) {
+    			reservation_customers.add(originalCustomer);
     			model.addAttribute("customer", customer);
     			return "/reservation/new/new-reservation-edit-customer";
     		}
