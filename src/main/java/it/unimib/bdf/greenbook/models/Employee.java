@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "employee")
 public class Employee extends Person {
 
+    @Column(unique = true)
     @Basic(optional = false)
     @NotEmpty(message = "Il CF non puo' essere lasciato vuoto")
     private String cf;

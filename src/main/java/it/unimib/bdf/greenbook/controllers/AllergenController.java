@@ -3,6 +3,7 @@ package it.unimib.bdf.greenbook.controllers;
 import it.unimib.bdf.greenbook.models.Allergen;
 import it.unimib.bdf.greenbook.services.AllergenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,7 +75,14 @@ public class AllergenController {
         // Check if the allergen is actually persisted in the database, otherwise show an error page
         service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid allergen Id:" + id));
 
-        service.deleteById(id);
+        //service.deleteById(id);
+
+        try {
+            service.deleteById(id);
+        } catch(DataIntegrityViolationException e) {
+            model.addAttribute("dataIntegrityError", "Impossibile eliminare l'allergene \"" +
+                   service.findById(id).get().getName() + "\" : verifica che non sia associato a nessun cliente.");
+        }
 
         model.addAttribute("allergens", service.findAll());
         return "allergen/allergens";
