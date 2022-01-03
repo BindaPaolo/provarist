@@ -26,6 +26,10 @@ public class CustomerService {
         this.repository = repository;
     }
     
+    public List<Long> findAllCustomerReservations(Long id){
+    	return repository.findAllCustomerReservations(id);
+    }
+    
     
     public List<Customer> findAllCustomersByFirstNameAndLastNameAllIgnoringCase(String firstName, String lastName){
     	return repository.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(firstName, lastName);
@@ -64,11 +68,19 @@ public class CustomerService {
 
     public void deleteById(Long id) {
     	log.info("\n\nENTRO in deleteById\n\n");
-    	updateRecommendedBy(id);
+    	cleanRecommendedByFieldOnCustomerDelete(id);
         repository.deleteById(id);
     }
     
-    public void updateRecommendedBy(Long id) {
+    /***
+     * On customer deletion, if it was referenced by 
+     * other customers as the recommendedBy, we need 
+     * to set the recommendedBy fields of those that 
+     * remain to null.
+     * 
+     * @param id
+     */
+    public void cleanRecommendedByFieldOnCustomerDelete(Long id) {
     	for(Customer c: repository.findAll()) {
     		
     		if(c.getRecommendedBy() != null) {
@@ -87,7 +99,7 @@ public class CustomerService {
      *
      * @param customer the customer object
      */
-    private void fixRecommendedByForeignKey(Customer customer) {
+    public void fixRecommendedByForeignKey(Customer customer) {
         String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
         if (recommendedByMobileNumber.isEmpty()) {
             // If the recommended by field is left empty by the user, make the RecommendedBy object null

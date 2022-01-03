@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,10 @@ public class Reservation {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@NotNull(message="Seleziona la data!")
+	@FutureOrPresent(message="Data selezionata non valida!")
 	private LocalDate date;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinTable(name = "reservation_customers",
 			   joinColumns = { @JoinColumn(name = "reservation_id")},
@@ -59,13 +61,6 @@ public class Reservation {
 		this.reservation_customers.add(c);
 	}
 	
-	/*
-	public Customer addReservationCustomer() {
-		Customer c = new Customer();
-		this.reservation_customers.add(c);
-		
-		return c;
-	}*/
 
 	public shiftEnumType getShiftEnum() {
 		return shiftEnum;
@@ -99,4 +94,8 @@ public class Reservation {
 		this.reservation_waiters = reservation_waiters;
 	}
 
+	@Override
+	public String toString() {
+		return this.reservation_id + this.getReservation_customers().toString() ;
+	}
 }

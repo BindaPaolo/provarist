@@ -2,6 +2,8 @@ package it.unimib.bdf.greenbook.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
 import java.util.Set;
 
 
@@ -11,6 +13,7 @@ public class Customer extends Person {
 
     @Column(unique=true)
     @NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
+    @Pattern(regexp = "[0-9]*", message="Numero inserito non valido!")
     private String mobileNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -23,6 +26,7 @@ public class Customer extends Person {
             joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "allergen_id"))
     private Set<Allergen> allergies;
+    
 
     @Override
     public int hashCode() {
@@ -42,11 +46,13 @@ public class Customer extends Person {
 
     @Override
     public String toString() {
+    	
         return this.getId() + ", " + this.getFirstName() + ", " + this.getLastName()
-                + ", " + this.getAllergies();
+                + ", " + this.getAllergies() + ", " + this.getMobileNumber();
     }
 
-    public String getMobileNumber() {
+
+	public String getMobileNumber() {
         return mobileNumber;
     }
 

@@ -7,6 +7,7 @@ import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import it.unimib.bdf.greenbook.services.AllergenService;
+import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.controllers.CustomerController;
 
 import javax.validation.Valid;
@@ -42,8 +43,13 @@ public class NewReservationController {
 	
 	@Autowired
 	private AllergenService allergenService;
-    
+	
+	@Autowired
+	private CustomerService customerService;
+	
+	
     @GetMapping("/new-reservation")
+
     public String showNewReservationForm(Model model) {
     	log.info("Entro in new-reservation");
 
@@ -70,8 +76,7 @@ public class NewReservationController {
 				return "/reservation/new/new-reservation-customer";
 			case "add":
 				log.info("action = add");
-				if (result.hasErrors()) {
-					model.addAttribute("allergensList", allergenService.findAll());
+				if(checkForErrors(result, model, customer)){
 					return "/reservation/new/new-reservation-customer";
 				}
 				reservation.addReservationCustomer(customer);
@@ -97,6 +102,7 @@ public class NewReservationController {
 			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/new/new-reservation";
         }
+    	log.info(reservation.toString());
     	log.info("Saving Reservation and Customer objects...");
     	reservationService.save(reservation);
     	log.info("Reservation and Customer objects saved");
@@ -132,22 +138,26 @@ public class NewReservationController {
 				break;
 			}
 		}
-    	
+		reservation_customers.remove(originalCustomer);
+
     	if (action.equals("cancel")) {
     		log.info("action = cancel");
+    		
     		originalCustomer.setId(0);
+    		reservation_customers.add(originalCustomer);
+    		
     		model.addAttribute("waitersList", getPersistedWaiters());
     		return "/reservation/new/new-reservation";
     	}else if(action.equals("save")) {
     		log.info("action = save");
-    		if (result.hasErrors()) {
-    			model.addAttribute("allergensList", allergenService.findAll());
+    		if (checkForErrors(result, model, customer)) {
     			model.addAttribute("customer", customer);
     			return "/reservation/new/new-reservation-edit-customer";
     		}
-			reservation.getReservation_customers().remove(originalCustomer);
-			model.addAttribute("waitersList", getPersistedWaiters());
+    		
     		reservation.addReservationCustomer(customer);
+    		
+			model.addAttribute("waitersList", getPersistedWaiters());
     		return "/reservation/new/new-reservation";
     	}
     	return "error";
@@ -184,29 +194,19 @@ public class NewReservationController {
     	return "error";
     }
     
-    @GetMapping("/showReservation/{id}")
-    public String showReservationById(@PathVariable Long id, Model model) {
-        Reservation reservation = reservationService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-        model.addAttribute("reservation", reservation);
-        return "/reservation/new/edit-reservation";
-    }
-   
-    @PostMapping("/updateReservation/{id}")
-    public String updateReservation(@PathVariable Long id, @Valid @ModelAttribute Reservation reservation, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "/reservation/new/edit-reservation";
-        }
-        reservationService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-        reservationService.save(reservation);
-        model.addAttribute("reservations", reservationService.findAll());
-        return "/reservation/new/reservations";
-    }
 
-
-    
-    //Helper function
+    /**
+     * Adds new Reservation object to the model.
+     * This object then remains in the session
+     * until its completion.
+     **/
+	@ModelAttribute("reservation")
+	public Reservation getReservation() {
+		log.info("Adding new reservation to the model");
+		return new Reservation();
+	}
+      
+	
     private Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
     	Customer found = null;	
 		for(Customer c : reservation.getReservation_customers()) {
@@ -228,20 +228,90 @@ public class NewReservationController {
 		
 		return persistedEmployees;
 	}
+	
+	
+    /**
+     * 1 result errors:
+     * 		a) firstName or lastName or mobileNumber not present or the
+     * 		   mobileNumber field doesn't contain a non zero number of digits.
+     * 
+     * 2 mobileNumber errors:
+     * 		a) mobileNumber is equal to another customer already 
+     * 		   present in db but they differ for either firstName or lastName.
+     * 		b) in the reservation_customers list there's already another
+     * 		   customer with same mobileNumber.
+     * 
+     * 3 recommendedBy errors:
+     * 		a) recommendedBy.getMobileNumber() is not empty but the referenced 
+     *  	   mobileNumber doesn't belong to a customer in the db.
+     * 
+     * @param result                    object that eventually contains validation errors
+     * @param model                     set of attributes of the .jsp page shown to the user
+     * @param customer                  object of the customer that the user is inserting/editing
+     * @return true if there is an error and some page needs to be shown to the user; false otherwise
+     */
+    private boolean checkForErrors(BindingResult result, Model model, Customer customer) {
 
-	@ModelAttribute("reservation")
-	public Reservation getReservation() {
-		log.info("Adding new reservation to the model");
-		return new Reservation();
-	}
+        // Flag = presence of errors
+        boolean errorPresence = false;
+        // Side (but important) note: customer.getRecommendedBy() 
+        // returns a customer object with all fields set to null except (maybe)
+        // the mobileNumber field.
+        Customer recommendedByCustomer  = customer.getRecommendedBy();
+        String recommenedByMobileNumber = recommendedByCustomer.getMobileNumber(); 
+        boolean recommendedByIsPersisted = !customerService.findAllCustomersByMobileNumber(recommenedByMobileNumber).isEmpty();
+
+        
+        if (result.hasErrors()) {
+            // firstName or lastName or mobileNumber are empty
+            // 1a)
+            errorPresence = true;
+        }
+    	
+        if(!customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).isEmpty()) {
+        	Customer existingCustomer = customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).get(0);
+	        if(existingCustomer != null) {
+	        	// There is another customer with 
+	        	// the same mobile number saved in the db,
+	        	if(!existingCustomer.getFirstName().equalsIgnoreCase(customer.getFirstName()) ||
+	        			!existingCustomer.getLastName().equalsIgnoreCase(customer.getLastName())) {
+	        		// but with different first and/or last name
+	        		// 2a)
+	            	String mobileNumberError = "Un cliente con questo numero di telefono esiste già ma ha nome e/o cognome differenti!";
+	                model.addAttribute("mobileNumberError", mobileNumberError);
+	            	errorPresence = true;        			
+	        		
+	        	}
+	        }
+        }
+        
+        for(Customer c : ((Reservation) model.getAttribute("reservation")).getReservation_customers()) {
+        	if (c.getMobileNumber().equals(customer.getMobileNumber()) && !(c == customer)){
+        		// Another customer, already in the reservation_customers' list,
+        		// has the same mobile number.
+        		// 2b)
+        		String mobileNumberError = "Il numero di telefono appartiene ad un altro cliente nella prenotazione!";
+        		model.addAttribute("mobileNumberError", mobileNumberError);
+        		errorPresence = true;
+        	}
+        }
+        
+        if(!recommenedByMobileNumber.isEmpty() && !recommendedByIsPersisted) {
+            	// RecommendedBy field not empty but 
+            	// refererenced customer doesn't exist.
+        		// 3a)
+	        	String recommendedByError = "Non esiste un cliente con questo numero di telefono nel sistema!";
+	            model.addAttribute("recommendedByError", recommendedByError);
+	        	errorPresence = true;
+        }
+        
+        if(errorPresence) {
+            // Load persisted allergens list
+            model.addAttribute("allergensList", allergenService.findAll());
+            return true;
+        }
+
+        return false;
+    }
 
 }
-
-
-
-
-
-
-
-
-

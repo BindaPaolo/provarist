@@ -26,4 +26,9 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 			+ "SET RECOMMENDED_BY_ID = :recommended_by "
 			+ "WHERE CUSTOMER.ID = :customer_id", nativeQuery=true)
 	void updateRecommendedBy(@Param("customer_id") Long customer_id, @Param("recommended_by") Long recommended_by);
+
+	@Query(value="SELECT rc.reservation_id "
+				+ "FROM reservation_customers rc join customer c on rc.customer_id = c.id "
+				+ "WHERE c.id = :customer_id", nativeQuery=true)
+	List<Long> findAllCustomerReservations(@Param("customer_id") Long customer_id);
 }

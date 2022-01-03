@@ -1,5 +1,6 @@
 package it.unimib.bdf.greenbook.services;
 
+import it.unimib.bdf.greenbook.controllers.NewReservationController;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.repositories.CustomerRepository;
@@ -10,10 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -54,14 +58,38 @@ public class ReservationService{
 
     @Transactional
     public Reservation save(Reservation reservation) {
-    	//Save the reservation object.
-    	//Save each customer object.
-
+    	// List for customers that are already inside the database
+    	List<Customer> customersToRemove = new ArrayList<>();
+    	List<Customer> customersToAdd = new ArrayList<>();
+    	
     	for (Customer customer : reservation.getReservation_customers()) {
-        	customerService.save(customer);
+
+    		if(customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).isEmpty()) {
+    			// The customer isn't present in the db.
+            	customerService.save(customer);
+    		}
+    		else {
+    			// switch the two customer objects
+    			// and update the recommendedBy field
+    			// if the new customer's is not null
+    			// and the old customer's field is null
+    			Customer alreadyExistingCustomer  = customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).get(0);
+    			customerService.fixRecommendedByForeignKey(customer);
+    			if(alreadyExistingCustomer.getRecommendedBy() == null && customer.getRecommendedBy() != null){
+    				alreadyExistingCustomer.setRecommendedBy(customer.getRecommendedBy());
+    			}
+
+				alreadyExistingCustomer.getAllergies().addAll(customer.getAllergies());
+
+    			customersToAdd.add(alreadyExistingCustomer);
+    			customersToRemove.add(customer);
+    		}
+
     	}
     	
-        log.info("\n\n\n" + reservation.toString() + "\n\n\n\n");
+		reservation.getReservation_customers().addAll(customersToAdd);
+    	reservation.getReservation_customers().removeAll(customersToRemove);
+    	//Save the reservation object.
     	reservationRepository.save(reservation);
     	
         return reservation;
@@ -69,13 +97,25 @@ public class ReservationService{
 
 
     public void deleteById(Long id) {
-    	//Take care of the recommended by stuff
     	Reservation reservation = this.findById(id)
     			.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-    	for(Customer c : reservation.getReservation_customers()) {
-    		customerService.updateRecommendedBy(c.getId());
+    	//Take care of the recommended by stuff
+    	List<Customer> reservation_customers = reservation.getReservation_customers();
+    	for(Customer c : reservation_customers) {
+    		customerService.cleanRecommendedByFieldOnCustomerDelete(c.getId());
     	}
+    	//Delete reservation and clean join table with customer and waiters
     	reservationRepository.deleteById(id);
+    	
+    	//If one or more of the customers 
+    	//in the reservation_customers list
+    	//don't belong to any other reservation,
+    	//we remove them from the customer table.
+    	for(Customer c : reservation_customers) {
+    		if(customerService.findAllCustomerReservations(c.getId()).isEmpty()) {
+    			customerService.deleteById(c.getId());
+    		}
+    	}
     }
     
     public List<Reservation> findAllReservationByCustomerFirstNameAndLastName(String firstName, String lastName){

@@ -38,6 +38,9 @@
                 <td>
                     <form:input type="text" id="mobileNumber" path="mobileNumber" />
                     <form:errors path="mobileNumber" class="validationError"/>
+                    <c:if test="${not empty mobileNumberError}">
+                       <div class="validationError">${mobileNumberError}</div>
+                    </c:if>
                 </td>
             </tr>
             <tr>
@@ -46,6 +49,9 @@
                 </td>
                 <td>
                     <form:input type="text" id="recommendedBy.mobileNumber" path="recommendedBy.mobileNumber" />
+                    <c:if test="${not empty recommendedByError}">
+                       <div class="validationError">${recommendedByError}</div>
+                    </c:if>
                 </td>
             </tr>
             <tr>

@@ -1,7 +1,5 @@
 package it.unimib.bdf.greenbook.models;
 
-import lombok.Data;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 

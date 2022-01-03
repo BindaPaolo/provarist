@@ -156,8 +156,7 @@ public class CustomerController {
 
         // Check if the customer related to the mobile number given by the user is actually persisted on the database
         String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
-        boolean recommendedByIsPersisted =
-                !service.findAllCustomersByMobileNumber((recommendedByMobileNumber)).isEmpty();
+        boolean recommendedByIsPersisted = isMobileNumberPersisted(recommendedByMobileNumber);
 
         // IF -> presence of validation errors
         if (result.hasErrors())
