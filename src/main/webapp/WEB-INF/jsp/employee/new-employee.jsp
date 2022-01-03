@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
 <head>
     <%@ page isELIgnored="false"%>
@@ -52,7 +53,10 @@
                 </td>
                 <td>
                     <form:input type="text" id="cf" path="cf" />
-                    <form:errors path="cf" class="validationError" />
+                    <form:errors path="cf" class="validationError"/>
+                    <c:if test="${not empty CfError}">
+                       <div class="validationError">Errore: ${CfError}</div>
+                    </c:if>
                 </td>
             </tr>
             <tr>

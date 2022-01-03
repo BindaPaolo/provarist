@@ -7,6 +7,7 @@
     <%@ page isELIgnored="false"%>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Lista Dipendenti</title>
+    <style><%@include file="/WEB-INF/static/css/styles.css"%></style>
     <style type="text/css">
       td {
         padding: 0 15px;
@@ -19,6 +20,9 @@
 			<h2>Dipendenti</h2>
 			<a href="/">Torna alla homepage</a>
 			<hr />
+			<c:if test="${not empty dataIntegrityError}">
+                <br /><div class="validationError">${dataIntegrityError}</div><br />
+            </c:if>
 			<a href="/new-employee">
 				<button type="submit">Aggiungi nuovo dipendente</button>
 			</a> <br />
