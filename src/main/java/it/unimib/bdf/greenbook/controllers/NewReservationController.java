@@ -241,6 +241,7 @@ public class NewReservationController {
      * 		   present in db but they differ for either firstName or lastName.
      * 		b) in the reservation_customers list there's already another
      * 		   customer with same mobileNumber.
+     * 		c) mobileNumber is equal to recommendedBy.
      * 
      * 3 recommendedBy errors:
      * 		a) recommendedBy.getMobileNumber() is not empty but the referenced 
@@ -259,8 +260,8 @@ public class NewReservationController {
         // returns a customer object with all fields set to null except (maybe)
         // the mobileNumber field.
         Customer recommendedByCustomer  = customer.getRecommendedBy();
-        String recommenedByMobileNumber = recommendedByCustomer.getMobileNumber(); 
-        boolean recommendedByIsPersisted = !customerService.findAllCustomersByMobileNumber(recommenedByMobileNumber).isEmpty();
+        String recommendedByMobileNumber = recommendedByCustomer.getMobileNumber(); 
+        boolean recommendedByIsPersisted = !customerService.findAllCustomersByMobileNumber(recommendedByMobileNumber).isEmpty();
 
         
         if (result.hasErrors()) {
@@ -297,13 +298,25 @@ public class NewReservationController {
         	}
         }
         
-        if(!recommenedByMobileNumber.isEmpty() && !recommendedByIsPersisted) {
+        if(!recommendedByMobileNumber.isEmpty()) {
+        	
+        	if(!recommendedByIsPersisted) {
             	// RecommendedBy field not empty but 
             	// refererenced customer doesn't exist.
         		// 3a)
 	        	String recommendedByError = "Non esiste un cliente con questo numero di telefono nel sistema!";
 	            model.addAttribute("recommendedByError", recommendedByError);
 	        	errorPresence = true;
+        	}
+        	
+        	if(recommendedByMobileNumber.equals(customer.getMobileNumber())){
+        		// Self loop relationship on the same entity
+        		// 2c)
+        		String mobileNumberError = "Il cliente scelto come referreal non "
+        								+ "può coincidere con il cliente stesso!";
+        		model.addAttribute("mobileNumberError", mobileNumberError);
+        		errorPresence = true;
+        	}
         }
         
         if(errorPresence) {
