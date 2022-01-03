@@ -126,7 +126,7 @@ public class CustomerController {
         try {
             service.deleteById(id);
         } catch(DataIntegrityViolationException e) {
-            model.addAttribute("dataIntegrityError", "Impossibile eliminare l'utente con ID " +
+            model.addAttribute("dataIntegrityError", "Impossibile eliminare il cliente con ID " +
                     customerToBeDeleted.getId() + ": verifica che non faccia parte di una prenotazione.");
         }
 
@@ -148,7 +148,7 @@ public class CustomerController {
      */
     private boolean checkForErrors(BindingResult result, Model model, Customer customer, boolean insertAction) {
 
-        // Flag = presence of errors
+        // Flag errorPresence = presence of errors
         boolean errorPresence = false;
 
         // Check if the mobile number of the customer is already persisted in the database
@@ -158,13 +158,13 @@ public class CustomerController {
         String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
         boolean recommendedByIsPersisted = isMobileNumberPersisted(recommendedByMobileNumber);
 
-        // IF -> presence of validation errors
+        // IF -> there are some validation errors
         if (result.hasErrors())
             errorPresence = true;
 
         // IF -> a customer with the same mobile number is already present in the database
         if(mobileNumberAlreadyPersisted) {
-            String duplicatedError = "Il numero di telefono è già registrato per un altro utente.";
+            String duplicatedError = "Il numero di telefono è già registrato per un altro cliente.";
 
             if (insertAction) {
                 model.addAttribute("mobileNumberError", duplicatedError);
@@ -180,10 +180,18 @@ public class CustomerController {
         // IF -> user has entered some recommended-by mobile phone AND it is not persisted in the database
         if (!recommendedByMobileNumber.isEmpty() && !recommendedByIsPersisted) {
             model.addAttribute("recommendedByError",
-                    "L'utente scelto come referreal non esiste! Verifica il numero di telefono.");
+                    "Il cliente scelto come referreal non esiste! Verifica il numero di telefono.");
             errorPresence = true;
         }
 
+        // IF -> user has entered himself as referral
+        if (!recommendedByMobileNumber.isEmpty() && recommendedByMobileNumber.equals(customer.getMobileNumber())) {
+            model.addAttribute("recommendedByError",
+                    "Il cliente scelto come referreal non può coincidere con il cliente stesso!");
+            errorPresence = true;
+        }
+
+        // If any of the above errors is present, show again page new/edit-customer
         if(errorPresence) {
             // Load persisted allergens list
             model.addAttribute("allergensList", allergenService.findAll());
