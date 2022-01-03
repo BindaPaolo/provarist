@@ -1,5 +1,6 @@
 package it.unimib.bdf.greenbook.services;
 
+import it.unimib.bdf.greenbook.controllers.NewReservationController;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.repositories.CustomerRepository;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -75,6 +78,9 @@ public class ReservationService{
     			if(alreadyExistingCustomer.getRecommendedBy() == null && customer.getRecommendedBy() != null){
     				alreadyExistingCustomer.setRecommendedBy(customer.getRecommendedBy());
     			}
+
+				alreadyExistingCustomer.getAllergies().addAll(customer.getAllergies());
+
     			customersToAdd.add(alreadyExistingCustomer);
     			customersToRemove.add(customer);
     		}
@@ -91,13 +97,25 @@ public class ReservationService{
 
 
     public void deleteById(Long id) {
-    	//Take care of the recommended by stuff
     	Reservation reservation = this.findById(id)
     			.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-    	for(Customer c : reservation.getReservation_customers()) {
+    	//Take care of the recommended by stuff
+    	List<Customer> reservation_customers = reservation.getReservation_customers();
+    	for(Customer c : reservation_customers) {
     		customerService.cleanRecommendedByFieldOnCustomerDelete(c.getId());
     	}
+    	//Delete reservation and clean join table with customer and waiters
     	reservationRepository.deleteById(id);
+    	
+    	//If one or more of the customers 
+    	//in the reservation_customers list
+    	//don't belong to any other reservation,
+    	//we remove them from the customer table.
+    	for(Customer c : reservation_customers) {
+    		if(customerService.findAllCustomerReservations(c.getId()).isEmpty()) {
+    			customerService.deleteById(c.getId());
+    		}
+    	}
     }
     
     public List<Reservation> findAllReservationByCustomerFirstNameAndLastName(String firstName, String lastName){
@@ -105,17 +123,3 @@ public class ReservationService{
     }
 
 }
-
-
-
-/*
-if(!customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).isEmpty()) {
-	Customer existingCustomer = customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).get(0);
-	if (existingCustomer != null) {
-		if (customer.getRecommendedBy() != null && existingCustomer.getRecommendedBy() == null) {
-			existingCustomer.setRecommendedBy(customer.getRecommendedBy());
-			customerService.save(existingCustomer);
-		}
-		
-	}
-}*/

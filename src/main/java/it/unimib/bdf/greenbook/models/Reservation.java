@@ -32,7 +32,7 @@ public class Reservation {
 	@FutureOrPresent(message="Data selezionata non valida!")
 	private LocalDate date;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@JoinTable(name = "reservation_customers",
 			   joinColumns = { @JoinColumn(name = "reservation_id")},
@@ -61,13 +61,6 @@ public class Reservation {
 		this.reservation_customers.add(c);
 	}
 	
-	/*
-	public Customer addReservationCustomer() {
-		Customer c = new Customer();
-		this.reservation_customers.add(c);
-		
-		return c;
-	}*/
 
 	public shiftEnumType getShiftEnum() {
 		return shiftEnum;

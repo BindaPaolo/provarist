@@ -26,6 +26,10 @@ public class CustomerService {
         this.repository = repository;
     }
     
+    public List<Long> findAllCustomerReservations(Long id){
+    	return repository.findAllCustomerReservations(id);
+    }
+    
     
     public List<Customer> findAllCustomersByFirstNameAndLastNameAllIgnoringCase(String firstName, String lastName){
     	return repository.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(firstName, lastName);
