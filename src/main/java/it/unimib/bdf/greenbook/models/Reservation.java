@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class Reservation {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@NotNull(message="Seleziona la data!")
+	@FutureOrPresent(message="Data selezionata non valida!")
 	private LocalDate date;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
@@ -99,4 +101,8 @@ public class Reservation {
 		this.reservation_waiters = reservation_waiters;
 	}
 
+	@Override
+	public String toString() {
+		return this.reservation_id + this.getReservation_customers().toString() ;
+	}
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,14 +55,35 @@ public class ReservationService{
 
     @Transactional
     public Reservation save(Reservation reservation) {
-    	//Save the reservation object.
-    	//Save each customer object.
-
+    	// List for customers that are already inside the database
+    	List<Customer> customersToRemove = new ArrayList<>();
+    	List<Customer> customersToAdd = new ArrayList<>();
+    	
     	for (Customer customer : reservation.getReservation_customers()) {
-        	customerService.save(customer);
+
+    		if(customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).isEmpty()) {
+    			// The customer isn't present in the db.
+            	customerService.save(customer);
+    		}
+    		else {
+    			// switch the two customer objects
+    			// and update the recommendedBy field
+    			// if the new customer's is not null
+    			// and the old customer's field is null
+    			Customer alreadyExistingCustomer  = customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).get(0);
+    			customerService.fixRecommendedByForeignKey(customer);
+    			if(alreadyExistingCustomer.getRecommendedBy() == null && customer.getRecommendedBy() != null){
+    				alreadyExistingCustomer.setRecommendedBy(customer.getRecommendedBy());
+    			}
+    			customersToAdd.add(alreadyExistingCustomer);
+    			customersToRemove.add(customer);
+    		}
+
     	}
     	
-        log.info("\n\n\n" + reservation.toString() + "\n\n\n\n");
+		reservation.getReservation_customers().addAll(customersToAdd);
+    	reservation.getReservation_customers().removeAll(customersToRemove);
+    	//Save the reservation object.
     	reservationRepository.save(reservation);
     	
         return reservation;
@@ -73,7 +95,7 @@ public class ReservationService{
     	Reservation reservation = this.findById(id)
     			.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
     	for(Customer c : reservation.getReservation_customers()) {
-    		customerService.updateRecommendedBy(c.getId());
+    		customerService.cleanRecommendedByFieldOnCustomerDelete(c.getId());
     	}
     	reservationRepository.deleteById(id);
     }
@@ -83,3 +105,17 @@ public class ReservationService{
     }
 
 }
+
+
+
+/*
+if(!customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).isEmpty()) {
+	Customer existingCustomer = customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).get(0);
+	if (existingCustomer != null) {
+		if (customer.getRecommendedBy() != null && existingCustomer.getRecommendedBy() == null) {
+			existingCustomer.setRecommendedBy(customer.getRecommendedBy());
+			customerService.save(existingCustomer);
+		}
+		
+	}
+}*/

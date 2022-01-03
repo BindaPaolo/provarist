@@ -55,7 +55,14 @@
                             			<td>${customer.id}</td>
                             			<td>${customer.firstName}</td>
                             			<td>${customer.lastName}</td>
-                           	 			<td>${customer.allergies}</td>
+   	 			                      <c:choose>
+				                      	<c:when test="${not empty customer.allergies}">
+				                      		<td>${customer.allergies}</td>
+				                      	</c:when>
+				                      	<c:otherwise>
+				                      		<td></td>
+				                      	</c:otherwise>
+				                      </c:choose>
                             			<td>${customer.mobileNumber}</td>
 								    </tr>
 								</c:forEach>
