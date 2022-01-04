@@ -12,10 +12,7 @@
 \usepackage{geometry}
 \geometry{
     a4paper,
-    total={170mm,257mm},
-    left=30mm,
-    right=30mm,
-    top=20mm,
+    total={170mm,257mm}
     }
 
 \usepackage{forest}
@@ -63,14 +60,19 @@ Due to the outbreak of the recent COVID-19 pandemic, we found it useful to devel
 
 GreenBook is a Spring web-app that allows to manage reservations in a restaurant, with a particular focus on the traceability of possible COVID infections.
 
-\section*{Assumptions}
-\subsection*{ER Model Design}
-[Placeholder: assumptions made for ER Model]
+\section*{ER Model Design}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{ER}
+    \caption{ER Model}
+    \label{fig:ermodel}
+\end{figure}
 
-ER Model image available at \hyperref[appendix:A]{Appendix} of this document
-
-\subsection*{Web-app Development}
-[Placeholder: assumptions made for Web-app code]
+In the phase of ER Design, we made the following assumptions:
+\begin{itemize}
+  \item A user cannot recommend himself
+  \item We trace also employees which are selected for each reservation, as they could be infected and, in such cases, we need to be able to track them too
+\end{itemize}
 
 \section*{Web-app Functionalities}
 The restaurant staff can mainly perform four types of operations:
@@ -82,15 +84,6 @@ The restaurant staff can mainly perform four types of operations:
 \end{itemize}
 
 \subsection*{Manage reservations}
-[Placeholder: subsection needed?]
-
-\subsection*{Manage employees}
-[Placeholder: subsection needed?]
-
-\subsection*{Manage customers}
-[Placeholder: subsection needed?]
-
-\subsection*{Manage allergens}
 [Placeholder: subsection needed?]
 
 \clearpage
@@ -169,36 +162,20 @@ The restaurant staff can mainly perform four types of operations:
     \end{forest}
 }\columnbreak
 
-The code contains 3 core types of elements:
+The code we have developed is mainly divided into two categories: the one necessary for the implementation of the back-end, written in Java, and the one for the front-end, written in JSP (and of course HTML, CSS and JS). The former is located in the \textit{java/src} directory, while the latter is located in \textit{resources/WEB-INF}.
+
+\subsection*{Front-end}
+The front-end was created by defining a page for each functionality offered by the application. Each of these is in fact dedicated to carrying out CRUD functions on specific entities (allergen/customer/employee). The pages in the reservation directory allow the insertion and search of reservations, thus also implementing operations that require the involvement of multiple database entities.
+
+\subsection*{Back-end}
+The back-end is dedicated to the management of GET and POST requests made by by the user through the forms presented in the View.
+
+Each entity implements three kinds of classes:
 \begin{itemize}
     \item Repository: persistence layer (mechanism for storage, retrieval, search, update and delete operations)
     \item Service: service layer (business logic)
     \item Controller: presentation layer (manage GET and POST requests)
 \end{itemize}
 \end{multicols*}
-
-\subsection*{Repositories}
-[Placeholder: subsection needed?]
-
-\subsection*{Services}
-[Placeholder: subsection needed?]
-
-\subsection*{Controllers}
-[Placeholder: subsection needed?]
-
-% ------------------------------- APPENDIX ------------------------------- %
-
-\newpage
-\appendix
-
-\section*{Appendix - ER Model}
-\label{appendix:A}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{ER}
-    \caption{ER Model}
-    \label{fig:ermodel}
-\end{figure}
-
 
 \end{document}
