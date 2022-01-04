@@ -139,6 +139,8 @@ public class CustomerController {
      * - there is some validation error
      * - the customer related to the mobile number given by the user is not persisted on the database (but only
      * if the mobile number field contains something, otherwise it doesn't get checked)
+     * - customer has entered himself as referral
+     * - the customer chose a mobile number which is already persisted and related to a different customer
      *
      * @param result                    object that eventually contains validation errors
      * @param model                     set of attributes of the .jsp page shown to the user
@@ -152,11 +154,11 @@ public class CustomerController {
         boolean errorPresence = false;
 
         // Check if the mobile number of the customer is already persisted in the database
-        boolean mobileNumberAlreadyPersisted = isMobileNumberPersisted(customer.getMobileNumber());
+        boolean mobileNumberAlreadyPersisted = service.isMobileNumberPersisted(customer.getMobileNumber());
 
         // Check if the customer related to the mobile number given by the user is actually persisted on the database
         String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
-        boolean recommendedByIsPersisted = isMobileNumberPersisted(recommendedByMobileNumber);
+        boolean recommendedByIsPersisted = service.isMobileNumberPersisted(recommendedByMobileNumber);
 
         // IF -> there are some validation errors
         if (result.hasErrors())
@@ -170,7 +172,7 @@ public class CustomerController {
                 model.addAttribute("mobileNumberError", duplicatedError);
                 errorPresence = true;
             } else {
-                if (checkForMobileNumberDuplicates(customer.getId(), customer.getMobileNumber())) {
+                if (service.checkForMobileNumberDuplicates(customer.getId(), customer.getMobileNumber())) {
                     model.addAttribute("mobileNumberError", duplicatedError);
                     errorPresence = true;
                 }
@@ -202,35 +204,6 @@ public class CustomerController {
 
         return false;
     }
-
-    /**
-     * Checks that the mobile number is stored in the database (in this case, the user is inserting a duplicate)
-     *
-     * @param mobileNumber mobile number of the customer that the user wants to insert
-     */
-    private boolean isMobileNumberPersisted(String mobileNumber){
-        return !service.findAllCustomersByMobileNumber(mobileNumber).isEmpty();
-    }
-
-    /**
-     * Checks for mobile number duplicates
-     *
-     * @param mobileNumber mobile number of the customer that the user wants to update
-     */
-    private boolean checkForMobileNumberDuplicates(Long id, String mobileNumber){
-        List<Customer> customersList = service.findAllCustomersByMobileNumber(mobileNumber);
-        boolean alreadyPresent = false;
-
-        for(Customer c : customersList){
-            if (c.getId() != id) {
-                alreadyPresent = true;
-                break;
-            }
-        }
-
-        return alreadyPresent;
-    }
-
 
 
 }

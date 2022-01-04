@@ -72,13 +72,11 @@ public class CustomerService {
         repository.deleteById(id);
     }
     
-    /***
-     * On customer deletion, if it was referenced by 
-     * other customers as the recommendedBy, we need 
-     * to set the recommendedBy fields of those that 
-     * remain to null.
+    /**
+     * On customer deletion, if it was referenced by other customers as the recommendedBy, we need to set the
+     * recommendedBy fields of those that remain to null.
      * 
-     * @param id
+     * @param id id of the customer being removed
      */
     public void cleanRecommendedByFieldOnCustomerDelete(Long id) {
     	for(Customer c: repository.findAll()) {
@@ -108,6 +106,37 @@ public class CustomerService {
             // Fetch the customer in the database which has the mobile number given by the user
             customer.setRecommendedBy(findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
         }
+    }
+
+
+    /**
+     * Checks that the mobile number is stored in the database (in this case, the user is inserting a duplicate)
+     *
+     * @param mobileNumber mobile number of the customer that the user wants to insert
+     */
+    public boolean isMobileNumberPersisted(String mobileNumber){
+        return !findAllCustomersByMobileNumber(mobileNumber).isEmpty();
+    }
+
+
+    /**
+     * Checks for mobile number duplicates
+     *
+     * @param mobileNumber mobile number of the customer that the user wants to update
+     * @return alreadyPresent returns true if the mobile number was already persisted for a different customer
+     */
+    public boolean checkForMobileNumberDuplicates(Long id, String mobileNumber){
+        List<Customer> customersList = findAllCustomersByMobileNumber(mobileNumber);
+        boolean alreadyPresent = false;
+
+        for(Customer c : customersList){
+            if (c.getId() != id) {
+                alreadyPresent = true;
+                break;
+            }
+        }
+
+        return alreadyPresent;
     }
 
 }
