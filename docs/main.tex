@@ -58,7 +58,7 @@
 
 Due to the outbreak of the recent COVID-19 pandemic, we found it useful to develop a web-app that would facilitate the traceability of possible infections for managers of clubs and restaurants. In fact, COVID virus can easily spread within a restaurant in the presence of many people in the same closed environment.
 
-GreenBook is a Spring web-app that allows to manage reservations in a restaurant, with a particular focus on the traceability of possible COVID infections.
+GreenBook is a Spring web-app that allows to manage reservations in a restaurant, with a particular focus on the traceability of possible COVID infections thanks to booking records.
 
 \section*{ER Model Design}
 \begin{figure}[H]
@@ -71,7 +71,10 @@ GreenBook is a Spring web-app that allows to manage reservations in a restaurant
 In the phase of ER Design, we made the following assumptions:
 \begin{itemize}
   \item A user cannot recommend himself
-  \item We trace also employees which are selected for each reservation, as they could be infected and, in such cases, we need to be able to track them too
+  \item Tracing also employees which are selected for each reservation should be useful, since they could be infected and, in such cases, we need to be able to track them too
+  \item Each customers' credentials are asked during the booking process, so that every person relating to a reservation gets recorded
+  \item A restaurant could find useful to register also customers' allergies, 
+  in order to avoid needing another application just for this purpose: we implemented this feature even if it is not the functionality for which it was intended
 \end{itemize}
 
 \section*{Web-app Functionalities}
@@ -84,11 +87,16 @@ The restaurant staff can mainly perform four types of operations:
 \end{itemize}
 
 \subsection*{Manage reservations}
-[Placeholder: subsection needed?]
+This section of the web-app offers three functionalities:
+\begin{itemize}
+  \item New reservation: to create a new reservation filled by customers' credentials and, eventually, allergies. The date of the lunch/dinner and also the mobile number of all the customers must be provided, to be able to contact them if a customer warns the restaurant of a possible infection.
+  \item Search reservation by customer: in case a user forgets the date he was in the restaurant, it is possible to find all his presences at the restaurant providing his credentials.
+  \item Search reservation by date: by entering the date of the meal, all the reservations corresponding to that date will be printed and the restaurant staff will have the possibility to track and contact all the customers that were present that particular day.
+\end{itemize}
 
 \clearpage
 \section*{Source code elements}
-\begin{multicols*}{2}
+\begin{multicols}{2}
 {\footnotesize\noindent
     \begin{forest}
       for tree={
@@ -147,17 +155,23 @@ The restaurant staff can mainly perform four types of operations:
         [ReservationService]
       ]
       [GreenBookApplication.java, file]
+      [\dots, file]
     ]
     [resources/WEB-INF
       [jsp
         [allergen]
-        [customer]
+        [customer
+          [customers.jsp, file]
+          [new-customer.jsp, file]
+          [edit-customer.jsp, file]
+        ]
         [employee]
         [reservation]
         [error.jsp, file]
       ]
       [index.html, file]
     ]
+    [\dots, file]
     ]
     \end{forest}
 }\columnbreak
@@ -165,17 +179,24 @@ The restaurant staff can mainly perform four types of operations:
 The code we have developed is mainly divided into two categories: the one necessary for the implementation of the back-end, written in Java, and the one for the front-end, written in JSP (and of course HTML, CSS and JS). The former is located in the \textit{java/src} directory, while the latter is located in \textit{resources/WEB-INF}.
 
 \subsection*{Front-end}
-The front-end was created by defining a page for each functionality offered by the application. Each of these is in fact dedicated to carrying out CRUD functions on specific entities (allergen/customer/employee). The pages in the reservation directory allow the insertion and search of reservations, thus also implementing operations that require the involvement of multiple database entities.
+The front-end was created by defining a page for each functionality offered by the application. Each of these is in fact dedicated to carrying out CRUD operations on specific entities (allergen/customer/employee). The pages in the reservation directory allow the insertion and search of reservations, thus also implementing operations that require the involvement of multiple database entities.
 
 \subsection*{Back-end}
-The back-end is dedicated to the management of GET and POST requests made by by the user through the forms presented in the View.
+The back-end is dedicated to the management of GET and POST requests made by by the user through the forms presented in the View. There are three foundamental elements associated to each model defined in the code: \textbf{repositories} (persistence logic); \textbf{services} (business logic); \textbf{controllers} (presentation layer).
 
-Each entity implements three kinds of classes:
-\begin{itemize}
-    \item Repository: persistence layer (mechanism for storage, retrieval, search, update and delete operations)
-    \item Service: service layer (business logic)
-    \item Controller: presentation layer (manage GET and POST requests)
-\end{itemize}
-\end{multicols*}
+\subsubsection*{Repositories}
+In the repositories we placed mechanisms for storage, retrieval, search, update and delete operations. The interfaces defined as repositories are extending \textit{CrudRepository}, which is an interface for generic CRUD operations on a repository for the specific type passed by parameter (eg. Customer).
+
+Our repository is an in-memory database made possible by the \textit{H2 Engine}: it provides a Java SQL database and allows to use JDBC to access and manage entities persistence.
+
+\subsubsection*{Services}
+These classes encapsulate business logic and changes to be persisted to ensure consistent data and the integrity of relationships between entities.
+
+The purpose of this element is also to define a central point of access to persisted data: all the operations defined in the repository are made available to the controllers through the service.
+
+\end{multicols}
+
+\subsubsection*{Controllers}
+The controllers are the managers of the \textit{View}, and provide entry points for GET and POST requests coming from the user. They validate the data provided in the JSP forms and return the appropriate web page, eventually an error page, making sure that data provided by user is consistent with the costraints defined by annotations in the entities. 
 
 \end{document}
