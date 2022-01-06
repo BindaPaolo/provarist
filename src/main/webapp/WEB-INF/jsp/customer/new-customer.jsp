@@ -11,10 +11,8 @@
 </head>
 <body>
     <h2>Nuovo Cliente</h2>
-    <a href="#" onclick="history.go(-1)">Torna indietro</a>
-    <hr /><br />
 
-    <form:form action="/customer/addCustomer" modelAttribute="customer" method="post">
+    <form:form modelAttribute="customer" method="post">
         <table>
             <tr>
                 <td>
@@ -81,9 +79,10 @@
             </tr>
             <tr>
                 <td>
+                    <br /><form:button type="submit" formaction="/customer/cancelCustomerOp">Annulla</form:button>
                 </td>
                 <td>
-                    <br/><input name="submit" type="submit" value="Aggiungi cliente" />
+                    <br /><form:button type="submit" formaction="/customer/addCustomer">Aggiungi</form:button>
                 </td>
             </tr>
         </table>
