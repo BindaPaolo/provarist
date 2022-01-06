@@ -11,7 +11,7 @@ public class Allergen {
     private long id;
 
     @Basic(optional = false)
-    @NotEmpty(message = "Il nome dell'allergene non puo' essere lasciato vuoto")
+    @NotEmpty(message = "Questo campo non puo' essere lasciato vuoto")
     private String name;
 
     @ManyToMany(mappedBy = "allergies")

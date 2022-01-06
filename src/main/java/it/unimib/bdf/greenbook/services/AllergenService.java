@@ -37,4 +37,13 @@ public class AllergenService {
         repository.deleteById(id);
     }
 
+    /**
+     * Checks if the allergen is already present in the database
+     *
+     * @param allergenName name of the allergen that the user wants to add to allergens list
+     */
+    public boolean isAllergenPersisted(String allergenName) {
+        return !repository.findAllAllergensByNameAllIgnoringCase(allergenName).isEmpty();
+    }
+
 }
