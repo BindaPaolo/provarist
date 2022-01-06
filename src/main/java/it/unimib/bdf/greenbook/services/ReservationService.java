@@ -25,20 +25,22 @@ import lombok.extern.slf4j.Slf4j;
 public class ReservationService{
 	@Autowired
     private ReservationRepository reservationRepository;
+/*
 	@Autowired
     private CustomerRepository customerRepository;
+*/
 	@Autowired
 	private CustomerService customerService;
 	
     
-
+/*
     @Autowired
     public ReservationService(ReservationRepository reservationRepository,
     		CustomerRepository customerRepository) {
         this.reservationRepository = reservationRepository;
         this.customerRepository = customerRepository;
     }
-    
+*/    
     public List<Reservation> findAllReservationsByCustomerId(Long id){
     	return this.reservationRepository.findAllReservationsByCustomerId(id);
     }
@@ -97,25 +99,10 @@ public class ReservationService{
 
 
     public void deleteById(Long id) {
-    	Reservation reservation = this.findById(id)
+    	this.findById(id)
     			.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-    	//Take care of the recommended by stuff
-    	List<Customer> reservation_customers = reservation.getReservation_customers();
-    	for(Customer c : reservation_customers) {
-    		customerService.cleanRecommendedByFieldOnCustomerDelete(c.getId());
-    	}
     	//Delete reservation and clean join table with customer and waiters
     	reservationRepository.deleteById(id);
-    	
-    	//If one or more of the customers 
-    	//in the reservation_customers list
-    	//don't belong to any other reservation,
-    	//we remove them from the customer table.
-    	for(Customer c : reservation_customers) {
-    		if(customerService.findAllCustomerReservations(c.getId()).isEmpty()) {
-    			customerService.deleteById(c.getId());
-    		}
-    	}
     }
     
     public List<Reservation> findAllReservationByCustomerFirstNameAndLastName(String firstName, String lastName){
