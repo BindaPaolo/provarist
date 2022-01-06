@@ -44,15 +44,22 @@
             <tr>
                 <td>Camerieri</td>
                 <td>
-                    <table>
-                        <c:forEach items="${waitersList}" var="employee">
-                            <tr>
-                                <td><form:checkbox path="reservation_waiters" value="${employee}" /></td>
-                                <td><c:out value="${employee.firstName}" /> <c:out value="${employee.lastName}" /></td>
-                            </tr>
-                        </c:forEach>
-                        <form:errors path="reservation_waiters" class="validationError" />
-                    </table>
+                <c:choose>
+                    <c:when test="${not empty waitersList}">
+	                  <table>
+	                      <c:forEach items="${waitersList}" var="employee">
+	                          <tr>
+	                              <td><form:checkbox path="reservation_waiters" value="${employee}" /></td>
+	                              <td><c:out value="${employee.firstName}" /> <c:out value="${employee.lastName}" /></td>
+	                          </tr>
+	                      </c:forEach>
+	                      <form:errors path="reservation_waiters" class="validationError" />
+	                  </table>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="red">Prima di poter prenotare devi aggiungere camerieri al sistema!</span>
+                    </c:otherwise>
+                </c:choose>      
                 </td>
             </tr>
             <tr>

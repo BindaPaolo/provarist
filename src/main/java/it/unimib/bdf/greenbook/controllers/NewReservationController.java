@@ -12,6 +12,7 @@ import it.unimib.bdf.greenbook.controllers.CustomerController;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.log.LogDelegateFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -76,7 +77,7 @@ public class NewReservationController {
 				return "/reservation/new/new-reservation-customer";
 			case "add":
 				log.info("action = add");
-				if(checkForErrors(result, model, customer)){
+				if(newReservationCustomerCheckForErrors(result, model, customer)){
 					return "/reservation/new/new-reservation-customer";
 				}
 				reservation.addReservationCustomer(customer);
@@ -99,6 +100,7 @@ public class NewReservationController {
     							SessionStatus status) {
         log.info("Entro in saveReservation");
     	if (result.hasErrors()) {
+    		log.info("\n\nEntro in result.hasW\n\n");
 			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/new/new-reservation";
         }
@@ -150,7 +152,7 @@ public class NewReservationController {
     		return "/reservation/new/new-reservation";
     	}else if(action.equals("save")) {
     		log.info("action = save");
-    		if (checkForErrors(result, model, customer)) {
+    		if (newReservationCustomerCheckForErrors(result, model, customer)) {
     			reservation_customers.add(originalCustomer);
     			model.addAttribute("customer", customer);
     			return "/reservation/new/new-reservation-edit-customer";
@@ -252,7 +254,7 @@ public class NewReservationController {
      * @param customer                  object of the customer that the user is inserting/editing
      * @return true if there is an error and some page needs to be shown to the user; false otherwise
      */
-    private boolean checkForErrors(BindingResult result, Model model, Customer customer) {
+    private boolean newReservationCustomerCheckForErrors(BindingResult result, Model model, Customer customer) {
 
         // Flag = presence of errors
         boolean errorPresence = false;

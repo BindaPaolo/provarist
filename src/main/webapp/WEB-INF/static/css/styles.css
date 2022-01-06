@@ -1,5 +1,8 @@
-.validationError{
+.validationError {
 	color: red;
+}
+span.red {
+    color: red;
 }
 .inline {
   display: inline;}
