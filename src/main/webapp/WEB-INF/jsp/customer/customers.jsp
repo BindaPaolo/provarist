@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,9 +42,18 @@
                             <td>${customer.id}</td>
                             <td>${customer.firstName}</td>
                             <td>${customer.lastName}</td>
-                            <td>${customer.allergies}</td>
+                            <td>
+                                <c:if test="${not empty customer.allergies}">
+                                    ${customer.allergies}
+                                </c:if>
+                            </td>
                             <td>${customer.mobileNumber}</td>
-                            <td>${customer.recommendedBy.id}</td>
+                            <td>
+                                <c:if test="${not empty customer.recommendedBy.id}">
+                                    ${customer.recommendedBy.firstName} ${customer.recommendedBy.lastName}
+                                    <br />(ID: ${customer.recommendedBy.id})
+                                </c:if>
+                            </td>
                             <td>
                                 <a href="/customer/showCustomer/${customer.id}">Modifica</a>
                                 <form action="/customer/deleteCustomer/${customer.id}" method="post">

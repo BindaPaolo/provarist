@@ -62,14 +62,21 @@
                     <form:label path="allergies">Allergeni</form:label>
                 </td>
                 <td>
-                    <table>
-                        <c:forEach items="${allergensList}" var="allergen">
-                            <tr>
-                                <td><form:checkbox path="allergies" value="${allergen}" /></td>
-                                <td><c:out value="${allergen.name}" /></td>
-                            </tr>
-                        </c:forEach>
-                    </table>
+                    <c:choose>
+                        <c:when test="${not empty allergensList}">
+                            <table>
+                                <c:forEach items="${allergensList}" var="allergen">
+                                    <tr>
+                                        <td><form:checkbox path="allergies" value="${allergen}" /></td>
+                                        <td><c:out value="${allergen.name}" /></td>
+                                    </tr>
+                                </c:forEach>
+                            </table>
+                        </c:when>
+                        <c:otherwise>
+                            Non vi sono allergeni disponibili per la scelta.
+                        </c:otherwise>
+                    </c:choose>
                 </td>
             </tr>
             <tr>
