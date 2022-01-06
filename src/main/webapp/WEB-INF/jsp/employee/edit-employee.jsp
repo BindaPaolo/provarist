@@ -10,12 +10,9 @@
     <title>Lista Dipendenti</title>
 </head>
 <body>
-
     <h2>Modifica Dipendente</h2>
-    <a href="#" onclick="history.go(-1)">Torna indietro</a>
-    <hr /><br />
 
-    <form:form action="/updateEmployee/${employee.id}" modelAttribute="employee" method="post">
+    <form:form modelAttribute="employee" method="post">
         <table>
             <tr>
                 <td>
@@ -61,9 +58,10 @@
             </tr>
             <tr>
                 <td>
+                    <br /><form:button type="submit" formaction="/cancelEmployeeOp">Annulla</form:button>
                 </td>
                 <td>
-                    <br /><input type="submit" value="Aggiorna Dipendente">
+                    <br /><form:button type="submit" formaction="/updateEmployee/${employee.id}">Aggiorna</form:button>
                 </td>
             </tr>
         </table>

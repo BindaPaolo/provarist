@@ -1,12 +1,9 @@
 package it.unimib.bdf.greenbook.controllers;
 
 import it.unimib.bdf.greenbook.models.Customer;
-import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
-import it.unimib.bdf.greenbook.services.ReservationService;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -15,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -125,11 +121,17 @@ public class CustomerController {
         // Delete the persisted customer by id
         try {
             service.deleteById(id);
-        } catch(DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             model.addAttribute("dataIntegrityError", "Impossibile eliminare il cliente con ID " +
                     customerToBeDeleted.getId() + ": verifica che non faccia parte di una prenotazione.");
         }
 
+        model.addAttribute("customers", service.findAll());
+        return "/customer/customers";
+    }
+
+    @PostMapping("/cancelCustomerOp")
+    public String cancelOperation(Model model) {
         model.addAttribute("customers", service.findAll());
         return "/customer/customers";
     }
@@ -142,10 +144,10 @@ public class CustomerController {
      * - customer has entered himself as referral
      * - the customer chose a mobile number which is already persisted and related to a different customer
      *
-     * @param result                    object that eventually contains validation errors
-     * @param model                     set of attributes of the .jsp page shown to the user
-     * @param customer                  object of the customer that the user is inserting/editing
-     * @param insertAction              defines if the current action is an insert (1) or an update (0)
+     * @param result       object that eventually contains validation errors
+     * @param model        set of attributes of the .jsp page shown to the user
+     * @param customer     object of the customer that the user is inserting/editing
+     * @param insertAction defines if the current action is an insert (1) or an update (0)
      * @return true if there is an error and some page needs to be shown to the user; false otherwise
      */
     private boolean checkForErrors(BindingResult result, Model model, Customer customer, boolean insertAction) {
@@ -165,7 +167,7 @@ public class CustomerController {
             errorPresence = true;
 
         // IF -> a customer with the same mobile number is already present in the database
-        if(mobileNumberAlreadyPersisted) {
+        if (mobileNumberAlreadyPersisted) {
             String duplicatedError = "Il numero di telefono è già registrato per un altro cliente.";
 
             if (insertAction) {
@@ -194,7 +196,7 @@ public class CustomerController {
         }
 
         // If any of the above errors is present, show again page new/edit-customer
-        if(errorPresence) {
+        if (errorPresence) {
             // Load persisted allergens list
             model.addAttribute("allergensList", allergenService.findAll());
 

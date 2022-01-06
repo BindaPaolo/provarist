@@ -1,6 +1,5 @@
 package it.unimib.bdf.greenbook.controllers;
 
-import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Employee;
 import it.unimib.bdf.greenbook.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +79,7 @@ public class EmployeeController {
 
         try {
             service.deleteById(id);
-        } catch(DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             model.addAttribute("dataIntegrityError", "Impossibile eliminare il dipendente con ID " +
                     service.findById(id).get().getId() + ": verifica che non faccia parte di una prenotazione.");
         }
@@ -95,10 +94,10 @@ public class EmployeeController {
      * - the employee related to the cf given by the user is not persisted on the database (but only
      * if the cf field contains something, otherwise it doesn't get checked)
      *
-     * @param result                    object that eventually contains validation errors
-     * @param model                     set of attributes of the .jsp page shown to the user
-     * @param employee                  object of the employee that the user is inserting/editing
-     * @param insertAction              defines if the current action is an insert (1) or an update (0)
+     * @param result       object that eventually contains validation errors
+     * @param model        set of attributes of the .jsp page shown to the user
+     * @param employee     object of the employee that the user is inserting/editing
+     * @param insertAction defines if the current action is an insert (1) or an update (0)
      * @return true if there is an error and some page needs to be shown to the user; false otherwise
      */
     private boolean checkForErrors(BindingResult result, Model model, Employee employee, boolean insertAction) {
@@ -132,12 +131,18 @@ public class EmployeeController {
         return errorPresence;
     }
 
+    @PostMapping("/cancelEmployeeOp")
+    public String cancelOperation(Model model) {
+        model.addAttribute("employees", service.findAll());
+        return "employee/employees";
+    }
+
     /**
      * Checks that the cf is stored in the database (in this case, the user is inserting a duplicate)
      *
      * @param cf cf of the customer that the user wants to insert
      */
-    private boolean isCFPersisted(String cf){
+    private boolean isCFPersisted(String cf) {
         return !service.findAllEmployeeByCF(cf).isEmpty();
     }
 
@@ -146,11 +151,11 @@ public class EmployeeController {
      *
      * @param cf cf of the customer that the user wants to update
      */
-    private boolean checkForCFDuplicates(Long id, String cf){
+    private boolean checkForCFDuplicates(Long id, String cf) {
         List<Employee> employeeList = service.findAllEmployeeByCF(cf);
         boolean alreadyPresent = false;
 
-        for(Employee e : employeeList){
+        for (Employee e : employeeList) {
             if (e.getId() != id) {
                 alreadyPresent = true;
                 break;

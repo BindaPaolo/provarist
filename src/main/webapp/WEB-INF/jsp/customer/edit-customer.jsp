@@ -11,10 +11,8 @@
 </head>
 <body>
     <h2>Modifica Cliente</h2>
-    <a href="#" onclick="history.go(-1)">Torna indietro</a>
-    <hr /><br />
 
-    <form:form action="/customer/updateCustomer/${customer.id}" modelAttribute="customer" method="post">
+    <form:form modelAttribute="customer" method="post">
         <table>
             <tr>
                 <td>
@@ -81,7 +79,10 @@
             </tr>
             <tr>
                 <td>
-                    <br/><input name="submit" type="submit" value="Aggiorna cliente" />
+                    <br /><form:button type="submit" formaction="/customer/cancelCustomerOp">Annulla</form:button>
+                </td>
+                <td>
+                    <br /><form:button type="submit" formaction="/customer/updateCustomer/${customer.id}">Aggiorna</form:button>
                 </td>
             </tr>
         </table>

@@ -100,4 +100,10 @@ public class AllergenController {
         model.addAttribute("allergens", service.findAll());
         return "allergen/allergens";
     }
+
+    @PostMapping("/cancelAllergenOp")
+    public String cancelOperation(Model model) {
+        model.addAttribute("allergens", service.findAll());
+        return "allergen/allergens";
+    }
 }

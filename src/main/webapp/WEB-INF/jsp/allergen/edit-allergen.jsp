@@ -10,33 +10,31 @@
     <title>Lista Allergeni</title>
 </head>
 <body>
-    <div>
-        <h2>Modifica Allergene</h2>
-        <a href="#" onclick="history.go(-1)">Torna indietro</a>
-        <hr /><br />
+    <h2>Modifica Allergene</h2>
 
-        <div>
-            <div>
-                <form:form action="/updateAllergen/${allergen.id}" modelAttribute="allergen" method="post">
-                    <div>
-                        <div>
-                            <form:label path="name">Nome</form:label>
-                            <form:input type="text" id="name" path="name" />
-                            <form:errors path="name" />
-                            <form:errors path="name" class="validationError"/>
-                            <c:if test="${not empty allergenError}">
-                               <div class="validationError">Errore: ${allergenError}</div>
-                            </c:if>
-                        </div>
-                    <div>
-                        <div>
-                        <br />
-                            <input type="submit" value="Aggiorna allergene">
-                        </div>
-                    </div>
-                </form:form>
-            </div>
-        </div>
-    </div>
+    <form:form modelAttribute="allergen" method="post">
+        <table>
+            <tr>
+                <td>
+                    <form:label path="name">Nome</form:label>
+                </td>
+                <td>
+                    <form:input type="text" id="name" path="name" />
+                    <form:errors path="name" class="validationError" />
+                    <c:if test="${not empty allergenError}">
+                       <div class="validationError">Errore: ${allergenError}</div>
+                    </c:if>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br /><form:button type="submit" formaction="/cancelAllergenOp">Annulla</form:button>
+                </td>
+                <td>
+                    <br /><form:button type="submit" formaction="/updateAllergen/${allergen.id}">Aggiorna</form:button>
+                </td>
+            </tr>
+        </table>
+    </form:form>
     </body>
 </html>
