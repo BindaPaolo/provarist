@@ -28,7 +28,7 @@ public class Reservation {
 	private shiftEnumType shiftEnum;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@NotNull(message="Seleziona la data!")
+	@NotNull(message="Seleziona una data.")
 	@FutureOrPresent(message="Data selezionata non valida.")
 	private LocalDate date;
 

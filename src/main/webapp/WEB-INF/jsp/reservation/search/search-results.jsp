@@ -77,6 +77,8 @@
   							<div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}?searchType=${searchType}&date=${date}">Elimina prenotazione</form:button></div>
   						</c:otherwise>
   					</c:choose>
+  					
+  						<div><form:button type="submit" name="edit" formaction="/reservation/edit/editReservation/${reservation.getReservation_id()}">Modifica</form:button></div>
 			        <hr noshade size="20">
 				</c:forEach>
 		 	</form:form>

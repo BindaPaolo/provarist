@@ -10,6 +10,7 @@ import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.controllers.CustomerController;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.log.LogDelegateFactory;
@@ -51,9 +52,9 @@ public class NewReservationController {
 	
     @GetMapping("/new-reservation")
 
-    public String showNewReservationForm(Model model) {
+    public String showNewReservationForm(Model model, HttpSession session) {
     	log.info("Entro in new-reservation");
-
+    	log.info("NewReservationController: " + session.getId());
 		// Show persisted waiters
 		model.addAttribute("waitersList", getPersistedWaiters());
 
@@ -77,7 +78,7 @@ public class NewReservationController {
 				return "/reservation/new/new-reservation-customer";
 			case "add":
 				log.info("action = add");
-				if(newReservationCustomerCheckForErrors(result, model, customer)){
+				if(reservationCustomerCheckForErrors(result, model, customer)){
 					return "/reservation/new/new-reservation-customer";
 				}
 				reservation.addReservationCustomer(customer);
@@ -152,7 +153,7 @@ public class NewReservationController {
     		return "/reservation/new/new-reservation";
     	}else if(action.equals("save")) {
     		log.info("action = save");
-    		if (newReservationCustomerCheckForErrors(result, model, customer)) {
+    		if (reservationCustomerCheckForErrors(result, model, customer)) {
     			reservation_customers.add(originalCustomer);
     			model.addAttribute("customer", customer);
     			return "/reservation/new/new-reservation-edit-customer";
@@ -254,7 +255,7 @@ public class NewReservationController {
      * @param customer                  object of the customer that the user is inserting/editing
      * @return true if there is an error and some page needs to be shown to the user; false otherwise
      */
-    private boolean newReservationCustomerCheckForErrors(BindingResult result, Model model, Customer customer) {
+    private boolean reservationCustomerCheckForErrors(BindingResult result, Model model, Customer customer) {
 
         // Flag = presence of errors
         boolean errorPresence = false;

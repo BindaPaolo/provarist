@@ -1,6 +1,7 @@
 package it.unimib.bdf.greenbook.controllers;
 
 import it.unimib.bdf.greenbook.models.Customer;
+import it.unimib.bdf.greenbook.models.DateContainer;
 import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.ReservationService;
@@ -36,6 +37,8 @@ import javax.validation.Valid;
 public class SearchReservationController {
 	@Autowired
 	private ReservationService reservationService;
+	
+	private DateContainer dateContainer;
 
 	
     @GetMapping("/search-reservation-by-customer")
@@ -45,11 +48,12 @@ public class SearchReservationController {
 
         return "reservation/search/search-reservation-by-customer";
     }
-
+    
     @GetMapping("/search-reservation-by-date")
     public String serachReservationByDate(Model model) {
-        model.addAttribute("reservation", new Reservation());
-        log.info("Going to search-reservatoin-by-date");
+    	dateContainer = new DateContainer();
+    	model.addAttribute("dateContainer", dateContainer);
+    	log.info("Going to search-reservatoin-by-date");
 
         return "/reservation/search/search-reservation-by-date";
     }
@@ -84,7 +88,9 @@ public class SearchReservationController {
 		
 		log.info("Entro in executeSearchReservationByDate");
 		
-		if(result.getFieldError("date") != null) {
+		if(reservation.getDate() == null) {
+			model.addAttribute("emptyDateField", "Seleziona una data.");
+			model.addAttribute("dateContainer", dateContainer);
             return "/reservation/search/search-reservation-by-date";
         }
 		
