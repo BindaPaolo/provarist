@@ -1,6 +1,5 @@
 package it.unimib.bdf.greenbook.services;
 
-import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Employee;
 import it.unimib.bdf.greenbook.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;

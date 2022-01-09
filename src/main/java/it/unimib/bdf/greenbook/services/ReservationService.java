@@ -1,9 +1,7 @@
 package it.unimib.bdf.greenbook.services;
 
-import it.unimib.bdf.greenbook.controllers.NewReservationController;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.models.Reservation;
-import it.unimib.bdf.greenbook.repositories.CustomerRepository;
 import it.unimib.bdf.greenbook.repositories.ReservationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import lombok.extern.slf4j.Slf4j;
-
 
 @Slf4j
 @Service
