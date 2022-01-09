@@ -13,7 +13,7 @@
 
 	<h2>Modifica Prenotazione</h2>
     <form:form modelAttribute="reservation" method="post">
-        <button type="submit" class="link-button" formaction="">
+        <button type="submit" class="link-button" formaction="TODO">
             Aggiungi cliente alla prenotazione
         </button>
 
@@ -69,7 +69,7 @@
                 </td>
                 <td>
                     <br />
-                    <form:button type="submit" name="save" formaction="">Salva modifiche</form:button>
+                    <form:button type="submit" name="save" formaction="TODO">Salva modifiche</form:button>
                 </td>
             </tr>
         </table>

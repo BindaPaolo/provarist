@@ -1,6 +1,8 @@
-package it.unimib.bdf.greenbook.models;
+package it.unimib.bdf.greenbook.containers;
 
 import java.util.List;
+
+import it.unimib.bdf.greenbook.models.Reservation;
 
 public class ReservationListContainer {
 
@@ -14,4 +16,12 @@ public class ReservationListContainer {
 		this.reservations = reservations;
 	}
 	
+	@Override
+	public String toString() {
+		String s = "";
+		for (Reservation r: reservations) {
+			s += r.toString();
+		}
+		return s;
+	}
 }

@@ -71,7 +71,7 @@ public class Reservation {
 	}
 
 	public LocalDate getDate() {
-		return date;
+		return this.date;
 	}
 
 	public void setDate(LocalDate date) {
@@ -96,6 +96,10 @@ public class Reservation {
 
 	@Override
 	public String toString() {
-		return this.reservation_id + this.getReservation_customers().toString() ;
+		return "Reservation [reservation_id=" + reservation_id + ", shiftEnum=" + shiftEnum + ", date=" + date
+				+ ", reservation_customers=" + reservation_customers + ", reservation_waiters=" + reservation_waiters
+				+ "]";
 	}
+
+
 }

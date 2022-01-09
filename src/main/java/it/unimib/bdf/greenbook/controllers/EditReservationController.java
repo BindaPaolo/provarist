@@ -1,6 +1,7 @@
 package it.unimib.bdf.greenbook.controllers;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import it.unimib.bdf.greenbook.containers.ReservationListContainer;
 import it.unimib.bdf.greenbook.models.Employee;
 import it.unimib.bdf.greenbook.models.Reservation;
 import it.unimib.bdf.greenbook.services.ReservationService;
@@ -36,38 +39,63 @@ public class EditReservationController {
 	
 	@PostMapping("/editReservation/{id}")
 	public String editReservation(@PathVariable Long id,
-									Model model) {
-		log.info("\n\n\n entro in edit-reservation\n\n\n");
+								@RequestParam("searchType") String searchType,
+								@RequestParam(value = "firstName", required = false) String firstName,
+								@RequestParam(value = "lastName", required = false) String lastName,
+								@RequestParam(value = "date", required = false) String date,								
+								Model model) {
+		
+		
 		Reservation reservation = reservationService.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
-		model.addAttribute("waitersList", getPersistedWaiters());
-		
+
+		model.addAttribute("waitersList", getPersistedWaiters());		
 		model.addAttribute("reservation", reservation);
 		
-		httpSession.setAttribute("reservation", reservation);
-		
-		
-		log.info(reservation.toString());
-		
+		httpSession.setAttribute("searchType", searchType);
+		if(searchType.equals("byDate")) {
+			httpSession.setAttribute("date", LocalDate.parse(date));
+		}
+		else {
+			httpSession.setAttribute("firstName", firstName);
+			httpSession.setAttribute("lastName", lastName);
+		}
+
 		return "/reservation/edit/edit-reservation";
 	}
 	
-	//TODO
+	
 	@PostMapping("/cancel-edit-reservation")
 	public String cancelEditReservation(Model model) {
+		ReservationListContainer reservationListContainer = new ReservationListContainer();
+		// Cleanup and close the session and set up model attribute 
+		// needed when going back to search-results.
+		String searchType = (String) httpSession.getAttribute("searchType");
+		model.addAttribute("searchType", searchType);
+
+		if(searchType.equals("byDate")) {
+			LocalDate date = (LocalDate) httpSession.getAttribute("date");
+			httpSession.removeAttribute("date");
+			model.addAttribute("date", date);
+			reservationListContainer.setReservations(reservationService.findAllReservationsByDate(date));
+		}
+		else {
+			model.addAttribute("firstName", httpSession.getAttribute("firstName"));
+			model.addAttribute("lastName", httpSession.getAttribute("lastName"));
+			reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName("firstName", "lastName"));
+
+			httpSession.removeAttribute("firstName");
+			httpSession.removeAttribute("lastName");
+		}
+		httpSession.removeAttribute("searchType");
 		httpSession.removeAttribute("reservation");
 		httpSession.invalidate();
-		/*
-		model.addAttribute("reservation", httpSession.getAttribute("reservation"));
-		model.addAttribute("waitersList", getPersistedWaiters());
-		*/
-		log.info("\n\n" + httpSession.toString());
 		
-		
-		return "/reservation/search/search-reservation-by-date";
+		model.addAttribute("reservationListContainer", reservationListContainer);
+
+		return "/reservation/search/search-results";
 	}
 
-	//METODO DUPLICATO (NewReservationController)!!
 	private List<Employee> getPersistedWaiters(){
 		List<Employee> persistedEmployees = employeeService.findAll();
 		persistedEmployees.removeIf(

@@ -23,7 +23,7 @@
 				<form:label path="date">Data</form:label>
 			  </td>
             <td>
-				<form:input type="date" name="date" id="date" path="date"/>
+				<form:input type="date" name="date" id="date" path="${dateContainer.date}"/>
               </td>
             </tr>
             

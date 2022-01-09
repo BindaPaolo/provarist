@@ -69,22 +69,23 @@
 			            </table>
 			        </div>
 			        <br>
-		              <c:choose>
-		              	<c:when test="${searchType == 'byCustomer'}">
-  							<div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}?searchType=${searchType}&firstName=${firstName}&lastName=${lastName}">Elimina prenotazione</form:button></div>
-  						</c:when>
-  						<c:otherwise>
-  							<div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}?searchType=${searchType}&date=${date}">Elimina prenotazione</form:button></div>
-  						</c:otherwise>
-  					</c:choose>
-  					
-  						<div><form:button type="submit" name="edit" formaction="/reservation/edit/editReservation/${reservation.getReservation_id()}">Modifica</form:button></div>
+					<c:choose>
+						<c:when test="${searchType == 'byDate'}">
+							  <div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}?searchType=${searchType}&date=${date}">Elimina prenotazione</form:button></div>
+	  							&nbsp;
+	  						 <div><form:button type="submit" name="edit" formaction="/reservation/edit/editReservation/${reservation.getReservation_id()}?searchType=${searchType}&date=${date}">Modifica</form:button></div>		
+						</c:when>
+						<c:otherwise>
+							  <div><form:button type="submit" name="delete" formaction="/reservation/search/deleteReservation/${reservation.getReservation_id()}?searchType=${searchType}&firstName=${firstName}&lastName=${lastName}">Elimina prenotazione</form:button></div>
+	  							&nbsp;
+	  						 <div><form:button type="submit" name="edit" formaction="/reservation/edit/editReservation/${reservation.getReservation_id()}?searchType=${searchType}&firstName=${firstName}&lastName=${lastName}">Modifica</form:button></div>		
+						</c:otherwise>
+					</c:choose>  					
 			        <hr noshade size="20">
 				</c:forEach>
 		 	</form:form>
 		</c:otherwise>
 	</c:choose>
-
 
 </body>
 </html>

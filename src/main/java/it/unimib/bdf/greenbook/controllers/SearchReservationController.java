@@ -1,9 +1,8 @@
 package it.unimib.bdf.greenbook.controllers;
 
+import it.unimib.bdf.greenbook.containers.DateContainer;
+import it.unimib.bdf.greenbook.containers.ReservationListContainer;
 import it.unimib.bdf.greenbook.models.Customer;
-import it.unimib.bdf.greenbook.models.DateContainer;
-import it.unimib.bdf.greenbook.models.Reservation;
-import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import it.unimib.bdf.greenbook.models.Customer;
 
-import it.unimib.bdf.greenbook.models.Reservation;
 
 import it.unimib.bdf.greenbook.services.ReservationService;
-import it.unimib.bdf.greenbook.models.ReservationListContainer;
-
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -38,22 +33,18 @@ public class SearchReservationController {
 	@Autowired
 	private ReservationService reservationService;
 	
-	private DateContainer dateContainer;
-
 	
     @GetMapping("/search-reservation-by-customer")
     public String searchReservationByCustomer(Model model) {
         model.addAttribute("customer", new Customer());
-        log.info("Going to search-reservation-by-customer");
 
         return "reservation/search/search-reservation-by-customer";
     }
     
     @GetMapping("/search-reservation-by-date")
     public String serachReservationByDate(Model model) {
-    	dateContainer = new DateContainer();
+    	DateContainer dateContainer = new DateContainer();
     	model.addAttribute("dateContainer", dateContainer);
-    	log.info("Going to search-reservatoin-by-date");
 
         return "/reservation/search/search-reservation-by-date";
     }
@@ -62,9 +53,9 @@ public class SearchReservationController {
     public String executeSearchReservationByCustomer(Model model,
                                                      @Valid @ModelAttribute Customer customer,
                                                      BindingResult result) {
-        log.info("Entro in executeSearchReservationByCustomer");
         if (result.getFieldErrors("firstName").size() != 0 ||
                 result.getFieldErrors("lastName").size() != 0) {
+        	//non devo riaggiungere customer al modello?
             return "/reservation/search/search-reservation-by-customer";
         }
 		
@@ -72,74 +63,77 @@ public class SearchReservationController {
 		ReservationListContainer reservationListContainer = new ReservationListContainer();
 		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(customer.getFirstName(), customer.getLastName()));
 
-
+		// Adding list of reservations with that customer's first and last name
 		model.addAttribute("reservationListContainer", reservationListContainer);
+		// Adding useful data, needed in other methods
 		model.addAttribute("searchType", "byCustomer");
 		model.addAttribute("firstName", customer.getFirstName());
 		model.addAttribute("lastName", customer.getLastName());
+		
 		
 		return "/reservation/search/search-results";
 	}
 
 	@PostMapping("/executeSearchReservationByDate")
 	public String executeSearchReservationByDate(Model model, 
-									@Valid @ModelAttribute Reservation reservation,
-									BindingResult result) {
+												@ModelAttribute DateContainer dateContainer) {
 		
 		log.info("Entro in executeSearchReservationByDate");
 		
-		if(reservation.getDate() == null) {
+		// Error Check: empty date field
+		if(dateContainer.getDate() == null) {
 			model.addAttribute("emptyDateField", "Seleziona una data.");
 			model.addAttribute("dateContainer", dateContainer);
             return "/reservation/search/search-reservation-by-date";
         }
 		
-		LocalDate date = reservation.getDate();
-		
 		ReservationListContainer reservationListContainer = new ReservationListContainer();
-		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(date));
+		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(dateContainer.getDate()));
 		model.addAttribute("reservationListContainer", reservationListContainer);
 		model.addAttribute("searchType", "byDate");
-		model.addAttribute("date", date);
+		model.addAttribute("date", dateContainer.getDate());
 
 		return "/reservation/search/search-results";
 	}
 	
+
+	
+    @PostMapping("/deleteReservation/{id}")
+    public String deleteReservation(@PathVariable Long id, 
+    								@RequestParam("searchType") String searchType,
+    								@RequestParam(value = "firstName", required = false) String firstName,
+    								@RequestParam(value = "lastName", required = false) String lastName,
+    								@RequestParam(value = "date", required = false) String date,
+    								Model model) {
+    	
+    	ReservationListContainer reservationListContainer = new ReservationListContainer();
+    	
+		reservationService.deleteById(id);
+		
+		if (searchType.equals("byDate")) {
+			reservationListContainer.setReservations(reservationService.findAllReservationsByDate(LocalDate.parse(date)));
+			model.addAttribute("date", date);
+		}
+		else {
+			//searchType = byCustomer
+			reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(firstName, lastName));			
+			model.addAttribute("firstName", firstName);
+			model.addAttribute("lastName", lastName);
+		}
+
+
+		model.addAttribute("reservationListContainer", reservationListContainer);
+		model.addAttribute("searchType", searchType);
+		
+        return "reservation/search/search-results";
+    }
+	
+    
 	@PostMapping("/cancelSearchReservation")
 	public String cancelSearchReservation(Model model) {
 		log.info("Aborting reservation search");
 		return "/reservation/reservations";
 	}
-	
-    @PostMapping("/deleteReservation/{id}")
-    public String deleteReservation(@PathVariable Long id, 
-    								@ModelAttribute("reservations") ReservationListContainer reservationListContainer,
-    								@RequestParam(value="searchType", required=false) String searchType,
-    								@RequestParam(value="firstName", required=false) String firstName,
-    								@RequestParam(value="lastName", required=false) String lastName,
-    								@RequestParam(value="date", required=false) String date,
-    								Model model) {
-    	
-		reservationService.deleteById(id);
-
-    	if (searchType.equals("byCustomer")) {
-    		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(firstName, lastName));
-    		model.addAttribute("firstName", firstName);
-    		model.addAttribute("lastName", lastName);
-    	}  	
-    	else{
-    		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(LocalDate.parse(date)));    		
-    		model.addAttribute("date", date);
-    	}
-    	
-
-		model.addAttribute("reservationListContainer", reservationListContainer);
-		model.addAttribute("searchType", searchType);
-
-		
-        return "/reservation/search/search-results";
-    }
-	
 }
 	
 
