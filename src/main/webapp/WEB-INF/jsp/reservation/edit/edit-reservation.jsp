@@ -13,7 +13,7 @@
 
 	<h2>Modifica Prenotazione</h2>
     <form:form modelAttribute="reservation" method="post">
-        <button type="submit" class="link-button" formaction="TODO">
+        <button type="submit" class="link-button" formaction="/reservation/edit/editReservationNewCustomer?action=show">
             Aggiungi cliente alla prenotazione
         </button>
 
@@ -35,7 +35,7 @@
                 </td>
                 <td>
                     <form:select name="shiftEnum" path = "shiftEnum">
-                        <form:option value = "${reservation.getShiftEnum()}" label = "Seleziona"/>
+                        <form:option value = "" label = "Seleziona"/>
                         <form:options items = "${shiftEnum.values()}" />
                     </form:select>
                     <form:errors path="shiftEnum" class="validationError"/>
@@ -65,11 +65,11 @@
             <tr>
                 <td>
                     <br />
-                    <form:button type="submit" name="cancel" formaction="/reservation/edit/cancel-edit-reservation">Annulla</form:button>
+                    <form:button type="submit" name="cancel" formaction="/reservation/edit/editReservationCancel">Annulla</form:button>
                 </td>
                 <td>
                     <br />
-                    <form:button type="submit" name="save" formaction="TODO">Salva modifiche</form:button>
+                    <form:button type="submit" name="save" formaction="/reservation/edit/editReservationSave">Salva modifiche</form:button>
                 </td>
             </tr>
         </table>
@@ -101,10 +101,10 @@
                       <td>${customer.mobileNumber}</td>
                       <td>${customer.recommendedBy.mobileNumber}</td>
                       <td>
-                        <form:button type="submit" formaction="/reservation/new/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>				
+                        <form:button type="submit" formaction="/reservation/edit/editReservationModifyCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=edit">Modifica</form:button>				
                       </td>
                       <td>
-                        <form:button type="submit" formaction="/reservation/new/modifyReservationCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=delete">Elimina</form:button>
+                        <form:button type="submit" formaction="/reservation/edit/editReservationModifyCustomer/${customer.firstName}&${customer.lastName}&${customer.mobileNumber}?action=delete">Elimina</form:button>
                       </td>
                   </tr>
              </c:forEach>

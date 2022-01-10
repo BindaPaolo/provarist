@@ -10,6 +10,7 @@ import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.controllers.CustomerController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +52,14 @@ public class NewReservationController {
 	
 	
     @GetMapping("/new-reservation")
-
-    public String showNewReservationForm(Model model, HttpSession session) {
+    public String showNewReservationForm(Model model, HttpSession httpSession) {
     	log.info("Entro in new-reservation");
-    	log.info("NewReservationController: " + session.getId());
+    	
+    	if(!httpSession.isNew()) {
+    		log.info("\n\n Old session, adding new Reservation object to the model\n\n");
+    		httpSession.invalidate();
+    	}
+		model.addAttribute("reservation", new Reservation());
 		// Show persisted waiters
 		model.addAttribute("waitersList", getPersistedWaiters());
 
@@ -75,11 +80,11 @@ public class NewReservationController {
 				log.info("action = show");
 				model.addAttribute("customer", new Customer());
 				model.addAttribute("allergensList", allergenService.findAll());
-				return "/reservation/new/new-reservation-customer";
+				return "/reservation/new/new-reservation-new-customer";
 			case "add":
 				log.info("action = add");
 				if(reservationCustomerCheckForErrors(result, model, customer)){
-					return "/reservation/new/new-reservation-customer";
+					return "/reservation/new/new-reservation-new-customer";
 				}
 				reservation.addReservationCustomer(customer);
 				model.addAttribute("waitersList", getPersistedWaiters());
@@ -97,8 +102,7 @@ public class NewReservationController {
     @PostMapping("/saveReservation")
     public String saveReservation(@Valid @ModelAttribute Reservation reservation,
     							BindingResult result, 
-    							Model model,
-    							SessionStatus status) {
+    							Model model) {
         log.info("Entro in saveReservation");
     	if (result.hasErrors()) {
     		log.info("\n\nEntro in result.hasW\n\n");
@@ -110,7 +114,6 @@ public class NewReservationController {
     	reservationService.save(reservation);
     	log.info("Reservation and Customer objects saved");
 
-    	status.setComplete();
     	return "/reservation/reservations";
     }
     
@@ -178,7 +181,6 @@ public class NewReservationController {
     	//Trovo il customer
     	Customer originalCustomer = findCustomer(firstName, lastName, mobileNumber, reservation);
 
-
 		if (action.equals("edit")) {
     		log.info("action = edit");
     		Customer cloneCustomer = (Customer) originalCustomer.clone();
@@ -203,15 +205,15 @@ public class NewReservationController {
      * Adds new Reservation object to the model.
      * This object then remains in the session
      * until its completion.
-     **/
+     *
 	@ModelAttribute("reservation")
 	public Reservation getReservation() {
 		log.info("Adding new reservation to the model");
 		return new Reservation();
-	}
+	}*/
       
 	
-    private Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
+    public Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
     	Customer found = null;	
 		for(Customer c : reservation.getReservation_customers()) {
 			if (c.getFirstName().equalsIgnoreCase(firstName) &&
@@ -255,7 +257,7 @@ public class NewReservationController {
      * @param customer                  object of the customer that the user is inserting/editing
      * @return true if there is an error and some page needs to be shown to the user; false otherwise
      */
-    private boolean reservationCustomerCheckForErrors(BindingResult result, Model model, Customer customer) {
+    public boolean reservationCustomerCheckForErrors(BindingResult result, Model model, Customer customer) {
 
         // Flag = presence of errors
         boolean errorPresence = false;

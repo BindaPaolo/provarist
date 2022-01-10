@@ -98,14 +98,16 @@ public class CustomerService {
      * @param customer the customer object
      */
     public void fixRecommendedByForeignKey(Customer customer) {
-        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
-        if (recommendedByMobileNumber.isEmpty()) {
-            // If the recommended by field is left empty by the user, make the RecommendedBy object null
-            customer.setRecommendedBy(null);
-        } else {
-            // Fetch the customer in the database which has the mobile number given by the user
-            customer.setRecommendedBy(findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
-        }
+    	if(customer.getRecommendedBy() != null) {
+	        String recommendedByMobileNumber = customer.getRecommendedBy().getMobileNumber();
+	        if (recommendedByMobileNumber.isEmpty()) {
+	            // If the recommended by field is left empty by the user, make the RecommendedBy object null
+	            customer.setRecommendedBy(null);
+	        } else {
+	            // Fetch the customer in the database which has the mobile number given by the user
+	            customer.setRecommendedBy(findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
+	        }
+    	}
     }
 
 
