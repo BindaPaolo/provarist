@@ -48,10 +48,38 @@ public class ReservationService{
 
     @Transactional
     public Reservation save(Reservation reservation) {
-    	for(Customer c : reservation.getReservation_customers()) {
-    		customerService.save(c);
-    	}
+    	List<Customer> customersToRemove = new ArrayList<>();
+    	List<Customer> customersToAdd = new ArrayList<>();
     	
+    	for(Customer c : reservation.getReservation_customers()) {
+    		
+    		//Can't insert the same entity (same mobile number) twice.
+    		String mobileNumber = c.getMobileNumber();
+    		//Get all the customers with the same mobile number.
+    		//Size must be 0 or 1.
+    		List<Customer> customers = customerService.findAllCustomersByMobileNumber(mobileNumber);
+    		if (!customers.isEmpty()) {
+    			//Then it contains only one customer.
+    			Customer returningCustomer = customers.get(0);
+    			//Check if there's new information this time.
+    			//On whether he was recommended
+    			if(returningCustomer.getRecommendedBy() == null && c.getRecommendedBy() != null) {
+    				returningCustomer.setRecommendedBy(customerService.findAllCustomersByMobileNumber(c.getRecommendedBy().getMobileNumber()).get(0));
+    			}
+    			//Or if he has new allergies
+    			returningCustomer.getAllergies().addAll(c.getAllergies());
+    			customerService.save(returningCustomer);
+    			customersToRemove.add(c);
+    			customersToAdd.add(returningCustomer);
+    		}
+    		else{
+    			//New customer.
+        		customerService.save(c);
+    		}
+
+    	}
+    	reservation.getReservation_customers().removeAll(customersToRemove);
+    	reservation.getReservation_customers().addAll(customersToAdd);
     	//Save the reservation object.
     	reservationRepository.save(reservation);
     	
