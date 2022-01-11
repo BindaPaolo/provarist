@@ -93,7 +93,7 @@ public class CustomerService {
     
     /**
      * If the recommended by field is left empty by the user, make the RecommendedBy object null so that the foreign
-     * key in the database is set to null
+     * key in the database is set to null.
      *
      * @param customer the customer object
      */
@@ -105,6 +105,8 @@ public class CustomerService {
 	            customer.setRecommendedBy(null);
 	        } else {
 	            // Fetch the customer in the database which has the mobile number given by the user
+	        	// At this stage I'm sure it exists because eithere the recommendedBy field
+	        	// is left empty or a user in the db must exist with that mobileNumber.
 	            customer.setRecommendedBy(findAllCustomersByMobileNumber(recommendedByMobileNumber).get(0));
 	        }
     	}

@@ -52,7 +52,11 @@ public class ReservationService{
     	List<Customer> customersToAdd = new ArrayList<>();
     	
     	for(Customer c : reservation.getReservation_customers()) {
-    		
+    		//Check if recommendedBy field was left empty, in
+    		//that case is set to null, otherwise find the 
+    		//customer in the db that recommended Customer c
+    		//and save its reference.
+    		customerService.fixRecommendedByForeignKey(c);
     		//Can't insert the same entity (same mobile number) twice.
     		String mobileNumber = c.getMobileNumber();
     		//Get all the customers with the same mobile number.
