@@ -70,8 +70,9 @@ public class ReservationService{
     			if(returningCustomer.getRecommendedBy() == null && c.getRecommendedBy() != null) {
     				returningCustomer.setRecommendedBy(customerService.findAllCustomersByMobileNumber(c.getRecommendedBy().getMobileNumber()).get(0));
     			}
-    			//Or if he has new allergies
-    			returningCustomer.getAllergies().addAll(c.getAllergies());
+    			//And always update it's allergies to the most
+    			//recent ones.
+    			returningCustomer.setAllergies(c.getAllergies());
     			customerService.save(returningCustomer);
     			customersToRemove.add(c);
     			customersToAdd.add(returningCustomer);
