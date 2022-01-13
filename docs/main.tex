@@ -7,6 +7,7 @@
 \hypersetup{
     colorlinks=true,
     urlcolor=blue,
+    linkcolor=blue,
     }
     
 \usepackage{geometry}
@@ -56,11 +57,26 @@
 
 \section*{Introduction}
 
-Due to the outbreak of the recent COVID-19 pandemic, we found it useful to develop a web-app that would facilitate the traceability of possible infections for managers of clubs and restaurants. In fact, COVID virus can easily spread within a restaurant in the presence of many people in the same closed environment.
+Due to the outbreak of the recent COVID-19 pandemic, restaurant owners have found
+themselves facing many new challenges for guaranteeing safety in the workplace for both
+customers and employees alike. And while many of these situations require a practical
+solution, like making sure there's enough distance between tables and that everybody
+is wearing a mask or authenticating green pass certificates at the entrance, others, like
+storing contact trace information, require a more careful approach and a long-term
+strategy is best suited to handle them.
 
-GreenBook is a Spring web-app that allows to manage reservations in a restaurant, with a particular focus on the traceability of possible COVID infections thanks to booking records.
 
-\section*{ER Model Design}
+We developed a web-app, called \textit{GreenBook}, to meet the needs of restaurant 
+managers throughout this pandemic. By storing the contact trace information of every 
+customer and recording the employees present in the restaurant on a particular 
+date and shift we are able to guarantee, in the event of a Covid-19 positive case,
+perfect traceability of all the people that need to be contactacted.
+
+
+The following ER-schema explicits the entities and relations that we intended
+to model with our application.
+
+\vspace{5mm}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{ER}
@@ -68,6 +84,7 @@ GreenBook is a Spring web-app that allows to manage reservations in a restaurant
     \label{fig:ermodel}
 \end{figure}
 
+\vspace{5mm}
 In the phase of ER Design, we made the following assumptions:
 \begin{itemize}
   \item A user cannot recommend himself
@@ -77,22 +94,71 @@ In the phase of ER Design, we made the following assumptions:
   in order to avoid needing another application just for this purpose: we implemented this feature even if it is not the functionality for which it was intended
 \end{itemize}
 
+\newpage
+
 \section*{Web-app Functionalities}
-The restaurant staff can mainly perform four types of operations:
+The web-app functionalities are divided into four main areas:
 \begin{itemize}
-    \item Manage reservations: it is the core functionality of the web-app which allows staff to record bookings requested by customers (see below for further details).
+    \item Manage reservations: it is the core functionality of the web-app. It allows
+      to record new bookings, search for booked reservations and eventually 
+       modify or delete them.
     \item Manage employees: this functionality allows the restaurant staff to manage the actual employees, that is, add, edit or remove an employee.
     \item Manage customers: the staff can also see the list of all the customers registered in the restaurant database, insert new customers, edit them and delete them.
     \item Manage allergens: although it is not a core feature for the application, every customer has his special needs and this web-app permits to record possible allergies of each customer.
 \end{itemize}
 
+
+We now go through the functionalities offered by our web-app in more detail.
+
+
 \subsection*{Manage reservations}
-This section of the web-app offers three functionalities:
+This section of the web-app leads to three main functionalities: creating, searching
+and editing a reservation.
+
 \begin{itemize}
-  \item New reservation: to create a new reservation filled by customers' credentials and, eventually, allergies. The date of the lunch/dinner and also the mobile number of all the customers must be provided, to be able to contact them if a customer warns the restaurant of a possible infection.
-  \item Search reservation by customer: in case a user forgets the date he was in the restaurant, it is possible to find all his presences at the restaurant providing his credentials.
-  \item Search reservation by date: by entering the date of the meal, all the reservations corresponding to that date will be printed and the restaurant staff will have the possibility to track and contact all the customers that were present that particular day.
+  \item New reservation: allows to create and save a new reservation object.
+  		During creation we have to select the date and shift of the booking.
+  		We must add at least one customer (with its mobile
+  		number) and select at least one employee which will be assigned to serve 
+  		the reservation's customers. 
+  		Failing to meet these requirements will halt the saving 
+  		process and prompt the relative errors  
+  		(\hyperref[sec:new_reservation_form_errors]{Appendix A: New Reservation}.)
+  		 to appear in the form.
+  		By recording the information this way we are sure, in the case of 
+  		a positive case of Covid, we are able to contact each person that 
+  		was in contact with the infected person.
+  
+
+   \item Search reservation by customer: allows to retrieve all the saved 
+   		reservations in which that customer took part.
+   		It requires the first and last name of a person.
+   		Failing to meet these requirements will stop the search process 
+   		and prompt the relative errors
+   		 (\hyperref[sec:search_reservation_by_customer_errors]
+   		{Appendix A: Search Reservation by Customer})to appear in the form.
+   		Returns all reservations containing a customer that match
+   		those credentials (if any).
+   
+   \item Search reservation by date: allows to retrieve all the saved reservations
+   		which took or will take place on a given date.
+		It requires a date. Failing to meet this requirement will stop the search
+		process and prompt the relative errors
+		(\hyperref[sec:search_reservation_by_date_errors]{Appendix A: Search Reservation
+		 by Date}) to appear in the form.   		
+   		Returns all reservations booked for that particular date, 
+   		regardless of the shift (if any).		 
+   	
+   \item Edit reservation: in the page where the results of a search are shown, 
+   		all the data relative to a reservation is displayed and it's possible 
+   		to edit (or delete entirely) a particular reservation.
+   		In the editing process all parts of a reservation can be modified: 
+   		we can add, remove or edit customers, change the reservation's date and shift,
+   		as well as the employees involved. This process is also subject to the 
+   		above requisites for a saving a reservation.
 \end{itemize}
+
+
 
 \clearpage
 \section*{Source code elements}
@@ -128,6 +194,7 @@ This section of the web-app offers three functionalities:
       [controllers
         [AllergenController]
         [CustomerController]
+        [EditReservationController]
         [EmployeeController]
         [NewReservationController]
         [ReservationController]
@@ -136,11 +203,13 @@ This section of the web-app offers three functionalities:
       [models
         [Allergen]
         [Customer]
-        [Plugin]
         [Employee]
         [Person]
         [Reservation]
+       ]
+      [containers
         [ReservationListContainer]
+        [DateContainer]
       ]
       [repositories
         [AllergenRepository]
@@ -166,7 +235,12 @@ This section of the web-app offers three functionalities:
           [edit-customer.jsp, file]
         ]
         [employee]
-        [reservation]
+        [reservation
+          [edit]
+        	  [new]
+        	  [search]
+        	  [reservations.jsp, file]
+        ]
         [error.jsp, file]
       ]
       [index.html, file]
@@ -191,12 +265,95 @@ Our repository is an in-memory database made possible by the \textit{H2 Engine}:
 
 \subsubsection*{Services}
 These classes encapsulate business logic and changes to be persisted to ensure consistent data and the integrity of relationships between entities.
-
 The purpose of this element is also to define a central point of access to persisted data: all the operations defined in the repository are made available to the controllers through the service.
 
 \end{multicols}
 
 \subsubsection*{Controllers}
 The controllers are the managers of the \textit{View}, and provide entry points for GET and POST requests coming from the user. They validate the data provided in the JSP forms and return the appropriate web page, eventually an error page, making sure that data provided by user is consistent with the costraints defined by annotations in the entities. 
+
+\vspace{10mm}
+\section*{Classes' roles}
+
+\section*{Models}
+\textit{Reservation.java} is the java class that represents
+the Reservation entity displayed in the above ER, with those attributes and relations
+ (annotated with javax persistance commands).
+
+\subsubsection*{Controllers}
+Being conprehensive of multiple functionalities and parts there are 4 different
+controllers that handle the reservations.
+
+\begin{itemize}
+	\item \textit{ReservationController.java} : handles the page where the possible
+	options are displayed and dispatches the requests to the relative jsp accordingly.
+	
+	\item \textit{NewReservationController.java} : handles the part related to the 
+		creation and validation of a new reservation object and saving that
+		 record to the db.
+		
+	\item \textit{SearchReservationController.java} : has the job of searching a
+	reservation in the database based on the search parameters (customer or date) and
+	showing the search results to the user.
+	
+	\item \textit{EditReservationController.java} : controls the process of editing 
+	a reservation and updating it's record into the db.
+
+\end{itemize}
+
+
+
+\subsection*{Services}
+\textit{ReservationService.java} dispatches the reservation controllers' query requests to the reservation's repository 
+and makes sure that saving a reservation occurs in a transaction.
+
+
+\subsection*{Repositories}
+The \textit{ReservationRepository.java} takes care of actually executing the CRUD queries
+asked by the service and implements a few custom queries to meet the application needs.
+In particular here we hardcoded the 2 sql queries needed for searching a reservation
+by customer and by date.
+
+
+
+
+
+
+
+
+\newpage
+\section*{Appendix A: Form errors}
+
+\vspace{5mm}
+\subsection*{New Reservation}
+\label{sec:new_reservation_form_errors}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{new_reservation_form_errors}
+    \caption{Saving a new reservation violating requisites}
+    \label{fig:new_reservation_form_errors}
+\end{figure}
+
+
+\newpage
+\subsection*{Search Reservation by Customer}
+\label{sec:search_reservation_by_customer_errors}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{search_reservation_by_customer_errors}
+    \caption{Searching a reservation by customer violating requisites}
+    \label{fig:search_reservation_by_customer_errors}
+\end{figure}
+
+
+\newpage
+\subsection*{Search Reservation by Date}
+\label{sec:search_reservation_by_date_errors}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{search_reservation_by_date_errors}
+    \caption{Searching a reservation by date violating requisites}
+    \label{fig:search_reservation_by_date_errors}
+\end{figure}
 
 \end{document}
