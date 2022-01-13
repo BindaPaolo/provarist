@@ -67,7 +67,6 @@ public class CustomerService {
     
 
     public void deleteById(Long id) {
-    	log.info("\n\nENTRO in deleteById\n\n");
     	cleanRecommendedByFieldOnCustomerDelete(id);
         repository.deleteById(id);
     }

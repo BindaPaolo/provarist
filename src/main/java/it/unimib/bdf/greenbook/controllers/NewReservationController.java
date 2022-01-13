@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.log.LogDelegateFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -72,12 +71,9 @@ public class NewReservationController {
     									@Valid @ModelAttribute("customer") Customer customer,
     									BindingResult result,
     									@RequestParam("action") String action) {
-    	
-    	log.info("Entro in newReservationCustomer");
 
 		switch (action) {
 			case "show":
-				log.info("action = show");
 				model.addAttribute("customer", new Customer());
 				model.addAttribute("allergensList", allergenService.findAll());
 				return "/reservation/new/new-reservation-new-customer";
@@ -90,7 +86,6 @@ public class NewReservationController {
 				model.addAttribute("waitersList", getPersistedWaiters());
 				return "/reservation/new/new-reservation";
 			case "cancel":
-				log.info("action = cancel");
 				model.addAttribute("waitersList", getPersistedWaiters());
 				return "/reservation/new/new-reservation";
 
@@ -105,12 +100,9 @@ public class NewReservationController {
     							Model model) {
         log.info("Entro in saveReservation");
     	if (result.hasErrors()) {
-    		log.info("\n\nEntro in result.hasW\n\n");
 			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/new/new-reservation";
         }
-    	log.info(reservation.toString());
-    	log.info("Saving Reservation and Customer objects...");
     	reservationService.save(reservation);
     	log.info("Reservation and Customer objects saved");
 
@@ -121,7 +113,6 @@ public class NewReservationController {
     public String cancelReservation(@ModelAttribute Reservation reservation,
 									Model model,
 									SessionStatus status) {
-        log.info("Entro in cancelReservation");
         
         status.setComplete();
 
@@ -135,7 +126,6 @@ public class NewReservationController {
     									BindingResult result,
 										@RequestParam("action") String action) {
 
-    	log.info("Entro in editReservationCustomer");
     	Customer originalCustomer = null;
 		List<Customer> reservation_customers = reservation.getReservation_customers();
 		for(Customer c : reservation_customers) {
@@ -147,7 +137,6 @@ public class NewReservationController {
 		reservation_customers.remove(originalCustomer);
 
     	if (action.equals("cancel")) {
-    		log.info("action = cancel");
     		
     		originalCustomer.setId(0);
     		reservation_customers.add(originalCustomer);
@@ -177,12 +166,10 @@ public class NewReservationController {
     										@PathVariable("mobileNumber") String mobileNumber,
     										@ModelAttribute("reservation") Reservation reservation,
     										@RequestParam("action") String action) {
-    	log.info("Entro in modifyReservationCustomer");
     	//Trovo il customer
     	Customer originalCustomer = findCustomer(firstName, lastName, mobileNumber, reservation);
 
 		if (action.equals("edit")) {
-    		log.info("action = edit");
     		Customer cloneCustomer = (Customer) originalCustomer.clone();
     		originalCustomer.setId(-1);
         	model.addAttribute("customer", cloneCustomer);
@@ -190,7 +177,6 @@ public class NewReservationController {
     		return "/reservation/new/new-reservation-edit-customer";
     	}
     	else if(action.equals("delete")) {
-    		log.info("action = delete");
         	reservation.getReservation_customers().remove(originalCustomer);
 			model.addAttribute("waitersList", getPersistedWaiters());
     		

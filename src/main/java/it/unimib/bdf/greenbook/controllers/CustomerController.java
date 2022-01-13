@@ -43,7 +43,6 @@ public class CustomerController {
 
     @GetMapping("/edit-reservation-customer")
     public String showEditCustomerForm(Model model) {
-        log.info("Entro in CustomerController.showEditCustomerForm");
 
         // Load persisted allergens list
         model.addAttribute("allergensList", allergenService.findAll());
@@ -109,7 +108,6 @@ public class CustomerController {
 
     @PostMapping("/deleteCustomer/{id}")
     public String deleteCustomer(@PathVariable Long id, Model model) {
-        log.info("Entro in deleteCustomer");
 
         // Check if the customer's id exists, otherwise throw an exception and show error page
         Customer customerToBeDeleted = service.findById(id).orElseThrow(
