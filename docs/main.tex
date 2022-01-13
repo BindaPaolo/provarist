@@ -79,9 +79,9 @@ to model with our application.
 \vspace{5mm}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{ER}
-    \caption{ER Model}
+    \includegraphics[width=\textwidth]{images/er_model.jpg}
     \label{fig:ermodel}
+    \caption{ER Model}
 \end{figure}
 
 \vspace{5mm}
@@ -110,6 +110,27 @@ The web-app functionalities are divided into four main areas:
 
 We now go through the functionalities offered by our web-app in more detail.
 
+\subsection*{Manage customers and employees}
+A comfortable overview is provided to the restaurant manager who intends, for whatever reason, to manage employees and customers. In the two sections of the web app it is possible to consult a list of all employees and customers with the possibility of modifying and deleting the data recorded in the system.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/customers_overview.jpg}
+    \label{fig:customers_overview}
+    \caption{Overview of customers registered in system database}
+\end{figure}
+
+The two entities are in fact managed in a similar way, allowing the main functions that one would expect to be available to such a staff member:
+
+\begin{itemize}
+  \item Register new employee/customer: in the case of the employee, name, surname, role and fiscal code are required; on the other hand, if it's a customer, it is required to insert name, surname, mobile number and (eventually) the referreal customer, as well as any allergies to watch out for.
+  \item Edit employee/customer: it's possible 
+  to edit a particular person by pressing on the edit button, on the right side of the record, as can be seen in the figure \hyperref[fig:customers_overview]{over here}.
+  \item Delete employee/customer: it's possible 
+  to remove a person from the system by pressing on the remove button, just below the edit button.
+\end{itemize}
+
+All the values entered by the user are validated by means of specific annotations on the attributes of the classes. Any validation requirement that is violated leads to the appearance of an error and the request to modify the data in the appropriate format, as shown in the figure available at \hyperref[fig:customer_validation_error]{Appendix A: Customer validation error}.
 
 \subsection*{Manage reservations}
 This section of the web-app leads to three main functionalities: creating, searching
@@ -261,7 +282,7 @@ The back-end is dedicated to the management of GET and POST requests made by by 
 \subsubsection*{Repositories}
 In the repositories we placed mechanisms for storage, retrieval, search, update and delete operations. The interfaces defined as repositories are extending \textit{CrudRepository}, which is an interface for generic CRUD operations on a repository for the specific type passed by parameter (eg. Customer).
 
-Our repository is an in-memory database made possible by the \textit{H2 Engine}: it provides a Java SQL database and allows to use JDBC to access and manage entities persistence.
+Our repository is an in-memory database, made persistent, run by the \textit{H2 Engine}: it provides a Java SQL database and allows to use JDBC to access and manage entities persistence.
 
 \subsubsection*{Services}
 These classes encapsulate business logic and changes to be persisted to ensure consistent data and the integrity of relationships between entities.
@@ -273,16 +294,21 @@ The purpose of this element is also to define a central point of access to persi
 The controllers are the managers of the \textit{View}, and provide entry points for GET and POST requests coming from the user. They validate the data provided in the JSP forms and return the appropriate web page, eventually an error page, making sure that data provided by user is consistent with the costraints defined by annotations in the entities. 
 
 \vspace{10mm}
-\section*{Classes' roles}
+\section*{Responsibilities of code sections}
+The web app code is broken down into many components and classes, but some of them deserve more attention than others. Therefore, a brief explanation of some parts of the code that have more responsibility than others will be given below.
 
-\section*{Models}
+\subsection*{Models}
+\textit{Allergen.java, Customer.java, Employee.java} are the implementations of, respectively, the allergen, customer and employee entitites of the ER Model.
+
+\textit{Person.java} is the parent class of Customer and Employee models, which makes it possible to define only a few additional attributes for these specialized classes. All the attributes of the Person class are in fact inherited and are an integral part of the objects registered in the database: the annotation \textit{@MappedSuperclass}, placed in \textit{Person} class, tells JPA to include the base class properties as if they were declared by the child classes \textit{(Employee, Customer)} extending Person. 
+
 \textit{Reservation.java} is the java class that represents
 the Reservation entity displayed in the above ER, with those attributes and relations
  (annotated with javax persistance commands).
 
-\subsubsection*{Controllers}
-Being conprehensive of multiple functionalities and parts there are 4 different
-controllers that handle the reservations.
+\subsection*{Controllers}
+Being conprehensive of multiple functionalities and parts, there are four different
+controllers that handle the reservations:
 
 \begin{itemize}
 	\item \textit{ReservationController.java} : handles the page where the possible
@@ -324,36 +350,46 @@ by customer and by date.
 \newpage
 \section*{Appendix A: Form errors}
 
-\vspace{5mm}
+\vspace*{5mm}
+
+\subsection*{User modification}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/customer_validation_error.jpg}
+    \label{fig:customer_validation_error}
+    \caption{Customer modification violating requisites}
+\end{figure}
+
+\vspace*{5mm}
+
 \subsection*{New Reservation}
 \label{sec:new_reservation_form_errors}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{new_reservation_form_errors}
-    \caption{Saving a new reservation violating requisites}
+    \includegraphics[width=0.9\textwidth]{images/new_reservation_form_errors}
     \label{fig:new_reservation_form_errors}
+    \caption{Saving a new reservation violating requisites}
 \end{figure}
 
 
-\newpage
 \subsection*{Search Reservation by Customer}
 \label{sec:search_reservation_by_customer_errors}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{search_reservation_by_customer_errors}
-    \caption{Searching a reservation by customer violating requisites}
+    \includegraphics[width=0.9\textwidth]{images/search_reservation_by_customer_errors}
     \label{fig:search_reservation_by_customer_errors}
+    \caption{Searching a reservation by customer violating requisites}
 \end{figure}
 
+\vspace*{5mm}
 
-\newpage
 \subsection*{Search Reservation by Date}
 \label{sec:search_reservation_by_date_errors}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{search_reservation_by_date_errors}
-    \caption{Searching a reservation by date violating requisites}
+    \includegraphics[width=0.9\textwidth]{images/search_reservation_by_date_errors}
     \label{fig:search_reservation_by_date_errors}
+    \caption{Searching a reservation by date violating requisites}
 \end{figure}
 
 \end{document}
