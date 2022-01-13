@@ -3,7 +3,6 @@ package it.unimib.bdf.greenbook.controllers;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Slf4j
 @Controller
 @RequestMapping(value = "/customer*")
 public class CustomerController {

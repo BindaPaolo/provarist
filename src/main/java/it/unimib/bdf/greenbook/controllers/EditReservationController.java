@@ -4,7 +4,6 @@ package it.unimib.bdf.greenbook.controllers;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,9 +26,8 @@ import it.unimib.bdf.greenbook.services.ReservationService;
 import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
 import it.unimib.bdf.greenbook.services.EmployeeService;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
 @Controller
 @SessionAttributes({"reservation", "searchType", "date", "firstName", "lastName", "originalCustomer"})
 @RequestMapping("/reservation/edit*")
@@ -54,15 +51,11 @@ public class EditReservationController {
 								@RequestParam(value = "firstName", required = false) String firstName,
 								@RequestParam(value = "lastName", required = false) String lastName,
 								@RequestParam(value = "date", required = false) String date,
-								HttpServletRequest request,
 								HttpSession httpSession,
 								Model model) {
-		HttpSession newSession = null;
 
 		if(!httpSession.isNew()) {
-			log.info("\n\nVecchia session!\n\n");
 			httpSession.invalidate();
-			newSession = request.getSession();
 		}
 		Reservation reservation = reservationService.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
@@ -91,7 +84,6 @@ public class EditReservationController {
 									HttpSession httpSession) {
 
     	if (result.hasErrors()) {
-    		log.info("\n\nReservation violates constraints\n\n");
 			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/edit/edit-reservation";
         }
@@ -140,17 +132,13 @@ public class EditReservationController {
 											@Valid @ModelAttribute("customer") Customer customer,
 											BindingResult result,
 											@RequestParam("action") String action) {
-
-		log.info("Entro in editReservationNewCustomer");
 		
 		switch (action) {
 			case "show":
-					log.info("action = show");
 					model.addAttribute("customer", new Customer());
 					model.addAttribute("allergensList", allergenService.findAll());
 					return "/reservation/edit/edit-reservation-new-customer";
 			case "add":
-					log.info("action = add");
 					model.addAttribute("reservation", reservation);
 					if(editReservationCustomerCheckForErrors(result, model, customer)){
 						return "/reservation/edit/edit-reservation-new-customer";
@@ -159,7 +147,6 @@ public class EditReservationController {
 					model.addAttribute("waitersList", getPersistedWaiters());
 					return "/reservation/edit/edit-reservation";
 			case "cancel":
-					log.info("action = cancel");
 					model.addAttribute("reservation", reservation);
 					model.addAttribute("waitersList", getPersistedWaiters());
 					return "/reservation/edit/edit-reservation";
@@ -177,13 +164,11 @@ public class EditReservationController {
 										@RequestParam("action") String action) {
 
     	if (action.equals("cancel")) {
-    		log.info("action = cancel");
     		reservation.getReservation_customers().add(originalCustomer);
     		model.addAttribute("waitersList", getPersistedWaiters());
     		model.addAttribute("reservation", reservation);
     		return "/reservation/edit/edit-reservation";
     	}else if(action.equals("save")) {
-    		log.info("action = save");
     		if (editReservationCustomerCheckForErrors(result, model, customer)) {
     			model.addAttribute("customer", customer);
     			return "/reservation/edit/edit-reservation-edit-customer";
@@ -206,21 +191,17 @@ public class EditReservationController {
     										@PathVariable("mobileNumber") String mobileNumber,
     										@ModelAttribute("reservation") Reservation reservation,
     										@RequestParam("action") String action) {
-    	log.info("Entro in modifyReservationCustomer");
     	//Trovo il customer
     	Customer originalCustomer = findCustomer(firstName, lastName, mobileNumber, reservation);
     	model.addAttribute("originalCustomer", originalCustomer);
     	reservation.getReservation_customers().remove(originalCustomer);
     	
 		if (action.equals("edit")) {
-    		log.info("action = edit");
-
         	model.addAttribute("customer", originalCustomer);
     		model.addAttribute("allergensList", allergenService.findAll());
     		return "/reservation/edit/edit-reservation-edit-customer";
     	}
     	else if(action.equals("delete")) {
-    		log.info("action = delete");
 			model.addAttribute("waitersList", getPersistedWaiters());
     		
     		return "/reservation/edit/edit-reservation";
@@ -268,8 +249,6 @@ public class EditReservationController {
         		// Another customer, already in the reservation_customers' list,
         		// has the same mobile number.
         		// 2b)
-        		log.info("\n\n"+customer);
-        		log.info("\n\n"+c);
         		String mobileNumberError = "Il numero di telefono appartiene ad un altro cliente nella prenotazione!";
         		model.addAttribute("mobileNumberError", mobileNumberError);
         		errorPresence = true;

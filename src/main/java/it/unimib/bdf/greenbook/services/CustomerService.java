@@ -2,7 +2,6 @@ package it.unimib.bdf.greenbook.services;
 
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.repositories.CustomerRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Slf4j
 @Service
 @Transactional
 public class CustomerService {

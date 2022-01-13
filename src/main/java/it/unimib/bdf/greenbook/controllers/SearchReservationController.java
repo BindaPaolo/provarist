@@ -4,7 +4,6 @@ import it.unimib.bdf.greenbook.containers.DateContainer;
 import it.unimib.bdf.greenbook.containers.ReservationListContainer;
 import it.unimib.bdf.greenbook.models.Customer;
 import it.unimib.bdf.greenbook.services.ReservationService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,18 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-
-
-import it.unimib.bdf.greenbook.services.ReservationService;
-import lombok.extern.slf4j.Slf4j;
-
 import java.time.LocalDate;
-
 import javax.validation.Valid;
 
 
-@Slf4j
 @Controller
 @RequestMapping("/reservation/search*")
 public class SearchReservationController {
@@ -76,10 +67,7 @@ public class SearchReservationController {
 
 	@PostMapping("/executeSearchReservationByDate")
 	public String executeSearchReservationByDate(Model model, 
-												@ModelAttribute DateContainer dateContainer) {
-		
-		log.info("Entro in executeSearchReservationByDate");
-		
+												@ModelAttribute DateContainer dateContainer) {		
 		// Error Check: empty date field
 		if(dateContainer.getDate() == null) {
 			model.addAttribute("emptyDateField", "Seleziona una data.");
@@ -131,7 +119,6 @@ public class SearchReservationController {
     
 	@PostMapping("/cancelSearchReservation")
 	public String cancelSearchReservation(Model model) {
-		log.info("Aborting reservation search");
 		return "/reservation/reservations";
 	}
 }

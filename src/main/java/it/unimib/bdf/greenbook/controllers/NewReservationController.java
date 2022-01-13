@@ -8,11 +8,10 @@ import it.unimib.bdf.greenbook.services.EmployeeService;
 import it.unimib.bdf.greenbook.services.ReservationService;
 import it.unimib.bdf.greenbook.services.AllergenService;
 import it.unimib.bdf.greenbook.services.CustomerService;
-import it.unimib.bdf.greenbook.controllers.CustomerController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,12 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
 
 
-@Slf4j
 @Controller
 @SessionAttributes("reservation")
 @RequestMapping("/reservation/new*")
@@ -52,10 +48,8 @@ public class NewReservationController {
 	
     @GetMapping("/new-reservation")
     public String showNewReservationForm(Model model, HttpSession httpSession) {
-    	log.info("Entro in new-reservation");
     	
     	if(!httpSession.isNew()) {
-    		log.info("\n\n Old session, adding new Reservation object to the model\n\n");
     		httpSession.invalidate();
     	}
 		model.addAttribute("reservation", new Reservation());
@@ -78,7 +72,6 @@ public class NewReservationController {
 				model.addAttribute("allergensList", allergenService.findAll());
 				return "/reservation/new/new-reservation-new-customer";
 			case "add":
-				log.info("action = add");
 				if(reservationCustomerCheckForErrors(result, model, customer)){
 					return "/reservation/new/new-reservation-new-customer";
 				}
@@ -98,14 +91,12 @@ public class NewReservationController {
     public String saveReservation(@Valid @ModelAttribute Reservation reservation,
     							BindingResult result, 
     							Model model) {
-        log.info("Entro in saveReservation");
     	if (result.hasErrors()) {
 			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/new/new-reservation";
         }
     	reservationService.save(reservation);
-    	log.info("Reservation and Customer objects saved");
-
+    	
     	return "/reservation/reservations";
     }
     
@@ -144,7 +135,6 @@ public class NewReservationController {
     		model.addAttribute("waitersList", getPersistedWaiters());
     		return "/reservation/new/new-reservation";
     	}else if(action.equals("save")) {
-    		log.info("action = save");
     		if (reservationCustomerCheckForErrors(result, model, customer)) {
     			reservation_customers.add(originalCustomer);
     			model.addAttribute("customer", customer);
