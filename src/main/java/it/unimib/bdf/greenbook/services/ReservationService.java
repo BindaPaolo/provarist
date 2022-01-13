@@ -20,22 +20,10 @@ import java.util.stream.StreamSupport;
 public class ReservationService{
 	@Autowired
     private ReservationRepository reservationRepository;
-/*
-	@Autowired
-    private CustomerRepository customerRepository;
-*/
+
 	@Autowired
 	private CustomerService customerService;
-	
-    
-/*
-    @Autowired
-    public ReservationService(ReservationRepository reservationRepository,
-    		CustomerRepository customerRepository) {
-        this.reservationRepository = reservationRepository;
-        this.customerRepository = customerRepository;
-    }
-*/    
+	   
     public List<Reservation> findAllReservationsByCustomerId(Long id){
     	return this.reservationRepository.findAllReservationsByCustomerId(id);
     }
@@ -55,37 +43,43 @@ public class ReservationService{
 
     @Transactional
     public Reservation save(Reservation reservation) {
-    	// List for customers that are already inside the database
     	List<Customer> customersToRemove = new ArrayList<>();
     	List<Customer> customersToAdd = new ArrayList<>();
     	
-    	for (Customer customer : reservation.getReservation_customers()) {
-
-    		if(customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).isEmpty()) {
-    			// The customer isn't present in the db.
-            	customerService.save(customer);
-    		}
-    		else {
-    			// switch the two customer objects
-    			// and update the recommendedBy field
-    			// if the new customer's is not null
-    			// and the old customer's field is null
-    			Customer alreadyExistingCustomer  = customerService.findAllCustomersByMobileNumber(customer.getMobileNumber()).get(0);
-    			customerService.fixRecommendedByForeignKey(customer);
-    			if(alreadyExistingCustomer.getRecommendedBy() == null && customer.getRecommendedBy() != null){
-    				alreadyExistingCustomer.setRecommendedBy(customer.getRecommendedBy());
+    	for(Customer c : reservation.getReservation_customers()) {
+    		//Check if recommendedBy field was left empty, in
+    		//that case is set to null, otherwise find the 
+    		//customer in the db that recommended Customer c
+    		//and save its reference.
+    		customerService.fixRecommendedByForeignKey(c);
+    		//Can't insert the same entity (same mobile number) twice.
+    		String mobileNumber = c.getMobileNumber();
+    		//Get all the customers with the same mobile number.
+    		//Size must be 0 or 1.
+    		List<Customer> customers = customerService.findAllCustomersByMobileNumber(mobileNumber);
+    		if (!customers.isEmpty()) {
+    			//Then it contains only one customer.
+    			Customer returningCustomer = customers.get(0);
+    			//Check if there's new information this time.
+    			//On whether he was recommended
+    			if(returningCustomer.getRecommendedBy() == null && c.getRecommendedBy() != null) {
+    				returningCustomer.setRecommendedBy(customerService.findAllCustomersByMobileNumber(c.getRecommendedBy().getMobileNumber()).get(0));
     			}
-
-				alreadyExistingCustomer.getAllergies().addAll(customer.getAllergies());
-
-    			customersToAdd.add(alreadyExistingCustomer);
-    			customersToRemove.add(customer);
+    			//And always update it's allergies to the most
+    			//recent ones.
+    			returningCustomer.setAllergies(c.getAllergies());
+    			customerService.save(returningCustomer);
+    			customersToRemove.add(c);
+    			customersToAdd.add(returningCustomer);
+    		}
+    		else{
+    			//New customer.
+        		customerService.save(c);
     		}
 
     	}
-    	
-		reservation.getReservation_customers().addAll(customersToAdd);
     	reservation.getReservation_customers().removeAll(customersToRemove);
+    	reservation.getReservation_customers().addAll(customersToAdd);
     	//Save the reservation object.
     	reservationRepository.save(reservation);
     	

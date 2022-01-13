@@ -37,20 +37,16 @@
             </tr>
           
             <br>
-           
+           <table>
             <tr>
               <td>
                   <br/><button type="submit" formaction="/reservation/search/executeSearchReservationByCustomer">Esegui Ricerca</button>
               </td> 
-            </tr>
-            
-             <br>
-             
-            <tr>
                 <td> 
                 	<br/> <button type="submit" formaction="/reservation/search/cancelSearchReservation">Annulla</button>
                </td>
             </tr>
+            </table>
 		</form:form>
 	</div>
 </body>

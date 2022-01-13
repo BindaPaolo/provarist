@@ -1,0 +1,6 @@
+2022-01-07 21:59:15 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "WAITERS" not found; SQL statement:
+select * from waiters [42102-200]
+2022-01-09 09:06:24 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * CUSTOMER[*]"; SQL statement:
+select * customer [42000-200]

@@ -13,32 +13,32 @@
 	<div><h1>Ricerca prenotazione per data</h1></div>
 	
 	<div>
-		<form:form modelAttribute="reservation" method="post">
+		<form:form modelAttribute="dateContainer" method="post">
+		
+			<c:if test="${not empty emptyDateField}">
+                <br /><div class="validationError">${emptyDateField}</div><br />
+            </c:if>
 			<tr>
               <td>
 				<form:label path="date">Data</form:label>
 			  </td>
             <td>
-				<form:input type="date" name="date" id="date" path="date"/>
-				<form:errors path="date" class="validationError"/>
+				<form:input type="date" name="date" id="date" path="${dateContainer.date}"/>
               </td>
             </tr>
             
             <br>
-            
-            <tr>
-              <td>
-                  <br/><button type="submit" formaction="/reservation/search/executeSearchReservationByDate">Esegui Ricerca</button>
-              </td>
-            </tr>
-            
-             <br>
-             
-            <tr>
-                <td> 
-                	<br/> <button type="submit" formaction="/reservation/search/cancelSearchReservation">Annulla</button>
-               </td>
-            </tr>
+            <table>
+	            <tr>
+	              <td>
+	                  <br/><button type="submit" formaction="/reservation/search/executeSearchReservationByDate">Esegui Ricerca</button>
+	              </td>
+			
+	                <td> 
+	                	<br/> <button type="submit" formaction="/reservation/search/cancelSearchReservation">Annulla</button>
+	               </td>
+	            </tr>
+            </table>
 		</form:form>	
 	   </div>
 </body>
