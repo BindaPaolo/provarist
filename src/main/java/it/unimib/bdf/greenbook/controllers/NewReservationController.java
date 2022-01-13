@@ -201,18 +201,6 @@ public class NewReservationController {
     }
     
 
-    /**
-     * Adds new Reservation object to the model.
-     * This object then remains in the session
-     * until its completion.
-     *
-	@ModelAttribute("reservation")
-	public Reservation getReservation() {
-		log.info("Adding new reservation to the model");
-		return new Reservation();
-	}*/
-      
-	
     public Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
     	Customer found = null;	
 		for(Customer c : reservation.getReservation_customers()) {

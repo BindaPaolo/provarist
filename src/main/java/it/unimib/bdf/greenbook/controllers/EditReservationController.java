@@ -48,9 +48,6 @@ public class EditReservationController {
 	@Autowired
 	private AllergenService allergenService;
 	
-	@Autowired
-	private NewReservationController newReservationController;
-	
 	@PostMapping("/editReservation/{id}")
 	public String editReservation(@PathVariable Long id,
 								@RequestParam("searchType") String searchType,
@@ -155,7 +152,7 @@ public class EditReservationController {
 			case "add":
 					log.info("action = add");
 					model.addAttribute("reservation", reservation);
-					if(newReservationController.reservationCustomerCheckForErrors(result, model, customer)){
+					if(editReservationCustomerCheckForErrors(result, model, customer)){
 						return "/reservation/edit/edit-reservation-new-customer";
 					}
 					reservation.addReservationCustomer(customer);
@@ -211,7 +208,7 @@ public class EditReservationController {
     										@RequestParam("action") String action) {
     	log.info("Entro in modifyReservationCustomer");
     	//Trovo il customer
-    	Customer originalCustomer = newReservationController.findCustomer(firstName, lastName, mobileNumber, reservation);
+    	Customer originalCustomer = findCustomer(firstName, lastName, mobileNumber, reservation);
     	model.addAttribute("originalCustomer", originalCustomer);
     	reservation.getReservation_customers().remove(originalCustomer);
     	
@@ -308,6 +305,19 @@ public class EditReservationController {
 
         return false;
     }
+    
+    public Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
+    	Customer found = null;	
+		for(Customer c : reservation.getReservation_customers()) {
+			if (c.getFirstName().equalsIgnoreCase(firstName) &&
+				c.getLastName().equalsIgnoreCase(lastName) &&
+				c.getMobileNumber().equals(mobileNumber)) {
+				found = c;
+			}
+		}
+		
+		return found;
+	}
     
 	private List<Employee> getPersistedWaiters(){
 		List<Employee> persistedEmployees = employeeService.findAll();
