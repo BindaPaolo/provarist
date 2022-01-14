@@ -46,9 +46,13 @@ public class ReservationService{
     	List<Customer> customersToAdd = new ArrayList<>();
     	
     	for(Customer c : reservation.getReservation_customers()) {
+    		//Trim the customer's fields of type String
+        	c.setFirstName(c.getFirstName().trim());
+        	c.setLastName(c.getLastName().trim());
+        	c.setMobileNumber(c.getMobileNumber().trim());
     		//Check if recommendedBy field was left empty, in
     		//that case is set to null, otherwise find the 
-    		//customer in the db that recommended Customer c
+    		//customer in the database that recommended Customer c
     		//and save its reference.
     		customerService.fixRecommendedByForeignKey(c);
     		//Can't insert the same entity (same mobile number) twice.
@@ -94,6 +98,8 @@ public class ReservationService{
     }
     
     public List<Reservation> findAllReservationByCustomerFirstNameAndLastName(String firstName, String lastName){
+    	firstName = firstName.trim();
+    	lastName = lastName.trim();
     	return reservationRepository.findAllReservationByCustomerFirstNameAndLastName(firstName, lastName);
     }
 
