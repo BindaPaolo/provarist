@@ -91,7 +91,10 @@ In the phase of ER Design, we made the following assumptions:
   \item Tracing also employees which are selected for each reservation should be useful, since they could be infected and, in such cases, we need to be able to track them too
   \item Each customers' credentials are asked during the booking process, so that every person relating to a reservation gets recorded
   \item A restaurant could find useful to register also customers' allergies, 
-  in order to avoid needing another application just for this purpose: we implemented this feature even if it is not the functionality for which it was intended
+  in order to avoid needing another application just for this purpose: we implemented this feature even if it is not the functionality for which it was intended.
+  \item In our model we allow multiple customer objects to have the same pair of
+  first and last name (because this might very well happen in practice) but consider
+  the mobile number as a unique identifier, necessary for contacting them.
 \end{itemize}
 
 \newpage
@@ -337,8 +340,21 @@ and makes sure that saving a reservation occurs in a transaction.
 \subsection*{Repositories}
 The \textit{ReservationRepository.java} takes care of actually executing the CRUD queries
 asked by the service and implements a few custom queries to meet the application needs.
-In particular here we hardcoded the 2 sql queries needed for searching a reservation
-by customer and by date.
+In particular, here, we hardcoded the sql query that fetches from the database
+all the reservations in which a customer, with given first and last name, took part.
+This query contains a nested query with a join on two tables and is shown below:
+
+\vspace{5mm}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/custom_query}
+    \label{fig:custom_query}
+    \caption{Query for searching the reservations by customer's first and last name.}
+\end{figure}
+
+
+
 
 
 

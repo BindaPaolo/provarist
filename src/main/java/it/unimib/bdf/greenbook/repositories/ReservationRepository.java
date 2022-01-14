@@ -20,7 +20,7 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
     List<Long> findAllCustomersByReservationId(@Param("reservation_id") Long reservation_id);
 
 	@Query(value="SELECT DISTINCT r.reservation_id, r.shift_enum, r.date"
-				+" FROM reservation r JOIN reservation_customers rc on r.reservation_id = rc.reservation_id"
+				+" FROM reservation r"
 				+" WHERE r.date = :date", nativeQuery=true)
 	public List<Reservation> findAllReservationsByDate(@Param("date") LocalDate date);
 
