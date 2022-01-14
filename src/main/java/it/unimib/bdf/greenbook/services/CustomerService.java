@@ -30,10 +30,15 @@ public class CustomerService {
     
     
     public List<Customer> findAllCustomersByFirstNameAndLastNameAllIgnoringCase(String firstName, String lastName){
+    	//Trim the firstName, lastName search parameters before executing the search.
+    	firstName = firstName.trim();
+    	lastName = lastName.trim();
     	return repository.findAllCustomersByFirstNameAndLastNameAllIgnoringCase(firstName, lastName);
     }
     
     public List<Customer> findAllCustomersByMobileNumber(String mobileNumber){
+    	//Trim the mobile number search parameter before executing the search.
+    	mobileNumber = mobileNumber.trim();
         return repository.findAllCustomersByMobileNumber(mobileNumber);
     }
     
@@ -58,6 +63,12 @@ public class CustomerService {
     }
 
     public Customer save(Customer customer) {
+    	//Trim the customer's fields of the String data types
+    	//before saving into the database.
+    	customer.setFirstName(customer.getFirstName().trim());
+    	customer.setLastName(customer.getLastName().trim());
+    	customer.setMobileNumber(customer.getMobileNumber().trim());
+    	
         // Check if the recommended-by field is left empty
     	fixRecommendedByForeignKey(customer);
         return repository.save(customer);
@@ -116,6 +127,7 @@ public class CustomerService {
      * @param mobileNumber mobile number of the customer that the user wants to insert
      */
     public boolean isMobileNumberPersisted(String mobileNumber){
+    	mobileNumber = mobileNumber.trim();
         return !findAllCustomersByMobileNumber(mobileNumber).isEmpty();
     }
 
@@ -127,6 +139,7 @@ public class CustomerService {
      * @return alreadyPresent returns true if the mobile number was already persisted for a different customer
      */
     public boolean checkForMobileNumberDuplicates(Long id, String mobileNumber){
+    	mobileNumber = mobileNumber.trim();
         List<Customer> customersList = findAllCustomersByMobileNumber(mobileNumber);
         boolean alreadyPresent = false;
 
