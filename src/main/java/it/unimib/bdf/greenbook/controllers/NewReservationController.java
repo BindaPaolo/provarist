@@ -48,7 +48,8 @@ public class NewReservationController {
 	
     @GetMapping("/new-reservation")
     public String showNewReservationForm(Model model, HttpSession httpSession) {
-    	
+    	//If the session is old, invalidate it
+    	//and create a new one.
     	if(!httpSession.isNew()) {
     		httpSession.invalidate();
     	}
@@ -68,17 +69,22 @@ public class NewReservationController {
 
 		switch (action) {
 			case "show":
+				//Show form for adding a new customer to the reservation
 				model.addAttribute("customer", new Customer());
 				model.addAttribute("allergensList", allergenService.findAll());
 				return "/reservation/new/new-reservation-new-customer";
 			case "add":
+				//Check for errors in the customer form
 				if(reservationCustomerCheckForErrors(result, model, customer)){
 					return "/reservation/new/new-reservation-new-customer";
 				}
+				//If the object passes the tests,
+				//add it to the reservation list.
 				reservation.addReservationCustomer(customer);
 				model.addAttribute("waitersList", getPersistedWaiters());
 				return "/reservation/new/new-reservation";
 			case "cancel":
+				//Cancel customer insertion
 				model.addAttribute("waitersList", getPersistedWaiters());
 				return "/reservation/new/new-reservation";
 
@@ -95,6 +101,7 @@ public class NewReservationController {
 			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/new/new-reservation";
         }
+    	//Persist the reservation to database.
     	reservationService.save(reservation);
     	
     	return "/reservation/reservations";
@@ -104,7 +111,8 @@ public class NewReservationController {
     public String cancelReservation(@ModelAttribute Reservation reservation,
 									Model model,
 									SessionStatus status) {
-        
+        //Reservation is being cancelled,
+    	//we make sure to close the session.
         status.setComplete();
 
         return "reservation/reservations";
@@ -117,6 +125,8 @@ public class NewReservationController {
     									BindingResult result,
 										@RequestParam("action") String action) {
 
+    	//Set up a way to find the customer after
+    	//passing to different view.
     	Customer originalCustomer = null;
 		List<Customer> reservation_customers = reservation.getReservation_customers();
 		for(Customer c : reservation_customers) {
@@ -125,11 +135,14 @@ public class NewReservationController {
 				break;
 			}
 		}
+		//Remove the customer that's being
+		//modified from the reservation's customer list.
 		reservation_customers.remove(originalCustomer);
 
     	if (action.equals("cancel")) {
-    		
+    		//Cancel means, we restore things as before
     		originalCustomer.setId(0);
+    		//and re-add the original customer to the list
     		reservation_customers.add(originalCustomer);
     		
     		model.addAttribute("waitersList", getPersistedWaiters());
@@ -140,7 +153,11 @@ public class NewReservationController {
     			model.addAttribute("customer", customer);
     			return "/reservation/new/new-reservation-edit-customer";
     		}
-    		
+    		//The original customer is no longer important.
+    		//We can substitute it with the "new" one.
+    		//This way of updating the customer is needed 
+    		//because the reservation's customer list has not 
+    		//been persisted yet.
     		reservation.addReservationCustomer(customer);
     		
 			model.addAttribute("waitersList", getPersistedWaiters());
@@ -161,12 +178,15 @@ public class NewReservationController {
 
 		if (action.equals("edit")) {
     		Customer cloneCustomer = (Customer) originalCustomer.clone();
+    		//Setting up customer object recognition
+    		//(might be needed).
     		originalCustomer.setId(-1);
         	model.addAttribute("customer", cloneCustomer);
     		model.addAttribute("allergensList", allergenService.findAll());
     		return "/reservation/new/new-reservation-edit-customer";
     	}
     	else if(action.equals("delete")) {
+    		//Remove the customer from the reservation's customer list
         	reservation.getReservation_customers().remove(originalCustomer);
 			model.addAttribute("waitersList", getPersistedWaiters());
     		
@@ -177,6 +197,8 @@ public class NewReservationController {
     }
     
 
+    //Method to find a customer with given firstName, lastName and mobileNumber
+    //in the reservation's customer list.
     public Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
     	Customer found = null;	
 		for(Customer c : reservation.getReservation_customers()) {
@@ -190,6 +212,7 @@ public class NewReservationController {
 		return found;
 	}
     
+    //Get the employees' with a particular role.
 	private List<Employee> getPersistedWaiters(){
 		List<Employee> persistedEmployees = employeeService.findAll();
 		persistedEmployees.removeIf(
@@ -201,6 +224,9 @@ public class NewReservationController {
 	
 	
     /**
+     * List of possible errors check for a customer to 
+     * be inserted into the reservation's customer list.
+     * 
      * 1 result errors:
      * 		a) firstName or lastName or mobileNumber not present or the
      * 		   mobileNumber field doesn't contain a non zero number of digits.

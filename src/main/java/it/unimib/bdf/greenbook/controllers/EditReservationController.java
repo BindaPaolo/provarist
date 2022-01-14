@@ -53,10 +53,11 @@ public class EditReservationController {
 								@RequestParam(value = "date", required = false) String date,
 								HttpSession httpSession,
 								Model model) {
-
+		//Make sure we are in a new session
 		if(!httpSession.isNew()) {
 			httpSession.invalidate();
 		}
+		//Retrieve the selected reservation object
 		Reservation reservation = reservationService.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid reservation Id:" + id));
 
@@ -66,6 +67,8 @@ public class EditReservationController {
 		model.addAttribute("reservation", reservation);
 		model.addAttribute("searchType", searchType);
 		
+		//Differentiate model attributes based on 
+		//the search parameters.
 		if(searchType.equals("byDate")) {
 			model.addAttribute("date", LocalDate.parse(date));
 		}
@@ -87,14 +90,18 @@ public class EditReservationController {
 			model.addAttribute("waitersList", getPersistedWaiters());
             return "reservation/edit/edit-reservation";
         }
-    	
+    	//Update the reservation
     	reservationService.save(reservation);
-
+    	//Go back to the previous page, updating search results.
 		getBackToSearchResults(model, httpSession);
 		
 		return "/reservation/search/search-results";
 	}
 	
+	//Once finished editing (either through a save or cancel)
+	//we go back to the previous jsp, search-results.jsp, with the 
+	//updated reservation list (possibly modified through
+	//the editing actions).
 	private void getBackToSearchResults(Model model, HttpSession httpSession) {
 		
 		String searchType = (String) httpSession.getAttribute("searchType");
@@ -117,6 +124,7 @@ public class EditReservationController {
 		model.addAttribute("reservationListContainer", reservationListContainer);
 	}
 	
+	//Cancel the reservation edit process
 	@PostMapping("/editReservationCancel")
 	public String editReservationCancel(Model model,
 										HttpSession httpSession) {
@@ -135,18 +143,23 @@ public class EditReservationController {
 		
 		switch (action) {
 			case "show":
+					//Show form for adding a new customer to the reservation.
 					model.addAttribute("customer", new Customer());
 					model.addAttribute("allergensList", allergenService.findAll());
 					return "/reservation/edit/edit-reservation-new-customer";
 			case "add":
+					//Adding new customer to the reservation.
 					model.addAttribute("reservation", reservation);
+					//Check for errors in new customer form.
 					if(editReservationCustomerCheckForErrors(result, model, customer)){
 						return "/reservation/edit/edit-reservation-new-customer";
 					}
+					//If there's no errors, add it to the reservation's list.
 					reservation.addReservationCustomer(customer);
 					model.addAttribute("waitersList", getPersistedWaiters());
 					return "/reservation/edit/edit-reservation";
 			case "cancel":
+					//Cancel the addition of a new customer to the reservation.
 					model.addAttribute("reservation", reservation);
 					model.addAttribute("waitersList", getPersistedWaiters());
 					return "/reservation/edit/edit-reservation";
@@ -155,6 +168,11 @@ public class EditReservationController {
 		return "error";
 	}
 	
+	//Method that handles the editing process of
+	//a customer selected from the reservation's customer list.
+	//It's similar to what happens in NewReservationController
+	//but the big difference is that now the reservation 
+	//and all its customers are already persisted in the database.
     @PostMapping("/editReservationEditCustomer")
     public String editReservationEditCustomer(Model model,
     									@ModelAttribute("originalCustomer") Customer originalCustomer,
@@ -162,8 +180,11 @@ public class EditReservationController {
     									@Valid @ModelAttribute Customer customer,
     									BindingResult result,
 										@RequestParam("action") String action) {
-
+    	
     	if (action.equals("cancel")) {
+    		//We had previously removed the customer 
+    		//selected for editing from the reservation's customer list.
+    		//Since we are undoing this process, we must add it back again.
     		reservation.getReservation_customers().add(originalCustomer);
     		model.addAttribute("waitersList", getPersistedWaiters());
     		model.addAttribute("reservation", reservation);
@@ -184,6 +205,12 @@ public class EditReservationController {
     	return "error";
     }   
 	
+    //Method that finds the customer selected from
+    //the reservation's customer list and either handles 
+    //It's deletion or forwards the editing process to
+    //a certain view which will be handled by another
+    //method of this controller's (for better code
+    //readability and separation of concerns).
     @PostMapping("/editReservationModifyCustomer/{firstName}&{lastName}&{mobileNumber}")
     public String editReservationModifyCustomer(Model model,
     										@PathVariable("firstName") String firstName,
@@ -210,6 +237,31 @@ public class EditReservationController {
     	return "error";
     }
 
+    
+     /**
+     * List of possible errors check for a customer to 
+     * be inserted into the reservation's customer list.
+     * 
+     * 1 result errors:
+     * 		a) firstName or lastName or mobileNumber not present or the
+     * 		   mobileNumber field doesn't contain a non zero number of digits.
+     * 
+     * 2 mobileNumber errors:
+     * 		a) mobileNumber is equal to another customer already 
+     * 		   present in db but they differ for either firstName or lastName.
+     * 		b) in the reservation_customers list there's already another
+     * 		   customer with same mobileNumber.
+     * 		c) mobileNumber is equal to recommendedBy.
+     * 
+     * 3 recommendedBy errors:
+     * 		a) recommendedBy.getMobileNumber() is not empty but the referenced 
+     *  	   mobileNumber doesn't belong to a customer in the db.
+     * 
+     * @param result                    object that eventually contains validation errors
+     * @param model                     set of attributes of the .jsp page shown to the user
+     * @param customer                  object of the customer that the user is inserting/editing
+     * @return true if there is an error and some page needs to be shown to the user; false otherwise
+     */
     private boolean editReservationCustomerCheckForErrors(BindingResult result, Model model, Customer customer) {
         // Flag = presence of errors
         boolean errorPresence = false;
@@ -285,6 +337,8 @@ public class EditReservationController {
         return false;
     }
     
+    //Method to find a customer with given firstName, lastName and mobileNumber
+    //in the reservation's customer list.
     public Customer findCustomer(String firstName, String lastName, String mobileNumber, Reservation reservation) {
     	Customer found = null;	
 		for(Customer c : reservation.getReservation_customers()) {
@@ -298,6 +352,7 @@ public class EditReservationController {
 		return found;
 	}
     
+    //Get the employees' with a particular role.
 	private List<Employee> getPersistedWaiters(){
 		List<Employee> persistedEmployees = employeeService.findAll();
 		persistedEmployees.removeIf(

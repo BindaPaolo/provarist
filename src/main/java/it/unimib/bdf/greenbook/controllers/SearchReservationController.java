@@ -52,6 +52,9 @@ public class SearchReservationController {
 		
 		
 		ReservationListContainer reservationListContainer = new ReservationListContainer();
+		//Fill the reservation list container with the reservations
+		//in the db where a customer with those first and last name 
+		//has took part.
 		reservationListContainer.setReservations(reservationService.findAllReservationByCustomerFirstNameAndLastName(customer.getFirstName(), customer.getLastName()));
 
 		// Adding list of reservations with that customer's first and last name
@@ -76,6 +79,9 @@ public class SearchReservationController {
         }
 		
 		ReservationListContainer reservationListContainer = new ReservationListContainer();
+		//Find all reservations in the db
+		//that have happened/will happened
+		//on the specified date.
 		reservationListContainer.setReservations(reservationService.findAllReservationsByDate(dateContainer.getDate()));
 		model.addAttribute("reservationListContainer", reservationListContainer);
 		model.addAttribute("searchType", "byDate");
@@ -95,9 +101,11 @@ public class SearchReservationController {
     								Model model) {
     	
     	ReservationListContainer reservationListContainer = new ReservationListContainer();
-    	
+    	//delete the selected reservation
 		reservationService.deleteById(id);
 		
+		//update search results page
+		//after the deletion of the reservation.
 		if (searchType.equals("byDate")) {
 			reservationListContainer.setReservations(reservationService.findAllReservationsByDate(LocalDate.parse(date)));
 			model.addAttribute("date", date);
