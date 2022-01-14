@@ -1,15 +1,10 @@
 package it.unimib.bdf.greenbook.models;
 
-import lombok.Data;
-import lombok.ToString;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Data
 @Entity
-@ToString
 @Table(name = "employee")
 public class Employee extends Person {
 
@@ -42,4 +37,19 @@ public class Employee extends Person {
         return this.getId() == ((Employee) obj).getId();
     }
 
+    public String getCf() {
+        return cf;
+    }
+
+    public void setCf(String cf) {
+        this.cf = cf;
+    }
+
+    public roleEnumType getRole() {
+        return role;
+    }
+
+    public void setRole(roleEnumType role) {
+        this.role = role;
+    }
 }
